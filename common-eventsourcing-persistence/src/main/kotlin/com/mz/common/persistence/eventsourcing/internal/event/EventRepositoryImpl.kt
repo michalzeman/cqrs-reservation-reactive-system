@@ -1,8 +1,8 @@
-package com.mz.common.persistence.eventsourcing.event.internal
+package com.mz.common.persistence.eventsourcing.internal.event
 
-import com.mz.common.persistence.eventsourcing.event.DataSource
 import com.mz.common.persistence.eventsourcing.event.Event
 import com.mz.common.persistence.eventsourcing.event.EventRepository
+import com.mz.common.persistence.eventsourcing.event.EventStorageAdapter
 import com.mz.common.persistence.eventsourcing.event.Tag
 import com.mz.reservation.common.api.domain.DomainEvent
 import com.mz.reservation.common.api.domain.Id
@@ -10,7 +10,8 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.Instant
 
-internal class EventRepositoryImpl<E : DomainEvent>(private val dataSource: DataSource) : EventRepository<E> {
+internal class EventRepositoryImpl<E : DomainEvent>(private val eventStorageAdapter: EventStorageAdapter) :
+    EventRepository<E> {
 
     override fun persistAll(id: Id, events: List<E>, tag: Tag): Mono<Void> {
 
@@ -23,15 +24,15 @@ internal class EventRepositoryImpl<E : DomainEvent>(private val dataSource: Data
             payloadType = event.javaClass.typeName
         )
 
-        return dataSource.getSequenceNumber(id.value)
+        return eventStorageAdapter.getSequenceNumber(id.value)
             .map { sequenceN ->
                 events.mapIndexed { index, event -> mapEvent(sequenceN + 1 + index, event) }
             }
-            .flatMap(dataSource::save)
+            .flatMap(eventStorageAdapter::save)
     }
 
     override fun read(id: Id, tag: Tag): Flux<Event> {
-        return dataSource.read(id.value, tag.value)
+        return eventStorageAdapter.read(id.value, tag.value)
     }
 
 }

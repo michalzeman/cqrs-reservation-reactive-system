@@ -1,37 +1,26 @@
-package com.mz.common.persistence.eventsourcing.aggregate.internal
+package com.mz.common.persistence.eventsourcing.internal.aggregate
 
-import com.mz.common.persistence.eventsourcing.aggregate.AggregateProcessor
 import com.mz.common.persistence.eventsourcing.aggregate.AggregateRepository
-import com.mz.common.persistence.eventsourcing.aggregate.AggregateRepositoryBuilder
 import com.mz.common.persistence.eventsourcing.aggregate.CommandEffect
-import com.mz.common.persistence.eventsourcing.aggregate.locking.AcquireLock
-import com.mz.common.persistence.eventsourcing.aggregate.locking.LockManager
-import com.mz.common.persistence.eventsourcing.aggregate.locking.LockReleased
-import com.mz.common.persistence.eventsourcing.aggregate.locking.ReleaseLock
-import com.mz.common.persistence.eventsourcing.event.Event
-import com.mz.common.persistence.eventsourcing.event.EventRepository
+import com.mz.common.persistence.eventsourcing.locking.AcquireLock
+import com.mz.common.persistence.eventsourcing.locking.LockManager
+import com.mz.common.persistence.eventsourcing.locking.LockReleased
+import com.mz.common.persistence.eventsourcing.locking.ReleaseLock
 import com.mz.reservation.common.api.domain.DomainCommand
 import com.mz.reservation.common.api.domain.DomainEvent
 import com.mz.reservation.common.api.domain.Id
 import com.mz.reservation.common.api.util.Failure
 import com.mz.reservation.common.api.util.Success
+import com.mz.reservation.common.api.util.Try
 import reactor.core.publisher.Mono
 
 
-internal class AggregateRepositoryImpl<A, C : DomainCommand, E : DomainEvent, S>(
-    aggregateRepositoryBuilder: AggregateRepositoryBuilder<A, C, E, S>,
+internal class AggregateRepositoryImpl<A, C : DomainCommand, E : DomainEvent>(
+    private val aggregateFactory: (Id) -> A,
+    private val executeCommand: (A, C) -> Try<CommandEffect<A, E>>,
+    private val persistAllEvents: (Id, List<E>) -> Mono<Unit>,
     private val lockManager: LockManager,
-    private val eventRepository: EventRepository<E>
-) : AggregateRepository<A, C, E, S> {
-
-    private val aggregateProcessor: AggregateProcessor<A, C, E> = AggregateProcessor.create(
-        aggregateRepositoryBuilder.aggregateCommandHandler,
-        aggregateRepositoryBuilder.aggregateEventHandler
-    )
-
-    private val aggregateFactory: (Id) -> A = aggregateRepositoryBuilder.aggregateFactory
-
-    private val domainTag = aggregateRepositoryBuilder.domainTag
+) : AggregateRepository<A, C, E> {
 
     override fun execute(id: Id, command: C): Mono<CommandEffect<A, E>> {
 
@@ -50,7 +39,7 @@ internal class AggregateRepositoryImpl<A, C : DomainCommand, E : DomainEvent, S>
         command: C,
         releaseLock: Mono<LockReleased>
     ): Mono<CommandEffect<A, E>> {
-        return when (val effect = aggregateProcessor.execute(aggregateFactory(id), command)) {
+        return when (val effect = executeCommand(aggregateFactory(id), command)) {
             is Success -> persistAllEvents(id, effect.result.events)
                 .and(releaseLock)
                 .thenReturn(effect.result)
@@ -59,9 +48,7 @@ internal class AggregateRepositoryImpl<A, C : DomainCommand, E : DomainEvent, S>
         }
     }
 
-    private fun persistAllEvents(id: Id, events: List<E>): Mono<Void> {
-        return eventRepository.persistAll(id, events)
-    }
+    override fun find(id: Id): Mono<A> = getAggregate(id)
 
     private fun getAggregate(id: Id): Mono<A> {
 //        Mono.fromCallable { aggregateFactory(id) }
@@ -74,9 +61,5 @@ internal class AggregateRepositoryImpl<A, C : DomainCommand, E : DomainEvent, S>
 //            .toStream().reduce(aggregateFactory(id), BiFunction { t, u ->  })
 
         return Mono.empty()
-    }
-
-    private fun mapPayloadToDomainEvent(event: Event): E? {
-        return null
     }
 }

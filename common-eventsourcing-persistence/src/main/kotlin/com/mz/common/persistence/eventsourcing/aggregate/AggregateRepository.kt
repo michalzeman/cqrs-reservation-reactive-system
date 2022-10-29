@@ -9,15 +9,19 @@ import com.mz.reservation.common.api.domain.event.AggregateEventHandler
 import reactor.core.publisher.Mono
 
 data class AggregateRepositoryBuilder<A, C : DomainCommand, E : DomainEvent, S>(
-    val aggregateCommandHandler: AggregateCommandHandler<A, C, E>,
+    val aggregateCommandHandler: AggregateCommandHandler<A, C, DomainEvent>,
     val aggregateEventHandler: AggregateEventHandler<A, E>,
     val aggregateFactory: (Id) -> A,
     val stateFactory: (A) -> S,
     val domainTag: Tag
 )
 
-interface AggregateRepository<A, C : DomainCommand, E : DomainEvent, S> {
+data class CommandEffect<A, E : DomainEvent>(val aggregate: A, val events: List<E>)
+
+interface AggregateRepository<A, C : DomainCommand, E : DomainEvent> {
 
     fun execute(id: Id, command: C): Mono<CommandEffect<A, E>>
+
+    fun find(id: Id): Mono<A>
 
 }

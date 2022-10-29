@@ -3,7 +3,7 @@ package com.mz.common.persistence.eventsourcing.event
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-interface DataSource {
+interface EventStorageAdapter {
 
     fun save(events: List<Event>): Mono<Void>
 

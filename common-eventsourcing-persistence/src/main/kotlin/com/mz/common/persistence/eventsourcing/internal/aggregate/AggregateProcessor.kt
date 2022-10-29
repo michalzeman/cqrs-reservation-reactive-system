@@ -1,13 +1,11 @@
-package com.mz.common.persistence.eventsourcing.aggregate
+package com.mz.common.persistence.eventsourcing.internal.aggregate
 
-import com.mz.common.persistence.eventsourcing.aggregate.internal.AggregateProcessorImpl
+import com.mz.common.persistence.eventsourcing.aggregate.CommandEffect
 import com.mz.reservation.common.api.domain.DomainCommand
 import com.mz.reservation.common.api.domain.DomainEvent
 import com.mz.reservation.common.api.domain.command.AggregateCommandHandler
 import com.mz.reservation.common.api.domain.event.AggregateEventHandler
 import com.mz.reservation.common.api.util.Try
-
-data class CommandEffect<A, E : DomainEvent>(val aggregate: A, val events: List<E>)
 
 interface AggregateProcessor<A, C : DomainCommand, E : DomainEvent> {
     fun execute(aggregate: A, cmd: C): Try<CommandEffect<A, E>>

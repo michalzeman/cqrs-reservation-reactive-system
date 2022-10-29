@@ -1,6 +1,5 @@
-package com.mz.common.persistence.eventsourcing.aggregate.internal
+package com.mz.common.persistence.eventsourcing.internal.aggregate
 
-import com.mz.common.persistence.eventsourcing.aggregate.AggregateProcessor
 import com.mz.common.persistence.eventsourcing.aggregate.CommandEffect
 import com.mz.reservation.common.api.domain.DomainCommand
 import com.mz.reservation.common.api.domain.DomainEvent

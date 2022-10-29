@@ -1,4 +1,4 @@
-package com.mz.common.persistence.eventsourcing.aggregate.locking
+package com.mz.common.persistence.eventsourcing.locking
 
 import reactor.core.publisher.Mono
 import java.time.Instant

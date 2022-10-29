@@ -16,5 +16,7 @@ dependencies {
 
     testImplementation("com.typesafe.akka:akka-actor-testkit-typed_${scalaBinary}")
     testImplementation("com.typesafe.akka:akka-persistence-testkit_${scalaBinary}")
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockito.core)
     testImplementation(libs.assertj.core)
 }

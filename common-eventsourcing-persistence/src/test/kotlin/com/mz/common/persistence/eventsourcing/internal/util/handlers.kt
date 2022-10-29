@@ -1,5 +1,6 @@
 package com.mz.common.persistence.eventsourcing.internal.util
 
+import com.mz.reservation.common.api.domain.DomainEvent
 import com.mz.reservation.common.api.domain.command.AggregateCommandHandler
 import com.mz.reservation.common.api.domain.event.AggregateEventHandler
 import com.mz.reservation.common.api.util.Try
@@ -35,14 +36,14 @@ class TestEventHandler : AggregateEventHandler<TestAggregate, TestEvent> {
         }
     }
 
-    private fun applyForEmptyAggregate(aggregate: EmptyTestAggregate, event: TestEvent): TestAggregate {
+    private fun applyForEmptyAggregate(aggregate: EmptyTestAggregate, event: DomainEvent): TestAggregate {
         return when (event) {
             is TestAggregateCreated -> aggregate.apply(event)
             else -> aggregate
         }
     }
 
-    private fun applyOnExistingAggregate(aggregate: ExistingTestAggregate, event: TestEvent): TestAggregate {
+    private fun applyOnExistingAggregate(aggregate: ExistingTestAggregate, event: DomainEvent): TestAggregate {
         return when (event) {
             is TestValueUpdated -> aggregate.apply(event)
             else -> aggregate

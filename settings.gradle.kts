@@ -13,6 +13,8 @@ dependencyResolutionManagement {
             library("projectreactor-blockhound", "io.projectreactor.tools:blockhound:1.0.4.RELEASE")
             library("apache-commons-lang3", "org.apache.commons:commons-lang3:3.9")
             library("assertj-core", "org.assertj:assertj-core:3.14.0")
+            library("mockito-core", "org.mockito:mockito-core:4.0.0")
+            library("mockito-kotlin", "org.mockito.kotlin:mockito-kotlin:4.0.0")
         }
     }
 }
@@ -33,3 +35,4 @@ include("@reservation")
 include("@reservation:reservation-application")
 findProject(":@reservation:reservation-application")?.name = "reservation-application"
 include("common-eventsourcing-persistence")
+include("persistance-testing")

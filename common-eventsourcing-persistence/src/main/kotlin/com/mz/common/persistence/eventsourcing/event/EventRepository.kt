@@ -29,3 +29,4 @@ interface EventRepository<E : DomainEvent> {
     fun read(id: Id, tag: Tag): Flux<Event>
 
 }
+

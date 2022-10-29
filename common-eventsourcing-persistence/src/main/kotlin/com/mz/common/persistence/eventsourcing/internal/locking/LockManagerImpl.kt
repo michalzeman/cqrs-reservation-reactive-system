@@ -1,6 +1,6 @@
-package com.mz.common.persistence.eventsourcing.aggregate.locking.internal
+package com.mz.common.persistence.eventsourcing.internal.locking
 
-import com.mz.common.persistence.eventsourcing.aggregate.locking.*
+import com.mz.common.persistence.eventsourcing.locking.*
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono

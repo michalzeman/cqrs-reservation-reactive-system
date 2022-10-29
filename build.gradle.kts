@@ -47,6 +47,8 @@ subprojects {
 
         testImplementation(group = "org.junit.jupiter", name = "junit-jupiter")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+        testImplementation("org.mockito:mockito-junit-jupiter")
+
     }
 
     dependencyManagement {

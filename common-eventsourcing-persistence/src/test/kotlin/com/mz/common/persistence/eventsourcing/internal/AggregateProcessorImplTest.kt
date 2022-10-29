@@ -1,6 +1,6 @@
 package com.mz.common.persistence.eventsourcing.internal
 
-import com.mz.common.persistence.eventsourcing.aggregate.internal.AggregateProcessorImpl
+import com.mz.common.persistence.eventsourcing.internal.aggregate.AggregateProcessorImpl
 import com.mz.common.persistence.eventsourcing.internal.util.*
 import com.mz.reservation.common.api.domain.uuid
 import org.assertj.core.api.Assertions.assertThat
@@ -12,7 +12,7 @@ internal class AggregateProcessorImplTest {
 
     private val eventHandler = TestEventHandler()
 
-    val subject = AggregateProcessorImpl(commandHandler, eventHandler)
+    private val subject = AggregateProcessorImpl(commandHandler, eventHandler)
 
     @Test
     internal fun execute() {
