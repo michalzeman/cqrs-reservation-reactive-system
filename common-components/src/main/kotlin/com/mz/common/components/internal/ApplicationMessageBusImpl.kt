@@ -13,7 +13,7 @@ internal class ApplicationMessageBusImpl : ApplicationMessageBus {
 
     private val messagesSink = Sinks.many().replay().all<Message>(1)
 
-    override fun publish(message: Message): Unit {
+    override fun publish(message: Message) {
         messagesSink.emitNext(message, FAIL_FAST)
     }
 

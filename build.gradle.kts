@@ -1,7 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val springframeworkBootVersion = project.extra["springframeworkBootVersion"]
+val springCloudVersion by project.properties
+
 plugins {
-    id("org.springframework.boot") version "2.7.1"
+    id("org.springframework.boot") version "2.7.1" apply false
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
@@ -16,8 +19,9 @@ allprojects {
 
 subprojects {
 
+    val jvmTargetVersion = "17"
+
     apply {
-        plugin("org.springframework.boot")
         plugin("kotlin")
         plugin("java-library")
         plugin("io.spring.dependency-management")
@@ -27,7 +31,12 @@ subprojects {
     version = "0.0.1-SNAPSHOT"
     java.sourceCompatibility = JavaVersion.VERSION_17
 
-    extra["springCloudVersion"] = "2021.0.3"
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
+            mavenBom("org.springframework.boot:spring-boot-dependencies:${springframeworkBootVersion}")
+        }
+    }
 
     dependencies {
         implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -43,24 +52,18 @@ subprojects {
 //		implementation("org.springframework.cloud:spring-cloud-stream")
 //		implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka-streams")
 //		testImplementation("org.springframework.boot:spring-boot-starter-test")
-//		testImplementation("io.projectreactor:reactor-test")
+        testImplementation("io.projectreactor:reactor-test")
 
-        testImplementation(group = "org.junit.jupiter", name = "junit-jupiter")
+        testImplementation("org.junit.jupiter:junit-jupiter")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
         testImplementation("org.mockito:mockito-junit-jupiter")
 
     }
 
-    dependencyManagement {
-        imports {
-            mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
-        }
-    }
-
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "17"
+            jvmTarget = jvmTargetVersion
         }
     }
 
@@ -71,12 +74,6 @@ subprojects {
 
 project(":common-components") {
     dependencies {
-        implementation(project(":common-api"))
-    }
-}
-
-project("common-eventsourcing-persistence") {
-    dependencies {
-        implementation(project(":common-api"))
+        implementation(project(":@ddd:common-domain-api"))
     }
 }

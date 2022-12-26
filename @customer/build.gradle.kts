@@ -9,7 +9,7 @@ project(":@customer:customer-application") {
 
 project(":@customer:customer-domain-api") {
     dependencies {
-        api(project(":common-api"))
+        api(project(":@ddd:common-domain-api"))
     }
 }
 

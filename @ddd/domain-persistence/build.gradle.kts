@@ -8,7 +8,6 @@ dependencies {
     api("com.typesafe.akka:akka-persistence-query_${scalaBinary}")
     api("org.springframework.data:spring-data-redis")
 
-
     compileOnly(group = "io.projectreactor", name = "reactor-core")
     compileOnly(group = "org.springframework", name = "spring-context")
     compileOnly(group = "org.springframework", name = "spring-core")

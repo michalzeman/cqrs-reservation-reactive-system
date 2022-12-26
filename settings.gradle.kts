@@ -20,19 +20,17 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "cqrs-reservation-reactive-system"
-include("common-api")
 include("common-components")
+include("persistence-testing")
+include("@ddd")
+include("@ddd:common-domain-api")
+include("@ddd:domain-persistence")
 include("@customer")
 include("@customer:customer-api")
-findProject(":@customer:customer-api")?.name = "customer-api"
 include("@customer:customer-domain-api")
-findProject(":@customer:customer-domain-api")?.name = "customer-domain-api"
 include("@customer:customer-application")
-findProject(":@customer:customer-application")?.name = "customer-application"
 include("@customer:customer-domain")
-findProject(":@customer:customer-domain")?.name = "customer-domain"
 include("@reservation")
 include("@reservation:reservation-application")
-findProject(":@reservation:reservation-application")?.name = "reservation-application"
-include("common-eventsourcing-persistence")
-include("persistance-testing")
+
+arrayOf("").forEach { include(it) }

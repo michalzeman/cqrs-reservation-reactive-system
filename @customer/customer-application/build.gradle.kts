@@ -1,3 +1,7 @@
+apply {
+    plugin("org.springframework.boot")
+}
+
 description = "Customer application"
 
 dependencies {
