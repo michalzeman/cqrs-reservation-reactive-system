@@ -25,6 +25,7 @@ include("persistence-testing")
 include("@ddd")
 include("@ddd:common-domain-api")
 include("@ddd:domain-persistence")
+include("@ddd:lock-storage-in-memory-adapter")
 include("@customer")
 include("@customer:customer-api")
 include("@customer:customer-domain-api")
@@ -32,5 +33,3 @@ include("@customer:customer-application")
 include("@customer:customer-domain")
 include("@reservation")
 include("@reservation:reservation-application")
-
-arrayOf("").forEach { include(it) }

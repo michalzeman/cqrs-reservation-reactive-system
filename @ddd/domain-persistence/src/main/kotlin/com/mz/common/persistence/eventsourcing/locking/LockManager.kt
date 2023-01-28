@@ -5,7 +5,7 @@ import java.time.Instant
 
 data class AcquireLock(val getKey: () -> String, val getIdentifier: () -> String)
 
-data class LockAcquired(val id: String, val acquiredAt: Instant)
+data class LockAcquired(val key: String, val acquiredAt: Instant)
 
 data class ReleaseLock(val getKey: () -> String)
 
