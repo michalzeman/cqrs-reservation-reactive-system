@@ -1,13 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val springframeworkBootVersion = project.extra["springframeworkBootVersion"]
-val springCloudVersion by project.properties
+val springframeworkBootVersion: String by project
+val springCloudVersion: String by project
 
 plugins {
-    id("org.springframework.boot") version "2.7.1" apply false
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    kotlin("jvm") version "1.6.21"
-    kotlin("plugin.spring") version "1.6.21"
+    alias(libs.plugins.springframework.boot) apply false
+    alias(libs.plugins.io.spring.dependency.management)
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.plugin.spring)
 }
 
 allprojects {
