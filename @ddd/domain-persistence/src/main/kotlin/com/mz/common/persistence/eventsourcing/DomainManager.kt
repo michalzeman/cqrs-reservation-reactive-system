@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono
  * @param C - Domain command type -> mutation of Domain entity
  * @param S - State type, represents status of domain entity
  */
-interface DomainFacade<A, C : DomainCommand, E : DomainEvent, S> {
+interface DomainManager<A, C : DomainCommand, E : DomainEvent, S> {
 
     /**
      * Apply changes to Domain entity.

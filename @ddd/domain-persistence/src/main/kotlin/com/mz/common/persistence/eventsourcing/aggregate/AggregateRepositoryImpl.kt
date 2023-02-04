@@ -1,7 +1,5 @@
-package com.mz.common.persistence.eventsourcing.internal.aggregate
+package com.mz.common.persistence.eventsourcing.aggregate
 
-import com.mz.common.persistence.eventsourcing.aggregate.AggregateRepository
-import com.mz.common.persistence.eventsourcing.aggregate.CommandEffect
 import com.mz.common.persistence.eventsourcing.locking.AcquireLock
 import com.mz.common.persistence.eventsourcing.locking.LockManager
 import com.mz.common.persistence.eventsourcing.locking.LockReleased
@@ -22,9 +20,8 @@ internal class AggregateRepositoryImpl<A, C : DomainCommand, E : DomainEvent>(
     private val lockManager: LockManager,
 ) : AggregateRepository<A, C, E> {
 
-    override fun execute(id: Id, command: C): Mono<CommandEffect<A, E>> {
-
-        return lockManager.acquireLock(AcquireLock({ id.value }, { command.toString() }))
+    override fun execute(id: Id, command: C): Mono<CommandEffect<A, E>> =
+        lockManager.acquireLock(AcquireLock({ id.value }, { command.toString() }))
             .then(
                 executeCommandViaCommandProcessor(
                     id,
@@ -32,21 +29,19 @@ internal class AggregateRepositoryImpl<A, C : DomainCommand, E : DomainEvent>(
                     lockManager.releaseLock(ReleaseLock { id.value })
                 )
             )
-    }
 
     private fun executeCommandViaCommandProcessor(
         id: Id,
         command: C,
         releaseLock: Mono<LockReleased>
-    ): Mono<CommandEffect<A, E>> {
-        return when (val effect = executeCommand(aggregateFactory(id), command)) {
+    ): Mono<CommandEffect<A, E>> =
+        when (val effect = executeCommand(aggregateFactory(id), command)) {
             is Success -> persistAllEvents(id, effect.result.events)
                 .and(releaseLock)
                 .thenReturn(effect.result)
 
             is Failure -> releaseLock.then(Mono.error(effect.exc))
         }
-    }
 
     override fun find(id: Id): Mono<A> = getAggregate(id)
 

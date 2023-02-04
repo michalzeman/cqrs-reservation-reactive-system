@@ -1,9 +1,5 @@
-package com.mz.common.persistence.eventsourcing.internal.event
+package com.mz.common.persistence.eventsourcing.event
 
-import com.mz.common.persistence.eventsourcing.event.Event
-import com.mz.common.persistence.eventsourcing.event.EventRepository
-import com.mz.common.persistence.eventsourcing.event.EventStorageAdapter
-import com.mz.common.persistence.eventsourcing.event.Tag
 import com.mz.reservation.common.api.domain.DomainEvent
 import com.mz.reservation.common.api.domain.Id
 import reactor.core.publisher.Flux
@@ -16,7 +12,7 @@ internal class EventRepositoryImpl<E : DomainEvent>(private val eventStorageAdap
     override fun persistAll(id: Id, events: List<E>, tag: Tag): Mono<Void> {
 
         fun mapEvent(sequenceNumber: Long, event: E): Event = Event(
-            persistenceId = id.value,
+            id = id.value,
             sequenceNumber = sequenceNumber,
             createdAt = Instant.now(),
             tag = tag.value,
@@ -32,7 +28,7 @@ internal class EventRepositoryImpl<E : DomainEvent>(private val eventStorageAdap
     }
 
     override fun read(id: Id, tag: Tag): Flux<Event> {
-        return eventStorageAdapter.read(id.value, tag.value)
+        return eventStorageAdapter.read(id.value)
     }
 
 }

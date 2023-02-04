@@ -13,8 +13,11 @@ data class Tag(val value: String) {
     }
 }
 
+/**
+ * Event data.
+ */
 data class Event(
-    val persistenceId: String,
+    val id: String,
     val sequenceNumber: Long,
     val createdAt: Instant,
     val tag: String,

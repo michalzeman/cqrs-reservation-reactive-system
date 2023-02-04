@@ -1,6 +1,6 @@
 package com.mz.common.persistence.eventsourcing.internal
 
-import com.mz.common.persistence.eventsourcing.DomainFacade
+import com.mz.common.persistence.eventsourcing.DomainManager
 import com.mz.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.common.persistence.eventsourcing.aggregate.CommandEffect
 import com.mz.common.persistence.eventsourcing.internal.util.*
@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
 @ExtendWith(MockitoExtension::class)
-internal class DomainFacadeImplTest {
+internal class DomainManagerImplTest {
 
     @Test
     fun execute() {
@@ -54,7 +54,7 @@ internal class DomainFacadeImplTest {
     private fun subject(
         aggregateRepository: AggregateRepository<TestAggregate, TestCommand, TestEvent>,
         aggregateMapper: (TestAggregate) -> String
-    ): DomainFacade<TestAggregate, TestCommand, TestEvent, String> {
-        return DomainFacadeImpl(aggregateRepository, aggregateMapper = aggregateMapper)
+    ): DomainManager<TestAggregate, TestCommand, TestEvent, String> {
+        return DomainManagerImpl(aggregateRepository, aggregateMapper = aggregateMapper)
     }
 }

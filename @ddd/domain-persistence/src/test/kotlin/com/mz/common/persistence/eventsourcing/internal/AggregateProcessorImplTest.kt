@@ -1,6 +1,6 @@
 package com.mz.common.persistence.eventsourcing.internal
 
-import com.mz.common.persistence.eventsourcing.internal.aggregate.AggregateProcessorImpl
+import com.mz.common.persistence.eventsourcing.aggregate.AggregateProcessorImpl
 import com.mz.common.persistence.eventsourcing.internal.util.*
 import com.mz.reservation.common.api.domain.uuid
 import org.assertj.core.api.Assertions.assertThat
