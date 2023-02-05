@@ -13,3 +13,10 @@ project(":@ddd:lock-storage-adapter-in-memory") {
         implementation(project(":@ddd:lock-storage-adapter-api"))
     }
 }
+
+project(":@ddd:lock-storage-adapter-redis") {
+    dependencies {
+        implementation(project(":@ddd:common-domain-api"))
+        implementation(project(":@ddd:lock-storage-adapter-api"))
+    }
+}

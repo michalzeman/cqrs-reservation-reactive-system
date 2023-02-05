@@ -46,3 +46,5 @@ include("@customer:customer-application")
 include("@customer:customer-domain")
 include("@reservation")
 include("@reservation:reservation-application")
+include("@ddd:lock-storage-adapter-redis")
+findProject(":@ddd:lock-storage-adapter-redis")?.name = "lock-storage-adapter-redis"

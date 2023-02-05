@@ -51,7 +51,7 @@ subprojects {
 //		implementation("org.apache.kafka:kafka-streams")
 //		implementation("org.springframework.cloud:spring-cloud-stream")
 //		implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka-streams")
-//		testImplementation("org.springframework.boot:spring-boot-starter-test")
+		testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("io.projectreactor:reactor-test")
 
         testImplementation("org.junit.jupiter:junit-jupiter")
@@ -75,5 +75,44 @@ subprojects {
 project(":common-components") {
     dependencies {
         implementation(project(":@ddd:common-domain-api"))
+    }
+}
+
+tasks.register("runDockerComposeBeforeTests") {
+    dependsOn("testClasses")
+    doLast {
+        exec {
+            commandLine("docker-compose", "up", "-d")
+        }
+
+        val startTime = System.currentTimeMillis()
+        val timeout = 60 * 1000 // 60 seconds
+
+        // wait for Docker containers to be healthy
+        while (true) {
+            val result = exec {
+                commandLine("docker-compose", "ps")
+            }
+            if (result.exitValue == 0) {
+                break
+            }
+
+            if (System.currentTimeMillis() - startTime > timeout) {
+                throw GradleException("Docker containers did not reach a healthy state within the timeout")
+            }
+
+            Thread.sleep(1000)
+        }
+    }
+}
+
+tasks["test"].dependsOn("runDockerComposeBeforeTests")
+
+tasks.register("tearDownDockerCompose") {
+    mustRunAfter("test")
+    doLast {
+        exec {
+            commandLine("docker-compose", "down", "-v")
+        }
     }
 }
