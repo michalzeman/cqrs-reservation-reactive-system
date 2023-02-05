@@ -1,15 +1,10 @@
 package com.mz.common.persistence.eventsourcing.locking
 
+import com.mz.common.persistence.eventsourcing.locking.persistence.AcquireLock
+import com.mz.common.persistence.eventsourcing.locking.persistence.LockAcquired
+import com.mz.common.persistence.eventsourcing.locking.persistence.LockReleased
+import com.mz.common.persistence.eventsourcing.locking.persistence.ReleaseLock
 import reactor.core.publisher.Mono
-import java.time.Instant
-
-data class AcquireLock(val getKey: () -> String, val getIdentifier: () -> String)
-
-data class LockAcquired(val key: String, val acquiredAt: Instant)
-
-data class ReleaseLock(val getKey: () -> String)
-
-data class LockReleased(val id: String, val releasedAt: Instant)
 
 interface LockManager {
 

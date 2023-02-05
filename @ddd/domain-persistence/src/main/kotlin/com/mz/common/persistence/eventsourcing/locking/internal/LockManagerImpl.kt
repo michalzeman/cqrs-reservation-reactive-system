@@ -1,7 +1,7 @@
 package com.mz.common.persistence.eventsourcing.locking.internal
 
-import com.mz.common.persistence.eventsourcing.locking.*
-import com.mz.common.persistence.eventsourcing.locking.persistence.LockStorageAdapter
+import com.mz.common.persistence.eventsourcing.locking.LockManager
+import com.mz.common.persistence.eventsourcing.locking.persistence.*
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers

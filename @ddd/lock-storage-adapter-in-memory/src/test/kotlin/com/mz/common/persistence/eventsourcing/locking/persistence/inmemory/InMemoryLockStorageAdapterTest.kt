@@ -1,7 +1,7 @@
 package com.mz.common.persistence.eventsourcing.locking.persistence.inmemory
 
-import com.mz.common.persistence.eventsourcing.locking.AcquireLock
-import com.mz.common.persistence.eventsourcing.locking.ReleaseLock
+import com.mz.common.persistence.eventsourcing.locking.persistence.AcquireLock
+import com.mz.common.persistence.eventsourcing.locking.persistence.ReleaseLock
 import com.mz.reservation.common.api.domain.uuid
 import org.junit.jupiter.api.Test
 import reactor.test.StepVerifier

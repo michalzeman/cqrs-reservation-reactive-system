@@ -1,9 +1,9 @@
 package com.mz.common.persistence.eventsourcing.aggregate
 
-import com.mz.common.persistence.eventsourcing.locking.AcquireLock
 import com.mz.common.persistence.eventsourcing.locking.LockManager
-import com.mz.common.persistence.eventsourcing.locking.LockReleased
-import com.mz.common.persistence.eventsourcing.locking.ReleaseLock
+import com.mz.common.persistence.eventsourcing.locking.persistence.AcquireLock
+import com.mz.common.persistence.eventsourcing.locking.persistence.LockReleased
+import com.mz.common.persistence.eventsourcing.locking.persistence.ReleaseLock
 import com.mz.reservation.common.api.domain.DomainCommand
 import com.mz.reservation.common.api.domain.DomainEvent
 import com.mz.reservation.common.api.domain.Id

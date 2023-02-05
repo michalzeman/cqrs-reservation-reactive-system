@@ -1,11 +1,8 @@
 package com.mz.common.persistence.eventsourcing.locking.persistence
 
-import com.mz.common.persistence.eventsourcing.locking.AcquireLock
-import com.mz.common.persistence.eventsourcing.locking.LockAcquired
-import com.mz.common.persistence.eventsourcing.locking.LockReleased
-import com.mz.common.persistence.eventsourcing.locking.ReleaseLock
 import reactor.core.publisher.Mono
 import java.time.Duration
+import java.time.Instant
 
 interface LockStorageAdapter {
 
@@ -14,3 +11,8 @@ interface LockStorageAdapter {
     fun releaseLock(releaseLock: ReleaseLock, timeout: Duration): Mono<LockReleased>
 
 }
+
+data class AcquireLock(val getKey: () -> String, val getIdentifier: () -> String)
+data class LockAcquired(val key: String, val acquiredAt: Instant)
+data class ReleaseLock(val getKey: () -> String)
+data class LockReleased(val id: String, val releasedAt: Instant)
