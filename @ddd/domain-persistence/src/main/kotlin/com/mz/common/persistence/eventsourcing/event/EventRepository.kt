@@ -20,16 +20,15 @@ data class Event(
     val id: String,
     val sequenceNumber: Long,
     val createdAt: Instant,
-    val tag: String,
-    val payload: String,
+    val payload: ByteArray,
     val payloadType: String
 )
 
 interface EventRepository<E : DomainEvent> {
 
-    fun persistAll(id: Id, events: List<E>, tag: Tag): Mono<Void>
+    fun persistAll(id: Id, events: List<E>): Mono<Void>
 
-    fun read(id: Id, tag: Tag): Flux<Event>
+    fun read(id: Id): Flux<E>
 
 }
 

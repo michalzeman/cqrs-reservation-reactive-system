@@ -6,17 +6,18 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.Instant
 
-internal class EventRepositoryImpl<E : DomainEvent>(private val eventStorageAdapter: EventStorageAdapter) :
-    EventRepository<E> {
+internal class EventRepositoryImpl<E : DomainEvent>(
+    private val eventStorageAdapter: EventStorageAdapter,
+    private val eventSerDeSerAdapter: EventSerDeSerAdapter<E>
+) : EventRepository<E> {
 
-    override fun persistAll(id: Id, events: List<E>, tag: Tag): Mono<Void> {
+    override fun persistAll(id: Id, events: List<E>): Mono<Void> {
 
         fun mapEvent(sequenceNumber: Long, event: E): Event = Event(
             id = id.value,
             sequenceNumber = sequenceNumber,
             createdAt = Instant.now(),
-            tag = tag.value,
-            payload = event.toString(),
+            payload = eventSerDeSerAdapter.serialize(event),
             payloadType = event.javaClass.typeName
         )
 
@@ -27,8 +28,8 @@ internal class EventRepositoryImpl<E : DomainEvent>(private val eventStorageAdap
             .flatMap(eventStorageAdapter::save)
     }
 
-    override fun read(id: Id, tag: Tag): Flux<Event> {
-        return eventStorageAdapter.read(id.value)
-    }
+    override fun read(id: Id): Flux<E> = eventStorageAdapter
+        .read(id.value)
+        .map(eventSerDeSerAdapter::deserialize)
 
 }
