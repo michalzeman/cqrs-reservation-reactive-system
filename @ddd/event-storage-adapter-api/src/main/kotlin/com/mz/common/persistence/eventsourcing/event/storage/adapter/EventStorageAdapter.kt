@@ -1,7 +1,22 @@
-package com.mz.common.persistence.eventsourcing.event
+package com.mz.common.persistence.eventsourcing.event.storage.adapter
 
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.time.Instant
+
+data class SequenceNumberQuery(val id: String, val tag: String)
+
+/**
+ * Event data.
+ */
+data class Event(
+    val id: String,
+    val sequenceNumber: Long,
+    val createdAt: Instant,
+    val tag: String,
+    val payload: ByteArray,
+    val payloadType: String
+)
 
 /**
  * Event storage adapter contract.
@@ -25,5 +40,5 @@ interface EventStorageAdapter {
      * Get last sequence number of the event for the given id.
      * Sequence number is an index of the event for the given id.
      */
-    fun getSequenceNumber(id: String): Mono<Long>
+    fun getSequenceNumber(query: SequenceNumberQuery): Mono<Long>
 }
