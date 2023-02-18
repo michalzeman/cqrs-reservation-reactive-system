@@ -1,7 +1,7 @@
 package com.mz.customer.api.domain.event
 
-import com.mz.reservation.common.api.domain.DomainEvent
-import com.mz.reservation.common.api.domain.uuid
+import com.mz.ddd.common.api.domain.DomainEvent
+import com.mz.ddd.common.api.domain.uuid
 import java.time.Instant
 
 sealed interface CustomerEvent : DomainEvent {

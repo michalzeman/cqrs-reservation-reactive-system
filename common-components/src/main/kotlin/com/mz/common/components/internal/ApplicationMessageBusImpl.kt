@@ -1,7 +1,7 @@
 package com.mz.common.components.internal
 
 import com.mz.common.components.ApplicationMessageBus
-import com.mz.reservation.common.api.domain.Message
+import com.mz.ddd.common.api.domain.Message
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Sinks

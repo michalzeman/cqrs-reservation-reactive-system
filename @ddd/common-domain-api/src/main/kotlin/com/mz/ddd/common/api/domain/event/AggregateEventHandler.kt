@@ -1,0 +1,7 @@
+package com.mz.ddd.common.api.domain.event
+
+import com.mz.ddd.common.api.domain.DomainEvent
+
+interface AggregateEventHandler<A, E : DomainEvent> {
+    fun apply(aggregate: A, event: E): A
+}

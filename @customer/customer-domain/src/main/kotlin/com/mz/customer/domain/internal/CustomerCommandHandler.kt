@@ -4,9 +4,9 @@ import com.mz.customer.api.domain.command.CustomerCommand
 import com.mz.customer.api.domain.command.RegisterCustomer
 import com.mz.customer.api.domain.command.RequestNewCustomerReservation
 import com.mz.customer.api.domain.event.CustomerEvent
-import com.mz.reservation.common.api.domain.command.AggregateCommandHandler
-import com.mz.reservation.common.api.util.Failure
-import com.mz.reservation.common.api.util.Try
+import com.mz.ddd.common.api.domain.command.AggregateCommandHandler
+import com.mz.ddd.common.api.util.Failure
+import com.mz.ddd.common.api.util.Try
 
 
 internal class CustomerCommandHandler : AggregateCommandHandler<Customer, CustomerCommand, CustomerEvent> {

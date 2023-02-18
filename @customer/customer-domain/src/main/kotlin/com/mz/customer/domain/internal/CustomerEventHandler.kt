@@ -1,8 +1,8 @@
 package com.mz.customer.domain.internal
 
 import com.mz.customer.api.domain.event.*
-import com.mz.reservation.common.api.domain.DomainEvent
-import com.mz.reservation.common.api.domain.event.AggregateEventHandler
+import com.mz.ddd.common.api.domain.DomainEvent
+import com.mz.ddd.common.api.domain.event.AggregateEventHandler
 
 class CustomerEventHandler : AggregateEventHandler<Customer, CustomerEvent> {
     override fun apply(aggregate: Customer, event: CustomerEvent): Customer {

@@ -5,7 +5,7 @@ import com.mz.customer.api.domain.command.RequestNewCustomerReservation
 import com.mz.customer.api.domain.event.CustomerEvent
 import com.mz.customer.api.domain.event.CustomerRegistered
 import com.mz.customer.api.domain.event.CustomerReservationRequested
-import com.mz.reservation.common.api.domain.*
+import com.mz.ddd.common.api.domain.*
 
 sealed interface Customer {
     val aggregateId: Id

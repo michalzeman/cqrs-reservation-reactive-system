@@ -1,4 +1,4 @@
-package com.mz.common.testing
+package com.mz.ddd.common.testing
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

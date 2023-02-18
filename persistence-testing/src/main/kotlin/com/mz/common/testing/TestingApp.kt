@@ -1,4 +1,4 @@
-package com.mz.common.testing
+package com.mz.ddd.common.testing
 
 //fun main() {
 //    val sortedArray = mergeSort(listOf(4, 2, 5, 1, 3))

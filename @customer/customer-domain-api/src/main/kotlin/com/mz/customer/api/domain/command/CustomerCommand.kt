@@ -1,8 +1,8 @@
 package com.mz.customer.api.domain.command
 
 import com.mz.customer.api.domain.event.CustomerRegistered
-import com.mz.reservation.common.api.domain.DomainCommand
-import com.mz.reservation.common.api.domain.uuid
+import com.mz.ddd.common.api.domain.DomainCommand
+import com.mz.ddd.common.api.domain.uuid
 import java.time.Instant
 
 sealed interface CustomerCommand : DomainCommand

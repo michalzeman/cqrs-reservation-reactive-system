@@ -1,6 +1,6 @@
 package com.mz.customer.domain.internal
 
-import com.mz.reservation.common.api.domain.Id
+import com.mz.ddd.common.api.domain.Id
 
 enum class ReservationStatus {
     REQUESTED,
