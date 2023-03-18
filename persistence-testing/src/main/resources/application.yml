@@ -1,4 +1,0 @@
-spring:
-  redis:
-    port: 6370
-    host: localhost
