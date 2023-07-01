@@ -26,16 +26,29 @@ internal class AggregateProcessorImplTest {
 
         assertThat(resultCreated).isInstanceOf(resultCreated.javaClass)
 
-        val existingAggregate = resultCreated.get().aggregate as ExistingTestAggregate
+        val existingAggregate = resultCreated.getOrThrow().aggregate as ExistingTestAggregate
         assertThat(existingAggregate.aggregateId).isEqualTo(aggregateId)
         assertThat(existingAggregate.value.value).isEqualTo(stringInitValue.value)
 
-        val events = resultCreated.get().events
+        val events = resultCreated.getOrThrow().events
         assertThat(events.all { it is TestAggregateCreated }).isTrue
 
         val updatedIntResult =
             subject.execute(existingAggregate, UpdateTestValue(value = IntValueParam(2), aggregateId = aggregateId))
-        assertThat(updatedIntResult.isSuccess()).isTrue
-        assertThat((updatedIntResult.get().aggregate as ExistingTestAggregate).value.value).isEqualTo("${stringInitValue.value} 2")
+        assertThat(updatedIntResult.isSuccess).isTrue
+        assertThat((updatedIntResult.getOrThrow().aggregate as ExistingTestAggregate).value.value).isEqualTo("${stringInitValue.value} 2")
     }
+
+    @Test
+    internal fun executeFailure() {
+        val aggregateId = uuid()
+        val emptyTestAggregate = EmptyTestAggregate(aggregateId)
+
+        val stringInitValue = StringValueParam("Hello there\n")
+        val cmd = UpdateTestValue(aggregateId = aggregateId, value = stringInitValue)
+
+        val result = subject.execute(emptyTestAggregate, cmd)
+        assertThat(result.isFailure).isTrue
+    }
+
 }

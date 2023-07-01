@@ -3,13 +3,12 @@ package com.mz.ddd.common.persistence.eventsourcing.internal.util
 import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.command.AggregateCommandHandler
 import com.mz.ddd.common.api.domain.event.AggregateEventHandler
-import com.mz.ddd.common.api.util.Try
 
 class TestCommandHandler : AggregateCommandHandler<TestAggregate, TestCommand, TestEvent> {
-    override fun execute(aggregate: TestAggregate, command: TestCommand): Try<List<TestEvent>> {
+    override fun execute(aggregate: TestAggregate, command: TestCommand): Result<List<TestEvent>> {
         return when (aggregate) {
-            is EmptyTestAggregate -> Try { executeOnEmptyAggregate(aggregate, command) }
-            is ExistingTestAggregate -> Try { executeAggregate(aggregate, command) }
+            is EmptyTestAggregate -> Result.runCatching { executeOnEmptyAggregate(aggregate, command) }
+            is ExistingTestAggregate -> Result.runCatching { executeAggregate(aggregate, command) }
         }
     }
 

@@ -3,8 +3,6 @@ package com.mz.ddd.common.persistence.eventsourcing.aggregate
 import com.mz.ddd.common.api.domain.DomainCommand
 import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.Id
-import com.mz.ddd.common.api.util.Failure
-import com.mz.ddd.common.api.util.Success
 import com.mz.ddd.common.persistence.eventsourcing.event.EventRepository
 import com.mz.ddd.common.persistence.eventsourcing.locking.LockManager
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.AcquireLock
@@ -15,7 +13,7 @@ import reactor.core.publisher.Mono
 
 internal class AggregateRepositoryImpl<A, C : DomainCommand, E : DomainEvent>(
     private val aggregateFactory: (Id) -> A,
-    private val aggregateProcessor: com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateProcessor<A, C, E>,
+    private val aggregateProcessor: AggregateProcessor<A, C, E>,
     private val eventRepository: EventRepository<E>,
     private val lockManager: LockManager,
 ) : AggregateRepository<A, C, E> {
@@ -39,13 +37,15 @@ internal class AggregateRepositoryImpl<A, C : DomainCommand, E : DomainEvent>(
     ): Mono<CommandEffect<A, E>> =
         getAggregate(id)
             .flatMap { aggregate ->
-                when (val effect = aggregateProcessor.execute(aggregate, command)) {
-                    is Success -> eventRepository.persistAll(id, effect.result.events)
-                        .and(releaseLock)
-                        .thenReturn(effect.result)
-
-                    is Failure -> releaseLock.then(Mono.error(effect.exc))
-                }
+                aggregateProcessor.execute(aggregate, command)
+                    .fold(
+                        onSuccess = { success ->
+                            eventRepository.persistAll(id, success.events)
+                                .and(releaseLock)
+                                .thenReturn(success)
+                        },
+                        onFailure = { exc -> releaseLock.then(Mono.error(exc)) }
+                    )
             }
 
 

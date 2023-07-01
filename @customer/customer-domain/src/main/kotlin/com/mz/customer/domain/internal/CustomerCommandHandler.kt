@@ -5,30 +5,28 @@ import com.mz.customer.api.domain.command.RegisterCustomer
 import com.mz.customer.api.domain.command.RequestNewCustomerReservation
 import com.mz.customer.api.domain.event.CustomerEvent
 import com.mz.ddd.common.api.domain.command.AggregateCommandHandler
-import com.mz.ddd.common.api.util.Failure
-import com.mz.ddd.common.api.util.Try
 
 
 internal class CustomerCommandHandler : AggregateCommandHandler<Customer, CustomerCommand, CustomerEvent> {
 
-    override fun execute(aggregate: Customer, command: CustomerCommand): Try<List<CustomerEvent>> {
+    override fun execute(aggregate: Customer, command: CustomerCommand): Result<List<CustomerEvent>> {
         return when (aggregate) {
             is EmptyCustomerAggregate -> newCustomer(aggregate, command)
             is CustomerAggregate -> existingCustomer(aggregate, command)
         }
     }
 
-    private fun newCustomer(aggregate: EmptyCustomerAggregate, cmd: CustomerCommand): Try<List<CustomerEvent>> {
+    private fun newCustomer(aggregate: EmptyCustomerAggregate, cmd: CustomerCommand): Result<List<CustomerEvent>> {
         return when (cmd) {
-            is RegisterCustomer -> Try { aggregate.verifyRegisterCustomer(cmd) }
-            else -> Failure(RuntimeException(""))
+            is RegisterCustomer -> Result.runCatching { aggregate.verifyRegisterCustomer(cmd) }
+            else -> Result.failure(RuntimeException(""))
         }
     }
 
-    private fun existingCustomer(aggregate: CustomerAggregate, cmd: CustomerCommand): Try<List<CustomerEvent>> {
+    private fun existingCustomer(aggregate: CustomerAggregate, cmd: CustomerCommand): Result<List<CustomerEvent>> {
         return when (cmd) {
-            is RegisterCustomer -> Failure(RuntimeException(""))
-            is RequestNewCustomerReservation -> Try { aggregate.verifyRequestNewCustomerReservation(cmd) }
+            is RegisterCustomer -> Result.failure(RuntimeException(""))
+            is RequestNewCustomerReservation -> Result.runCatching { aggregate.verifyRequestNewCustomerReservation(cmd) }
         }
     }
 }
