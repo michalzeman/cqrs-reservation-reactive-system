@@ -53,7 +53,7 @@ subprojects {
 //		implementation("org.apache.kafka:kafka-streams")
 //		implementation("org.springframework.cloud:spring-cloud-stream")
 //		implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka-streams")
-		testImplementation("org.springframework.boot:spring-boot-starter-test")
+        testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("io.projectreactor:reactor-test")
 
         testImplementation("org.junit.jupiter:junit-jupiter")
@@ -111,7 +111,7 @@ tasks.register("runDockerComposeBeforeTests") {
 tasks["test"].dependsOn("runDockerComposeBeforeTests")
 
 tasks.register("tearDownDockerCompose") {
-    mustRunAfter("test")
+    dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "test" } })
     doLast {
         exec {
             commandLine("docker-compose", "down", "-v")
