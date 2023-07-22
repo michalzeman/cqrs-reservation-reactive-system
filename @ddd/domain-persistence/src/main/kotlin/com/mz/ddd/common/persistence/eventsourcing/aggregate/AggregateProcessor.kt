@@ -5,17 +5,17 @@ import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.command.AggregateCommandHandler
 import com.mz.ddd.common.api.domain.event.AggregateEventHandler
 
-internal interface AggregateProcessor<A, C : DomainCommand, E : DomainEvent> {
-    fun execute(aggregate: A, cmd: C): Result<com.mz.ddd.common.persistence.eventsourcing.aggregate.CommandEffect<A, E>>
+interface AggregateProcessor<A, C : DomainCommand, E : DomainEvent> {
+    fun execute(aggregate: A, cmd: C): Result<CommandEffect<A, E>>
 
     fun applyEvents(aggregate: A, events: List<E>): A
 
     companion object {
-        fun <A, C : DomainCommand, E : DomainEvent> create(
+        operator fun <A, C : DomainCommand, E : DomainEvent> invoke(
             aggregateCommandHandler: AggregateCommandHandler<A, C, E>,
             aggregateEventHandler: AggregateEventHandler<A, E>
-        ): com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateProcessor<A, C, E> =
-            com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateProcessorImpl(
+        ): AggregateProcessor<A, C, E> =
+            AggregateProcessorImpl(
                 aggregateCommandHandler,
                 aggregateEventHandler
             )
