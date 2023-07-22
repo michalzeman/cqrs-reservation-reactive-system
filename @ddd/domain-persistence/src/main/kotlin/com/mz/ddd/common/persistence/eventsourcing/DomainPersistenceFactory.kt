@@ -9,7 +9,7 @@ import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepositoryImpl
 import com.mz.ddd.common.persistence.eventsourcing.event.DomainTag
 import com.mz.ddd.common.persistence.eventsourcing.event.EventRepositoryImpl
-import com.mz.ddd.common.persistence.eventsourcing.event.EventSerdAdapter
+import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerdAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.storage.adapter.EventStorageAdapter
 import com.mz.ddd.common.persistence.eventsourcing.internal.DomainManagerImpl
 import com.mz.ddd.common.persistence.eventsourcing.internal.PublishChanged

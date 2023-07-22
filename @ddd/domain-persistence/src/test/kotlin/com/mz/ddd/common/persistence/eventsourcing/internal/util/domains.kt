@@ -2,8 +2,9 @@ package com.mz.ddd.common.persistence.eventsourcing.internal.util
 
 import com.mz.ddd.common.api.domain.DomainCommand
 import com.mz.ddd.common.api.domain.DomainEvent
+import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.uuid
-import java.time.Instant
+import kotlinx.datetime.Instant
 
 sealed interface TestAggregate {
     val aggregateId: String
@@ -19,42 +20,42 @@ data class ExistingTestAggregate(override val aggregateId: String, val value: Va
 
 data class ValueVo(val value: String)
 
-sealed interface TestEvent : DomainEvent {
-    val aggregateId: String
+sealed class TestEvent : DomainEvent() {
+    abstract val aggregateId: String
 }
 
 data class TestAggregateCreated(
     override val aggregateId: String,
     override val correlationId: String = uuid(),
-    override val createdAt: Instant = Instant.now(),
+    override val createdAt: Instant = instantNow(),
     override val eventId: String = uuid(),
     val value: ValueVo
-) : TestEvent
+) : TestEvent()
 
 data class TestValueUpdated(
     override val aggregateId: String,
     override val correlationId: String = uuid(),
-    override val createdAt: Instant = Instant.now(),
+    override val createdAt: Instant = instantNow(),
     override val eventId: String = uuid(),
     val value: ValueVo
-) : TestEvent
+) : TestEvent()
 
-sealed interface TestCommand : DomainCommand
+sealed class TestCommand : DomainCommand()
 
 data class CreateTestAggregate(
     override val correlationId: String = uuid(),
-    override val createdAt: Instant = Instant.now(),
+    override val createdAt: Instant = instantNow(),
     override val commandId: String = uuid(),
     val value: ValueParam<*>
-) : TestCommand
+) : TestCommand()
 
 data class UpdateTestValue(
     val aggregateId: String,
     override val correlationId: String = uuid(),
-    override val createdAt: Instant = Instant.now(),
+    override val createdAt: Instant = instantNow(),
     override val commandId: String = uuid(),
     val value: ValueParam<*>
-) : TestCommand
+) : TestCommand()
 
 sealed interface ValueParam<V> {
     val value: V

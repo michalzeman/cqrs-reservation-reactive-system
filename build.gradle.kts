@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val kotlinxSerializationJsonVersion: String by project
 val springframeworkBootVersion: String by project
 val springCloudVersion: String by project
 
@@ -7,6 +8,7 @@ plugins {
     alias(libs.plugins.springframework.boot) apply false
     alias(libs.plugins.io.spring.dependency.management)
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.plugin.spring)
 }
 
@@ -23,6 +25,7 @@ subprojects {
 
     apply {
         plugin("kotlin")
+        plugin("org.jetbrains.kotlin.plugin.serialization")
         plugin("java-library")
         plugin("io.spring.dependency-management")
     }
@@ -43,16 +46,9 @@ subprojects {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
         implementation("org.jetbrains.kotlin:kotlin-serialization")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${kotlinxSerializationJsonVersion}")
+        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 
-//		implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-//		implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
-//		implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
-
-//		implementation("org.springframework.boot:spring-boot-starter-webflux")
-//		implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-//		implementation("org.apache.kafka:kafka-streams")
-//		implementation("org.springframework.cloud:spring-cloud-stream")
-//		implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka-streams")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("io.projectreactor:reactor-test")
 

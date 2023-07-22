@@ -2,19 +2,20 @@ package com.mz.customer.api.domain.command
 
 import com.mz.customer.api.domain.event.CustomerRegistered
 import com.mz.ddd.common.api.domain.DomainCommand
+import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.uuid
-import java.time.Instant
+import kotlinx.datetime.Instant
 
-sealed interface CustomerCommand : DomainCommand
+sealed class CustomerCommand : DomainCommand()
 
 data class RegisterCustomer(
     val lastName: String,
     val firstName: String,
     val email: String,
     override val correlationId: String = uuid(),
-    override val createdAt: Instant = Instant.now(),
+    override val createdAt: Instant = instantNow(),
     override val commandId: String = uuid()
-) : CustomerCommand {
+) : CustomerCommand() {
 
     fun mapToEvent(customerId: String): CustomerRegistered {
         return CustomerRegistered(
@@ -31,6 +32,6 @@ data class RequestNewCustomerReservation(
     val customerId: String,
     val reservationId: String,
     override val correlationId: String = uuid(),
-    override val createdAt: Instant = Instant.now(),
+    override val createdAt: Instant = instantNow(),
     override val commandId: String = uuid()
-) : CustomerCommand
+) : CustomerCommand()

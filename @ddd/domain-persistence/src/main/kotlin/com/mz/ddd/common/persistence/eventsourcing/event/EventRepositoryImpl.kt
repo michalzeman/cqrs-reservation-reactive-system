@@ -2,6 +2,7 @@ package com.mz.ddd.common.persistence.eventsourcing.event
 
 import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.Id
+import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerdAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.storage.adapter.Event
 import com.mz.ddd.common.persistence.eventsourcing.event.storage.adapter.EventStorageAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.storage.adapter.SequenceNumberQuery
