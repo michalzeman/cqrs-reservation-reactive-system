@@ -107,10 +107,13 @@ tasks.register("runDockerComposeBeforeTests") {
 tasks["test"].dependsOn("runDockerComposeBeforeTests")
 
 tasks.register("tearDownDockerCompose") {
-    dependsOn(subprojects.flatMap { it.tasks.matching { it.name == "test" } })
+    val allTasks = project.subprojects.flatMap { project -> project.tasks.matching { it.name == "test" } }
+    mustRunAfter(allTasks)
     doLast {
         exec {
             commandLine("docker-compose", "down", "-v")
         }
     }
 }
+
+tasks["build"].finalizedBy("tearDownDockerCompose")
