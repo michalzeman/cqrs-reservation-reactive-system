@@ -1,0 +1,1 @@
+create keyspace if not exists liquibase_keyspace with replication = {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '1'};

@@ -28,6 +28,7 @@ subprojects {
         plugin("org.jetbrains.kotlin.plugin.serialization")
         plugin("java-library")
         plugin("io.spring.dependency-management")
+        plugin("org.jetbrains.kotlin.plugin.spring")
     }
 
     group = "com.mz.reservation"
@@ -117,3 +118,12 @@ tasks.register("tearDownDockerCompose") {
 }
 
 tasks["build"].finalizedBy("tearDownDockerCompose")
+
+//val copyMyConfiguration = tasks.register<Copy>("copyMyConfiguration") {
+//    from(configurations["myConfiguration"])
+//    into("libs")
+//}
+//
+//tasks.named("build") {
+//    dependsOn(copyMyConfiguration)
+//}

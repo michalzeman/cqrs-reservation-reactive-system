@@ -1,6 +1,63 @@
-version: '3'
+version: '3.9'
 services:
-  redis:
-    image: redis
+  redis-db:
+    image: redis:7.2.1
     ports:
       - 6379:6379
+    volumes:
+      - redis-db-data:/data
+    networks:
+      - reservation-system
+  cassandra-db-init-keyspace:
+    image: cassandra:4.1.3
+    volumes:
+      - ./src/main/Docker/liquibase/Cassandra/init/create-liquibase-keyspace.cql:/create-liquibase-keyspace.cql
+      - ./src/main/Docker/liquibase/Cassandra/init/init-db.sh:/init-db.sh
+    networks:
+      - reservation-system
+    depends_on:
+      cassandra-db:
+        condition: service_healthy
+    #    command: /bin/bash -c "sleep 60 && echo loading cassandra keyspace && cqlsh cassandra-db -f /create-liquibase-keyspace.cql"
+    command: /bin/bash -c "echo loading cassandra keyspace && cqlsh cassandra-db -f /create-liquibase-keyspace.cql"
+
+  cassandra-db:
+    image: cassandra:4.1.3
+    ports:
+      - 9042:9042
+    volumes:
+      - cassandra-db-data:/var/lib/cassandra
+    networks:
+      - reservation-system
+    healthcheck:
+      test: [ "CMD-SHELL", "cqlsh --execute \"DESC KEYSPACES;\"" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  cassandra-liquibase:
+    image: liquibase/liquibase:4.23.2
+    volumes:
+      - ./src/main/Docker/liquibase/Cassandra/changelog:/liquibase/changelog
+      - ./src/main/Docker/liquibase/Cassandra/lib:/liquibase/lib
+    depends_on:
+      - cassandra-db-init-keyspace
+
+    command:
+      - --url=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
+      - --changeLogFile=changelog.xml
+      - --username=cassandra
+      - --password=cassandra
+      - --driver=com.simba.cassandra.jdbc42.Driver
+      - --defaultSchemaName=liquibase_keyspace
+      - update
+    networks:
+      - reservation-system
+
+
+volumes:
+  cassandra-db-data:
+  redis-db-data:
+
+networks:
+  reservation-system:
