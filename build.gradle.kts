@@ -118,12 +118,3 @@ tasks.register("tearDownDockerCompose") {
 }
 
 tasks["build"].finalizedBy("tearDownDockerCompose")
-
-//val copyMyConfiguration = tasks.register<Copy>("copyMyConfiguration") {
-//    from(configurations["myConfiguration"])
-//    into("libs")
-//}
-//
-//tasks.named("build") {
-//    dependsOn(copyMyConfiguration)
-//}

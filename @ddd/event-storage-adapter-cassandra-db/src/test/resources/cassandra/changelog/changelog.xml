@@ -3,10 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
 
-    <changeSet id="001_create_key_space" author="michal.zeman">
-        <sqlFile path="001_create_key_space.cql" relativeToChangelogFile="true"/>
-    </changeSet>
-    <changeSet id="002_create_person_table" author="michal.zeman">
-        <sqlFile path="002_create_person_table.cql" relativeToChangelogFile="true"/>
+    <changeSet id="001_init-event-storage-db-model" author="michal.zeman">
+        <sqlFile path="001_init-event-storage-db-model.cql" relativeToChangelogFile="true"/>
     </changeSet>
 </databaseChangeLog>

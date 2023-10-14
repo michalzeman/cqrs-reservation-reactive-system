@@ -8,7 +8,7 @@ services:
       - redis-db-data:/data
     networks:
       - reservation-system
-  cassandra-db-init-keyspace:
+  cassandra-db-init-liquibase-keyspace:
     image: cassandra:4.1.3
     volumes:
       - ./src/main/Docker/liquibase/Cassandra/init/create-liquibase-keyspace.cql:/create-liquibase-keyspace.cql
@@ -35,13 +35,13 @@ services:
       timeout: 10s
       retries: 10
 
-  cassandra-liquibase:
+  cassandra-liquibase-ddd-testing:
     image: liquibase/liquibase:4.23.2
     volumes:
-      - ./src/main/Docker/liquibase/Cassandra/changelog:/liquibase/changelog
+      - ./@ddd/event-storage-adapter-cassandra-db/src/test/resources/cassandra/changelog:/liquibase/changelog
       - ./src/main/Docker/liquibase/Cassandra/lib:/liquibase/lib
     depends_on:
-      - cassandra-db-init-keyspace
+      - cassandra-db-init-liquibase-keyspace
 
     command:
       - --url=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
@@ -49,7 +49,7 @@ services:
       - --username=cassandra
       - --password=cassandra
       - --driver=com.simba.cassandra.jdbc42.Driver
-      - --defaultSchemaName=liquibase_keyspace
+      - --defaultSchemaName=ddd_testing_keyspace
       - update
     networks:
       - reservation-system

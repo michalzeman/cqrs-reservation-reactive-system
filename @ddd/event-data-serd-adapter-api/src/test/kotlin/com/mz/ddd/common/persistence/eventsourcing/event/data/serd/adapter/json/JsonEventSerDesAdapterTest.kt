@@ -3,8 +3,8 @@ package com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json
 import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.uuid
-import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerdAdapter
-import com.mz.ddd.common.persistence.eventsourcing.event.storage.adapter.Event
+import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
+import com.mz.ddd.common.persistence.eventsourcing.event.storage.adapter.EventJournal
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
 import kotlinx.serialization.SerialName
@@ -44,9 +44,9 @@ data class TestValueUpdated(
     val value: ValueVo
 ) : TestEvent()
 
-class JsonEventSerdAdapterTest {
+class JsonEventSerDesAdapterTest {
 
-    val subject = EventSerdAdapter<TestEvent>(
+    val subject = EventSerDesAdapter<TestEvent>(
         encode = { event -> serToJsonString(event).encodeToByteArray() },
         decode = { json -> desJson(json) }
     )
@@ -67,8 +67,8 @@ class JsonEventSerdAdapterTest {
         val testAggregateCreated = TestAggregateCreated("1", value = ValueVo("1"))
         val payload = subject.serialize(testAggregateCreated)
 
-        val event = Event(
-            id = "1",
+        val eventJournal = EventJournal(
+            aggregateId = "1",
             sequenceNumber = 1,
             createdAt = instantNow().toJavaInstant(),
             tag = "TestAggregate",
@@ -76,7 +76,7 @@ class JsonEventSerdAdapterTest {
             payload = payload
         )
 
-        val desEvent = subject.deserialize(event)
+        val desEvent = subject.deserialize(eventJournal)
 
         assertThat(desEvent is TestAggregateCreated).isTrue()
         assertThat(desEvent).isEqualTo(testAggregateCreated)

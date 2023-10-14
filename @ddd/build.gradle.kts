@@ -1,5 +1,7 @@
 description = "DDD basic components"
 
+project(":@ddd:common-domain-api")
+
 project(":@ddd:domain-persistence") {
     dependencies {
         implementation(project(":@ddd:common-domain-api"))
@@ -32,6 +34,12 @@ project(":@ddd:event-data-serd-adapter-api") {
 
 project(":@ddd:event-storage-adapter-api") {
     dependencies {
-        implementation(project(":@ddd:common-domain-api"))
+        api(project(":@ddd:common-domain-api"))
+    }
+}
+
+project(":@ddd:event-storage-adapter-cassandra-db") {
+    dependencies {
+        implementation(project(":@ddd:event-storage-adapter-api"))
     }
 }

@@ -9,7 +9,7 @@ import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepositoryImpl
 import com.mz.ddd.common.persistence.eventsourcing.event.DomainTag
 import com.mz.ddd.common.persistence.eventsourcing.event.EventRepositoryImpl
-import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerdAdapter
+import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.storage.adapter.EventStorageAdapter
 import com.mz.ddd.common.persistence.eventsourcing.internal.DomainManagerImpl
 import com.mz.ddd.common.persistence.eventsourcing.internal.PublishChanged
@@ -21,7 +21,7 @@ import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.LockStora
 /**
  * Data storage adapters configuration.
  * @param eventStorageAdapter   - Data storage for persisting of domain events.
- * @param eventSerdAdapter      - Domain event serializer and deserializer domain event payload to be capable
+ * @param eventSerDesAdapter      - Domain event serializer and deserializer domain event payload to be capable
  *                                serialise and domain event is storing into the event storage and deserialize
  *                                domain event when is loading from the event storage.
  *
@@ -29,7 +29,7 @@ import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.LockStora
  */
 data class DataStorageAdaptersConfig<E : DomainEvent>(
     val eventStorageAdapter: EventStorageAdapter,
-    val eventSerdAdapter: EventSerdAdapter<E>,
+    val eventSerDesAdapter: EventSerDesAdapter<E>,
     val lockStorageAdapter: LockStorageAdapter
 )
 
@@ -51,7 +51,7 @@ object DomainPersistenceFactory {
             EventRepositoryImpl(
                 domainTag,
                 dataStorageAdaptersConfig.eventStorageAdapter,
-                dataStorageAdaptersConfig.eventSerdAdapter
+                dataStorageAdaptersConfig.eventSerDesAdapter
             ),
             LockManagerImpl(dataStorageAdaptersConfig.lockStorageAdapter)
         )
