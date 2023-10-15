@@ -2,10 +2,10 @@ package com.mz.ddd.common.persistence.eventsourcing.event
 
 import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.Id
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventJournal
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventStorageAdapter
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.SequenceNumberQuery
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
-import com.mz.ddd.common.persistence.eventsourcing.event.storage.adapter.EventJournal
-import com.mz.ddd.common.persistence.eventsourcing.event.storage.adapter.EventStorageAdapter
-import com.mz.ddd.common.persistence.eventsourcing.event.storage.adapter.SequenceNumberQuery
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.Instant
@@ -27,7 +27,12 @@ internal class EventRepositoryImpl<E : DomainEvent>(
             payloadType = event.javaClass.typeName
         )
 
-        return eventStorageAdapter.getSequenceNumber(SequenceNumberQuery(aggregateId = id.value, tag = domainTag.value))
+        return eventStorageAdapter.getEventJournalSequenceNumber(
+            SequenceNumberQuery(
+                aggregateId = id.value,
+                tag = domainTag.value
+            )
+        )
             .map { sequenceN ->
                 events.mapIndexed { index, event -> mapEvent(sequenceN + 1 + index, event) }
             }
@@ -35,7 +40,7 @@ internal class EventRepositoryImpl<E : DomainEvent>(
     }
 
     override fun read(id: Id): Flux<E> = eventStorageAdapter
-        .read(id.value)
+        .readEvents(id.value)
         .map(eventSerDesAdapter::deserialize)
 
 }

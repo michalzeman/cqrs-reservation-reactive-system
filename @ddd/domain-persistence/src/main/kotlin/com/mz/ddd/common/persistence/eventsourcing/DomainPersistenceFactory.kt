@@ -5,12 +5,12 @@ import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.command.AggregateCommandHandler
 import com.mz.ddd.common.api.domain.event.AggregateEventHandler
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventStorageAdapter
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepositoryImpl
 import com.mz.ddd.common.persistence.eventsourcing.event.DomainTag
 import com.mz.ddd.common.persistence.eventsourcing.event.EventRepositoryImpl
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
-import com.mz.ddd.common.persistence.eventsourcing.event.storage.adapter.EventStorageAdapter
 import com.mz.ddd.common.persistence.eventsourcing.internal.DomainManagerImpl
 import com.mz.ddd.common.persistence.eventsourcing.internal.PublishChanged
 import com.mz.ddd.common.persistence.eventsourcing.internal.PublishDocument

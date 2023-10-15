@@ -1,4 +1,4 @@
-package com.mz.ddd.common.persistence.eventsourcing.event.storage.adapter
+package com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra
 
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -24,7 +24,8 @@ data class SnapshotAggregate(
     val createdAt: Instant,
     val tag: String,
     val payload: ByteArray,
-    val payloadType: String
+    val payloadType: String,
+    val eventJournals: List<EventJournal> = listOf()
 )
 
 /**
@@ -41,13 +42,19 @@ interface EventStorageAdapter {
      * Read all events for the given id.
      * @param aggregateId - the id of the aggregate
      * @param sequence - starting of the sequence for the events, it is an optional. When is not specified, all events
-     * are read frf the given id.
+     * are read for the given id.
      */
-    fun read(aggregateId: String, sequence: Long? = null): Flux<EventJournal>
+    fun readEvents(aggregateId: String, sequence: Long? = null): Flux<EventJournal>
+
+    /**
+     * Read snapshot for the given id.
+     * @param aggregateId - the id of the aggregate
+     */
+    fun readSnapshot(aggregateId: String): Mono<SnapshotAggregate>
 
     /**
      * Get last sequence number of the event for the given id.
      * Sequence number is an index of the event for the given id.
      */
-    fun getSequenceNumber(query: SequenceNumberQuery): Mono<Long>
+    fun getEventJournalSequenceNumber(query: SequenceNumberQuery): Mono<Long>
 }

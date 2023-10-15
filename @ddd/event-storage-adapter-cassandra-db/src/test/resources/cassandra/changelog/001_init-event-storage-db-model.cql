@@ -7,15 +7,19 @@ CREATE TABLE event_journal
     aggregate_id text,
     sequence_nr  bigint,
     created_at   timestamp,
-    event        blob,
+    tag          text,
+    payload      blob,
+    payload_type text,
     PRIMARY KEY (aggregate_id, sequence_nr)
 );
 
-CREATE TABLE snapshot_store
+CREATE TABLE snapshot_aggregate
 (
     aggregate_id text,
     sequence_nr  bigint,
     created_at   timestamp,
-    snapshot     blob,
+    tag          text,
+    payload      blob,
+    payload_type text,
     PRIMARY KEY (aggregate_id, sequence_nr)
 );

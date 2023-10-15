@@ -1,8 +1,8 @@
 package com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json
 
 import com.mz.ddd.common.api.domain.DomainEvent
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventJournal
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
-import com.mz.ddd.common.persistence.eventsourcing.event.storage.adapter.EventJournal
 
 internal class JsonEventSerDesAdapter<E : DomainEvent>(
     val encode: (event: E) -> ByteArray,

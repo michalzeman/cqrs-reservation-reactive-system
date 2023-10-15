@@ -1,0 +1,7 @@
+spring:
+  data:
+    cassandra:
+      local-datacenter: datacenter1
+      keyspace-name: ddd_testing_keyspace
+      contact-points: 127.0.0.1
+      port: 9042
