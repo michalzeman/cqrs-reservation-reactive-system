@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 data class ValueVo(val value: String)
 
 @Serializable
-sealed class TestEvent : DomainEvent() {
+sealed class TestEvent : DomainEvent {
     abstract val aggregateId: String
 }
 

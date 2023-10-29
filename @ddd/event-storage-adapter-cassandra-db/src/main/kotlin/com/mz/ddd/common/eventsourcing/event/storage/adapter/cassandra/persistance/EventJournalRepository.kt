@@ -12,13 +12,13 @@ import reactor.core.publisher.Mono
 internal interface EventJournalRepository : ReactiveCassandraRepository<EventJournalEntity, String> {
     fun findByAggregateId(
         aggregateId: String,
-        sort: Sort = Sort.by(Sort.Direction.DESC, "sequenceNr")
+        sort: Sort = Sort.by(Sort.Direction.ASC, "sequenceNr")
     ): Flux<EventJournalEntity>
 
     fun findByAggregateIdAndSequenceNrGreaterThanEqual(
         aggregateId: String,
         sequenceNr: Long,
-        sort: Sort = Sort.by(Sort.Direction.DESC, "sequenceNr")
+        sort: Sort = Sort.by(Sort.Direction.ASC, "sequenceNr")
     ): Flux<EventJournalEntity>
 
     @Query("select max(sequence_nr) from event_journal where aggregate_id=:aggregateId")

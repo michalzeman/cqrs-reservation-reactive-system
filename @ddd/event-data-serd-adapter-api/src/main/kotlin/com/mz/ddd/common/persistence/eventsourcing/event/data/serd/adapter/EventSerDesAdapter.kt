@@ -5,6 +5,9 @@ import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventJour
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.JsonEventSerDesAdapter
 
 interface EventSerDesAdapter<E : DomainEvent> {
+
+    fun contentType(): String
+
     fun serialize(event: E): ByteArray
 
     fun deserialize(eventJournal: EventJournal): E

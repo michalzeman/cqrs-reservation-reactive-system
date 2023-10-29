@@ -2,7 +2,7 @@ package com.mz.ddd.common.persistence.eventsourcing.event
 
 import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.Id
-import com.mz.ddd.common.api.domain.validateValue
+import com.mz.ddd.common.api.domain.validateNotBlank
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono
  */
 data class DomainTag(val value: String) {
     init {
-        value.validateValue()
+        value.validateNotBlank()
     }
 }
 

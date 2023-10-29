@@ -1,3 +1,7 @@
+eventsourcing:
+  event-storage-adapter:
+    events-per-snapshot: 3
+
 spring:
   data:
     cassandra:

@@ -20,7 +20,7 @@ data class ExistingTestAggregate(override val aggregateId: String, val value: Va
 
 data class ValueVo(val value: String)
 
-sealed class TestEvent : DomainEvent() {
+sealed class TestEvent : DomainEvent {
     abstract val aggregateId: String
 }
 
@@ -40,7 +40,7 @@ data class TestValueUpdated(
     val value: ValueVo
 ) : TestEvent()
 
-sealed class TestCommand : DomainCommand()
+sealed class TestCommand : DomainCommand
 
 data class CreateTestAggregate(
     override val correlationId: String = uuid(),

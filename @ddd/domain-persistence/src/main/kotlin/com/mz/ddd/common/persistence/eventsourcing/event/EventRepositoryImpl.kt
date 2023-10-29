@@ -24,7 +24,7 @@ internal class EventRepositoryImpl<E : DomainEvent>(
             createdAt = Instant.now(),
             tag = domainTag.value,
             payload = eventSerDesAdapter.serialize(event),
-            payloadType = event.javaClass.typeName
+            payloadType = eventSerDesAdapter.contentType()
         )
 
         return eventStorageAdapter.getEventJournalSequenceNumber(
@@ -33,10 +33,12 @@ internal class EventRepositoryImpl<E : DomainEvent>(
                 tag = domainTag.value
             )
         )
+            .map { it + 1 }
             .map { sequenceN ->
-                events.mapIndexed { index, event -> mapEvent(sequenceN + 1 + index, event) }
+                events.mapIndexed { index, event -> mapEvent(sequenceN + index, event) }
             }
             .flatMap(eventStorageAdapter::save)
+            .then()
     }
 
     override fun read(id: Id): Flux<E> = eventStorageAdapter

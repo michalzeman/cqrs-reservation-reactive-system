@@ -6,7 +6,7 @@ import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.uuid
 import kotlinx.datetime.Instant
 
-sealed class CustomerCommand : DomainCommand()
+sealed class CustomerCommand : DomainCommand
 
 data class RegisterCustomer(
     val lastName: String,

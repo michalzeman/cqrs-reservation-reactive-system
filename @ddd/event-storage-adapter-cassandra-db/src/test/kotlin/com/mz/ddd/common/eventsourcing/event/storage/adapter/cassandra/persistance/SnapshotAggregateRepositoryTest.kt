@@ -1,7 +1,5 @@
-package com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra
+package com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance
 
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.EventJournalEntity
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.EventJournalRepository
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.TestEventStorageAdapterCassandraConfiguration
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -15,18 +13,18 @@ import java.time.Instant
 
 @SpringBootTest(classes = [TestEventStorageAdapterCassandraConfiguration::class])
 @ActiveProfiles("test")
-class EventJournalRepositoryTest {
+class SnapshotAggregateRepositoryTest {
 
     @Autowired
-    internal lateinit var eventJournalRepository: EventJournalRepository
+    internal lateinit var repository: SnapshotAggregateRepository
 
     // beforeEach method that generate and store testing data
     @BeforeEach
     fun setUp() {
         // create 3 instances of EvenJournalEntity with respecting sequenceNr and store it into the DB
-        eventJournalRepository.saveAll(
+        repository.saveAll(
             listOf(
-                EventJournalEntity().apply {
+                SnapshotAggregateEntity().apply {
                     aggregateId = "1"
                     sequenceNr = 1
                     createdAt = Instant.now()
@@ -34,7 +32,7 @@ class EventJournalRepositoryTest {
                     payload = ByteBuffer.wrap(byteArrayOf(1))
                     payloadType = "string"
                 },
-                EventJournalEntity().apply {
+                SnapshotAggregateEntity().apply {
                     aggregateId = "1"
                     sequenceNr = 2
                     createdAt = Instant.now()
@@ -42,7 +40,7 @@ class EventJournalRepositoryTest {
                     payload = ByteBuffer.wrap(byteArrayOf(2))
                     payloadType = "string"
                 },
-                EventJournalEntity().apply {
+                SnapshotAggregateEntity().apply {
                     aggregateId = "1"
                     sequenceNr = 3
                     createdAt = Instant.now()
@@ -58,27 +56,20 @@ class EventJournalRepositoryTest {
 
     @AfterEach
     fun tearDown() {
-        eventJournalRepository.deleteAll().block()
+        repository.deleteAll().block()
     }
 
     @Test
     fun `find by aggregate id`() {
-        StepVerifier.create(eventJournalRepository.findByAggregateId("1"))
+        StepVerifier.create(repository.findByAggregateId("1"))
             .expectNextCount(3)
             .verifyComplete()
     }
 
     @Test
     fun `find by aggregateId and started with sequenceNr`() {
-        StepVerifier.create(eventJournalRepository.findByAggregateIdAndSequenceNrGreaterThanEqual("1", 2))
+        StepVerifier.create(repository.findByAggregateIdAndSequenceNrGreaterThanEqual("1", 2))
             .expectNextCount(2)
-            .verifyComplete()
-    }
-
-    @Test
-    fun `find max sequenceNr by aggregateId`() {
-        StepVerifier.create(eventJournalRepository.findMaxSequenceNuByAggregateId("1"))
-            .expectNext(3)
             .verifyComplete()
     }
 

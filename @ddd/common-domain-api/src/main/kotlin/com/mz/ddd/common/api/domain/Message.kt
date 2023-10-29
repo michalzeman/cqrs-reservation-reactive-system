@@ -1,25 +1,20 @@
 package com.mz.ddd.common.api.domain
 
 import kotlinx.datetime.Instant
-import kotlinx.serialization.Serializable
 
-@Serializable
-sealed class Message {
-    abstract val correlationId: String
-    abstract val createdAt: Instant
+sealed interface Message {
+    val correlationId: String
+    val createdAt: Instant
 }
 
-@Serializable
-abstract class DomainEvent : Message() {
-    abstract val eventId: String
+interface DomainEvent : Message {
+    val eventId: String
 }
 
-@Serializable
-abstract class DomainCommand : Message() {
-    abstract val commandId: String
+interface DomainCommand : Message {
+    val commandId: String
 }
 
-@Serializable
-abstract class Document : Message() {
-    abstract val docId: String
+interface Document : Message {
+    val docId: String
 }

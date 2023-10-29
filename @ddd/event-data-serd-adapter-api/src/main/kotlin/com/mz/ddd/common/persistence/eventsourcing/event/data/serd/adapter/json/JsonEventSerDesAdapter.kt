@@ -9,6 +9,7 @@ internal class JsonEventSerDesAdapter<E : DomainEvent>(
     val decode: (event: String) -> E
 ) : EventSerDesAdapter<E> {
     override fun serialize(event: E) = encode(event)
+    override fun contentType(): String = "application/json"
 
     override fun deserialize(eventJournal: EventJournal): E {
         val rawPayload = eventJournal.payload

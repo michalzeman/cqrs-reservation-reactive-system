@@ -36,7 +36,7 @@ interface EventStorageAdapter {
     /**
      * Save all events.
      */
-    fun save(eventJournals: List<EventJournal>): Mono<Void>
+    fun save(eventJournals: List<EventJournal>): Mono<Long>
 
     /**
      * Read all events for the given id.

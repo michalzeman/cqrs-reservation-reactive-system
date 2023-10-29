@@ -50,6 +50,10 @@ subprojects {
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${kotlinxSerializationJsonVersion}")
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 
+        // https://mvnrepository.com/artifact/io.projectreactor.kotlin/reactor-kotlin-extensions
+        implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.2.2")
+
+
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("io.projectreactor:reactor-test")
 

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Id(val value: String) {
     init {
-        value.validateValue()
+        value.validateNotBlank()
     }
 }
 
@@ -21,26 +21,33 @@ data class Version(val value: Long = 0) {
 @Serializable
 data class LastName(val value: String) {
     init {
-        value.validateValue()
+        value.validateNotBlank()
     }
 }
 
 @Serializable
 data class FirstName(val value: String) {
     init {
-        value.validateValue()
+        value.validateNotBlank()
     }
 }
 
 @Serializable
+data class Name(val lastName: LastName, val firstName: FirstName)
+
+@Serializable
 data class Email(val value: String) {
     init {
-        value.validateValue()
-        val emailRegex = Regex("^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})")
-        assert(emailRegex.matches(value))
+        value.validateNotBlank()
+        value.validateEmail()
     }
 }
 
-fun String.validateValue() {
+fun String.validateNotBlank() {
     assert(this.isNotBlank())
+}
+
+fun String.validateEmail() {
+    val emailRegex = Regex("^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})")
+    assert(emailRegex.matches(this))
 }

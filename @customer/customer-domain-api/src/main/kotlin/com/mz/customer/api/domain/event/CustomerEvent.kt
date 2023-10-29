@@ -8,7 +8,7 @@ import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 
 @Polymorphic
-sealed class CustomerEvent : DomainEvent() {
+sealed class CustomerEvent : DomainEvent {
     abstract val customerId: String
 }
 
