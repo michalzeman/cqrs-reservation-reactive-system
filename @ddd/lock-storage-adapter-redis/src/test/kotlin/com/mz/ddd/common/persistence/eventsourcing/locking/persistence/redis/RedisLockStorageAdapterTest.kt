@@ -3,19 +3,16 @@ package com.mz.ddd.common.persistence.eventsourcing.locking.persistence.redis
 import com.mz.ddd.common.api.domain.uuid
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.AcquireLock
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.ReleaseLock
-import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.redis.wiring.RedisConfigurationTest
-import org.junit.jupiter.api.Assertions.*
+import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.redis.wiring.RedisLockStorageAdapterConfiguration
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import reactor.test.StepVerifier
 import java.time.Duration
 
 
-@SpringBootTest(classes = [RedisConfigurationTest::class])
-@Import(RedisLockStorageAdapter::class)
+@SpringBootTest(classes = [RedisLockStorageAdapterConfiguration::class])
 @ActiveProfiles("test")
 class RedisLockStorageAdapterTest {
 

@@ -40,7 +40,7 @@ object DomainPersistenceFactory {
         aggregateFactory: (Id) -> A,
         aggregateCommandHandler: AggregateCommandHandler<A, C, E>,
         aggregateEventHandler: AggregateEventHandler<A, E>,
-        dataStorageAdaptersConfig: com.mz.ddd.common.persistence.eventsourcing.DataStorageAdaptersConfig<E>
+        dataStorageAdaptersConfig: DataStorageAdaptersConfig<E>
     ): AggregateRepository<A, C, E> =
         AggregateRepositoryImpl(
             aggregateFactory,
@@ -56,12 +56,23 @@ object DomainPersistenceFactory {
             LockManagerImpl(dataStorageAdaptersConfig.lockStorageAdapter)
         )
 
+    /**
+     * Build domain manager.
+     * @param aggregateRepository - Aggregate repository.
+     * @param aggregateMapper - Aggregate mapper.
+     * @param publishChanged - Publish changed document.
+     *
+     * A - Aggregate type
+     * C - Command type
+     * E - Event type
+     * S - State type
+     */
     fun <A, C : DomainCommand, E : DomainEvent, S> buildDomainManager(
         aggregateRepository: AggregateRepository<A, C, E>,
         aggregateMapper: (A) -> S,
         publishChanged: PublishChanged<E>? = null,
         publishDocument: PublishDocument<S>? = null
-    ): com.mz.ddd.common.persistence.eventsourcing.DomainManager<A, C, E, S> =
+    ): DomainManager<A, C, E, S> =
         DomainManagerImpl(aggregateRepository, aggregateMapper, publishChanged, publishDocument)
 
 }

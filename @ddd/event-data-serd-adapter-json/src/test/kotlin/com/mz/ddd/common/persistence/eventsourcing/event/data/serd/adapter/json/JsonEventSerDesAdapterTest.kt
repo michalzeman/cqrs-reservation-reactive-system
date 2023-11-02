@@ -4,14 +4,10 @@ import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.uuid
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventJournal
-import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -46,8 +42,8 @@ data class TestValueUpdated(
 
 class JsonEventSerDesAdapterTest {
 
-    val subject = EventSerDesAdapter<TestEvent>(
-        encode = { event -> serToJsonString(event).encodeToByteArray() },
+    val subject = JsonEventSerDesAdapter<TestEvent>(
+        encode = { event -> serToJsonString(event) },
         decode = { json -> desJson(json) }
     )
 
@@ -80,11 +76,5 @@ class JsonEventSerDesAdapterTest {
 
         assertThat(desEvent is TestAggregateCreated).isTrue()
         assertThat(desEvent).isEqualTo(testAggregateCreated)
-    }
-
-    private inline fun <reified T : DomainEvent> serToJsonString(value: T) = Json.encodeToString(value)
-
-    private inline fun <reified T : DomainEvent> desJson(value: String): T {
-        return Json.decodeFromString<T>(value)
     }
 }

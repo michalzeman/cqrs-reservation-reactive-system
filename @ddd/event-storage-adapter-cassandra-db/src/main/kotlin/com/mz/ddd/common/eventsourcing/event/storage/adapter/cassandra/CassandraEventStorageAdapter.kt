@@ -49,5 +49,6 @@ internal class CassandraEventStorageAdapter(
 
     override fun getEventJournalSequenceNumber(query: SequenceNumberQuery): Mono<Long> {
         return eventJournalRepository.findMaxSequenceNuByAggregateId(query.aggregateId)
+            .switchIfEmpty(Mono.just(0L))
     }
 }

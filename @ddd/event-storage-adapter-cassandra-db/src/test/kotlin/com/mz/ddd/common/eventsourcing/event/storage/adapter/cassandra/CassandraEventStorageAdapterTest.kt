@@ -4,7 +4,7 @@ import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistan
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.EventJournalRepository
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.SnapshotAggregateEntity
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.SnapshotAggregateRepository
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.TestEventStorageAdapterCassandraConfiguration
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.EventStorageAdapterCassandraConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -16,7 +16,7 @@ import reactor.test.StepVerifier
 import java.nio.ByteBuffer
 import java.time.Instant
 
-@SpringBootTest(classes = [TestEventStorageAdapterCassandraConfiguration::class])
+@SpringBootTest(classes = [EventStorageAdapterCassandraConfiguration::class])
 @ActiveProfiles("test")
 class CassandraEventStorageAdapterTest {
 
