@@ -2,7 +2,6 @@ package com.mz.ddd.common.persistence.eventsourcing.internal.util
 
 import com.mz.ddd.common.api.domain.*
 import com.mz.ddd.common.persistence.eventsourcing.event.DomainTag
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -10,14 +9,14 @@ import kotlinx.serialization.Serializable
 val testTag = DomainTag(TestAggregate::class.java.name)
 
 sealed interface TestAggregate {
-    val aggregateId: String
+    val aggregateId: Id
 }
 
-data class EmptyTestAggregate(override val aggregateId: String) : TestAggregate {
+data class EmptyTestAggregate(override val aggregateId: Id) : TestAggregate {
 
 }
 
-data class ExistingTestAggregate(override val aggregateId: String, val value: ValueVo) : TestAggregate {
+data class ExistingTestAggregate(override val aggregateId: Id, val value: ValueVo) : TestAggregate {
 
 }
 
@@ -25,51 +24,52 @@ data class ExistingTestAggregate(override val aggregateId: String, val value: Va
 data class ValueVo(val value: String)
 
 data class TestDocument(
-    override val correlationId: String = uuid(),
-    override val createdAt: Instant = Clock.System.now(),
-    override val docId: String = uuid(),
-    val value: String
-) : Document
+    override val correlationId: Id = Id(uuid()),
+    override val createdAt: Instant = instantNow(),
+    override val docId: Id = Id(uuid()),
+    val value: String,
+    override val events: Set<TestEvent> = setOf()
+) : Document<TestEvent>
 
 @Serializable
 sealed class TestEvent : DomainEvent {
-    abstract val aggregateId: String
+    abstract val aggregateId: Id
 }
 
 @Serializable
 @SerialName("TestAggregateCreated")
 data class TestAggregateCreated(
-    override val aggregateId: String,
-    override val correlationId: String = uuid(),
+    override val aggregateId: Id,
+    override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
-    override val eventId: String = uuid(),
+    override val eventId: Id = Id(uuid()),
     val value: ValueVo
 ) : TestEvent()
 
 @Serializable
 @SerialName("TestValueUpdated")
 data class TestValueUpdated(
-    override val aggregateId: String,
-    override val correlationId: String = uuid(),
+    override val aggregateId: Id,
+    override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
-    override val eventId: String = uuid(),
+    override val eventId: Id = Id(uuid()),
     val value: ValueVo
 ) : TestEvent()
 
 sealed class TestCommand : DomainCommand
 
 data class CreateTestAggregate(
-    override val correlationId: String = uuid(),
+    override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
-    override val commandId: String = uuid(),
+    override val commandId: Id = Id(uuid()),
     val value: ValueParam<*>
 ) : TestCommand()
 
 data class UpdateTestValue(
-    val aggregateId: String,
-    override val correlationId: String = uuid(),
+    val aggregateId: Id,
+    override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
-    override val commandId: String = uuid(),
+    override val commandId: Id = Id(uuid()),
     val value: ValueParam<*>
 ) : TestCommand()
 

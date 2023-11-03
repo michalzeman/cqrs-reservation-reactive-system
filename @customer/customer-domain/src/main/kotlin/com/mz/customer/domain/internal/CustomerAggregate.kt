@@ -14,12 +14,9 @@ sealed interface Customer {
 
 internal data class EmptyCustomerAggregate(override val aggregateId: Id, override val version: Version) : Customer {
     fun verifyRegisterCustomer(cmd: RegisterCustomer): List<CustomerEvent> {
-        LastName(cmd.lastName)
-        FirstName(cmd.firstName)
-        Email(cmd.email)
         return listOf(
             CustomerRegistered(
-                customerId = aggregateId.value,
+                customerId = aggregateId,
                 correlationId = cmd.correlationId,
                 firstName = cmd.firstName,
                 lastName = cmd.lastName,
@@ -32,9 +29,9 @@ internal data class EmptyCustomerAggregate(override val aggregateId: Id, overrid
         return CustomerAggregate(
             aggregateId = this.aggregateId,
             version = this.version,
-            lastName = LastName(event.lastName),
-            firstName = FirstName(event.firstName),
-            email = Email(event.email)
+            lastName = event.lastName,
+            firstName = event.firstName,
+            email = event.email
         )
     }
 }
@@ -48,12 +45,12 @@ internal data class CustomerAggregate(
     val reservations: List<Reservation> = emptyList()
 ) : Customer {
     fun verifyRequestNewCustomerReservation(cmd: RequestNewCustomerReservation): List<CustomerEvent> {
-        return if (reservations.any { item -> item.id.value == cmd.reservationId }) {
+        return if (reservations.any { item -> item.id == cmd.reservationId }) {
             throw RuntimeException("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")
         } else {
             return listOf(
                 CustomerReservationRequested(
-                    customerId = aggregateId.value,
+                    customerId = aggregateId,
                     correlationId = cmd.correlationId,
                     reservationId = cmd.reservationId
                 )
@@ -62,7 +59,7 @@ internal data class CustomerAggregate(
     }
 
     fun apply(event: CustomerReservationRequested): CustomerAggregate {
-        val reservation = Reservation(Id(event.reservationId), ReservationStatus.REQUESTED)
+        val reservation = Reservation(event.reservationId, ReservationStatus.REQUESTED)
         return this.copy(reservations = reservations.plus(reservation), version = version.increment())
     }
 }

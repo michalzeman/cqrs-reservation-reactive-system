@@ -11,7 +11,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.Instant
 
-internal class EventRepositoryImpl<E : DomainEvent, S : Document>(
+internal class EventRepositoryImpl<E : DomainEvent, S : Document<E>>(
     private val domainTag: DomainTag,
     private val eventStorageAdapter: EventStorageAdapter,
     private val eventSerDesAdapter: EventSerDesAdapter<E>

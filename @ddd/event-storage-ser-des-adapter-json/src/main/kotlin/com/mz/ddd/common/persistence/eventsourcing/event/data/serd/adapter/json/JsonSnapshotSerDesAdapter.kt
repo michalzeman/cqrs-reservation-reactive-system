@@ -7,7 +7,7 @@ import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.Snaps
 /**
  * JSON snapshot serialization/deserialization adapter.
  */
-class JsonSnapshotSerDesAdapter<S : Document>(
+class JsonSnapshotSerDesAdapter<S : Document<*>>(
     encode: Encoder<S>,
     decode: Decode<S>
 ) : JsonSerDesAdapter<S>(encode, decode), SnapshotSerDesAdapter<S> {

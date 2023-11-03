@@ -1,12 +1,10 @@
 package com.mz.ddd.common.persistence.eventsourcing.internal
 
-import com.mz.ddd.common.api.domain.Id
-import com.mz.ddd.common.api.domain.uuid
+import com.mz.ddd.common.api.domain.newId
 import com.mz.ddd.common.persistence.eventsourcing.DomainPersistenceFactory.buildDomainManager
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.CommandEffect
 import com.mz.ddd.common.persistence.eventsourcing.internal.util.*
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
@@ -20,14 +18,14 @@ internal class DomainManagerImplTest {
 
     @Test
     fun execute() {
-        val aggregateId = uuid()
+        val aggregateId = newId()
         val emptyTestAggregate = EmptyTestAggregate(aggregateId)
 
         val commandEffect = CommandEffect<TestAggregate, TestEvent>(emptyTestAggregate, listOf())
 
         val stringInitValue = StringValueParam("Hello there\n")
         val createTestAggregate = CreateTestAggregate(value = stringInitValue)
-        val id = Id(aggregateId)
+        val id = aggregateId
 
         val aggregateRepository = mock<AggregateRepository<TestAggregate, TestCommand, TestEvent>> {
             on { execute(id, createTestAggregate) } doReturn Mono.just(commandEffect)
@@ -45,7 +43,7 @@ internal class DomainManagerImplTest {
 
     @Test
     fun executeAndReturnEvents() {
-        val aggregateId = uuid()
+        val aggregateId = newId()
         val emptyTestAggregate = EmptyTestAggregate(aggregateId)
         val stringInitValue = StringValueParam("Hello there\n")
 
@@ -55,7 +53,7 @@ internal class DomainManagerImplTest {
         )
 
         val createTestAggregate = CreateTestAggregate(value = stringInitValue)
-        val id = Id(aggregateId)
+        val id = aggregateId
 
         val aggregateRepository = mock<AggregateRepository<TestAggregate, TestCommand, TestEvent>> {
             on { execute(id, createTestAggregate) } doReturn Mono.just(commandEffect)
@@ -72,8 +70,8 @@ internal class DomainManagerImplTest {
 
     @Test
     fun findById() {
-        val aggregateId = uuid()
-        val id = Id(aggregateId)
+        val aggregateId = newId()
+        val id = aggregateId
         val value = ValueVo("Existing Aggregate")
         val aggregate = ExistingTestAggregate(aggregateId, value)
 

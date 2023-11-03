@@ -2,6 +2,7 @@ package com.mz.ddd.common.persistence.eventsourcing
 
 import com.mz.ddd.common.api.domain.DomainCommand
 import com.mz.ddd.common.api.domain.DomainEvent
+import com.mz.ddd.common.api.domain.Id
 import reactor.core.publisher.Mono
 
 /**
@@ -17,9 +18,9 @@ interface DomainManager<A, C : DomainCommand, E : DomainEvent, S> {
      * @param command - Command for mutating of Domain entity
      * @param id - Id of the domain entity
      */
-    fun execute(command: C, id: String): Mono<S>
+    fun execute(command: C, id: Id): Mono<S>
 
-    fun executeAndReturnEvents(command: C, id: String): Mono<List<E>>
+    fun executeAndReturnEvents(command: C, id: Id): Mono<List<E>>
 
-    fun findById(id: String): Mono<S>
+    fun findById(id: Id): Mono<S>
 }

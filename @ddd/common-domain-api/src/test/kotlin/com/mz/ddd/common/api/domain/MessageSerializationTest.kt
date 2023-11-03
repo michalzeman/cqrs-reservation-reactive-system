@@ -21,9 +21,9 @@ sealed class TestEvent : DomainEvent {
 @SerialName("TestAggregateCreated")
 data class TestAggregateCreated(
     override val aggregateId: String,
-    override val correlationId: String = uuid(),
+    override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
-    override val eventId: String = uuid(),
+    override val eventId: Id = Id(uuid()),
     val value: ValueVo
 ) : TestEvent()
 
@@ -31,9 +31,9 @@ data class TestAggregateCreated(
 @SerialName("TestValueUpdated")
 data class TestValueUpdated(
     override val aggregateId: String,
-    override val correlationId: String = uuid(),
+    override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
-    override val eventId: String = uuid(),
+    override val eventId: Id = Id(uuid()),
     val value: ValueVo
 ) : TestEvent()
 

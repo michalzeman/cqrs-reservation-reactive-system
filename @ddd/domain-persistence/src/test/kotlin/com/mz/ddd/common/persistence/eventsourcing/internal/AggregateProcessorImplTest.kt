@@ -1,6 +1,6 @@
 package com.mz.ddd.common.persistence.eventsourcing.internal
 
-import com.mz.ddd.common.api.domain.uuid
+import com.mz.ddd.common.api.domain.newId
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateProcessor
 import com.mz.ddd.common.persistence.eventsourcing.internal.util.*
 import org.assertj.core.api.Assertions.assertThat
@@ -16,7 +16,7 @@ internal class AggregateProcessorImplTest {
 
     @Test
     internal fun execute() {
-        val aggregateId = uuid()
+        val aggregateId = newId()
         val emptyTestAggregate = EmptyTestAggregate(aggregateId)
 
         val stringInitValue = StringValueParam("Hello there\n")
@@ -41,7 +41,7 @@ internal class AggregateProcessorImplTest {
 
     @Test
     internal fun executeFailure() {
-        val aggregateId = uuid()
+        val aggregateId = newId()
         val emptyTestAggregate = EmptyTestAggregate(aggregateId)
 
         val stringInitValue = StringValueParam("Hello there\n")

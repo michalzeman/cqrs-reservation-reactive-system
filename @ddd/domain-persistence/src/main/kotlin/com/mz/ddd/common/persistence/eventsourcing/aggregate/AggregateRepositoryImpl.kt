@@ -12,7 +12,7 @@ import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.ReleaseLo
 import reactor.core.publisher.Mono
 
 
-internal class AggregateRepositoryImpl<A, C : DomainCommand, E : DomainEvent, S : Document>(
+internal class AggregateRepositoryImpl<A, C : DomainCommand, E : DomainEvent, S : Document<E>>(
     private val aggregateFactory: (Id) -> A,
     private val aggregateProcessor: AggregateProcessor<A, C, E>,
     private val eventRepository: EventRepository<E, S>,

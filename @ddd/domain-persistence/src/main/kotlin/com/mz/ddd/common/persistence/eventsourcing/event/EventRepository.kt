@@ -16,7 +16,7 @@ data class DomainTag(val value: String) {
     }
 }
 
-interface EventRepository<E : DomainEvent, S : Document> {
+interface EventRepository<E : DomainEvent, S : Document<E>> {
 
     fun persistAll(id: Id, events: List<E>): Mono<Void>
 

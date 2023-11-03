@@ -6,7 +6,7 @@ import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.Snapshot
 /**
  * Snapshot serialization/deserialization adapter.
  */
-interface SnapshotSerDesAdapter<S : Document> : SerDesAdapter {
+interface SnapshotSerDesAdapter<S : Document<*>> : SerDesAdapter {
 
     fun serialize(document: S): ByteArray
 

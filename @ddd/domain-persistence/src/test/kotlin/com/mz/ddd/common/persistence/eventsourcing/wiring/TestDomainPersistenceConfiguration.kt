@@ -37,7 +37,7 @@ class TestDomainPersistenceConfiguration {
     ): AggregateRepository<TestAggregate, TestCommand, TestEvent> {
         return DomainPersistenceFactory.buildAggregateRepository(
             testTag,
-            { EmptyTestAggregate(it.value) },
+            { EmptyTestAggregate(it) },
             TestCommandHandler(),
             TestEventHandler(),
             dataStorageAdaptersConfig

@@ -3,18 +3,19 @@ package com.mz.ddd.common.api.domain
 import kotlinx.datetime.Instant
 
 sealed interface Message {
-    val correlationId: String
+    val correlationId: Id
     val createdAt: Instant
 }
 
 interface DomainEvent : Message {
-    val eventId: String
+    val eventId: Id
 }
 
 interface DomainCommand : Message {
-    val commandId: String
+    val commandId: Id
 }
 
-interface Document : Message {
-    val docId: String
+interface Document<E : DomainEvent> : Message {
+    val docId: Id
+    val events: Set<E>
 }
