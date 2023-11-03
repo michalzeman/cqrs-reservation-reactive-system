@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono
  * Domain facade contract for operations related with state management of Domain entity (Aggregate root).
  * @param A - Domain Entity type (Root Aggregate)
  * @param C - Domain command type -> mutation of Domain entity
- * @param S - State type, represents status of domain entity
+ * @param S - State type, represents state/snapshot/document of domain entity
  */
 interface DomainManager<A, C : DomainCommand, E : DomainEvent, S> {
 

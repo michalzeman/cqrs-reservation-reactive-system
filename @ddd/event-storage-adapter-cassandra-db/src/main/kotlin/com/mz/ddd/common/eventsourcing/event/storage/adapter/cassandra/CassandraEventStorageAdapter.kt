@@ -1,7 +1,7 @@
 package com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra
 
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.EventJournalRepository
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.SnapshotAggregateRepository
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.SnapshotRepository
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.map
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.toEntity
 import org.springframework.stereotype.Component
@@ -12,7 +12,7 @@ import reactor.kotlin.core.publisher.toMono
 @Component
 internal class CassandraEventStorageAdapter(
     private val eventJournalRepository: EventJournalRepository,
-    private val snapshotAggregateRepository: SnapshotAggregateRepository
+    private val snapshotRepository: SnapshotRepository
 ) : EventStorageAdapter {
 
     override fun save(eventJournals: List<EventJournal>): Mono<Long> {
@@ -33,8 +33,8 @@ internal class CassandraEventStorageAdapter(
         return result.map { it.map() }
     }
 
-    override fun readSnapshot(aggregateId: String): Mono<SnapshotAggregate> {
-        return snapshotAggregateRepository.findByAggregateId(aggregateId)
+    override fun readSnapshot(aggregateId: String): Mono<Snapshot> {
+        return snapshotRepository.findByAggregateId(aggregateId)
             .take(1)
             .singleOrEmpty()
             .flatMap { snapshot ->

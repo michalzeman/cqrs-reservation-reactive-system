@@ -7,11 +7,11 @@ project(":@ddd:domain-persistence") {
         implementation(project(":@ddd:common-domain-api"))
         implementation(project(":@ddd:lock-storage-adapter-api"))
         implementation(project(":@ddd:event-storage-adapter-api"))
-        implementation(project(":@ddd:event-data-serd-adapter-api"))
+        implementation(project(":@ddd:event-storage-ser-des-adapter-api"))
 
         testImplementation(project(":@ddd:lock-storage-adapter-redis"))
         testImplementation(project(":@ddd:event-storage-adapter-cassandra-db"))
-        testImplementation(project(":@ddd:event-data-serd-adapter-json"))
+        testImplementation(project(":@ddd:event-storage-ser-des-adapter-json"))
     }
 }
 
@@ -29,7 +29,7 @@ project(":@ddd:lock-storage-adapter-redis") {
     }
 }
 
-project(":@ddd:event-data-serd-adapter-api") {
+project(":@ddd:event-storage-ser-des-adapter-api") {
     dependencies {
         api(project(":@ddd:common-domain-api"))
         api(project(":@ddd:event-storage-adapter-api"))
@@ -37,9 +37,9 @@ project(":@ddd:event-data-serd-adapter-api") {
 }
 
 
-project(":@ddd:event-data-serd-adapter-json") {
+project(":@ddd:event-storage-ser-des-adapter-json") {
     dependencies {
-        api(project(":@ddd:event-data-serd-adapter-api"))
+        api(project(":@ddd:event-storage-ser-des-adapter-api"))
     }
 }
 

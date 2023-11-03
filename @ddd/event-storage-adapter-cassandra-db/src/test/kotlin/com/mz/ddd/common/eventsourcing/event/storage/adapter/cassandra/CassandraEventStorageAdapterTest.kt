@@ -2,8 +2,8 @@ package com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra
 
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.EventJournalEntity
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.EventJournalRepository
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.SnapshotAggregateEntity
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.SnapshotAggregateRepository
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.SnapshotEntity
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.SnapshotRepository
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.EventStorageAdapterCassandraConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -27,7 +27,7 @@ class CassandraEventStorageAdapterTest {
     internal lateinit var eventJournalRepository: EventJournalRepository
 
     @Autowired
-    internal lateinit var snapshotAggregateRepository: SnapshotAggregateRepository
+    internal lateinit var snapshotRepository: SnapshotRepository
 
     @BeforeEach
     fun setUp() {
@@ -78,9 +78,9 @@ class CassandraEventStorageAdapterTest {
             .then()
             .block()
 
-        snapshotAggregateRepository.saveAll(
+        snapshotRepository.saveAll(
             listOf(
-                SnapshotAggregateEntity().apply {
+                SnapshotEntity().apply {
                     aggregateId = "1"
                     sequenceNr = 1
                     createdAt = Instant.now()
@@ -88,7 +88,7 @@ class CassandraEventStorageAdapterTest {
                     payload = ByteBuffer.wrap(byteArrayOf(1))
                     payloadType = "string"
                 },
-                SnapshotAggregateEntity().apply {
+                SnapshotEntity().apply {
                     aggregateId = "1"
                     sequenceNr = 3
                     createdAt = Instant.now()
@@ -105,7 +105,7 @@ class CassandraEventStorageAdapterTest {
     @AfterEach
     fun tearDown() {
         eventJournalRepository.deleteAll().block()
-        snapshotAggregateRepository.deleteAll().block()
+        snapshotRepository.deleteAll().block()
     }
 
     @Test

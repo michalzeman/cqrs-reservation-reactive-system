@@ -18,7 +18,7 @@ data class EventJournal(
     val payloadType: String
 )
 
-data class SnapshotAggregate(
+data class Snapshot(
     val aggregateId: String,
     val sequenceNumber: Long,
     val createdAt: Instant,
@@ -50,7 +50,7 @@ interface EventStorageAdapter {
      * Read snapshot for the given id.
      * @param aggregateId - the id of the aggregate
      */
-    fun readSnapshot(aggregateId: String): Mono<SnapshotAggregate>
+    fun readSnapshot(aggregateId: String): Mono<Snapshot>
 
     /**
      * Get last sequence number of the event for the given id.

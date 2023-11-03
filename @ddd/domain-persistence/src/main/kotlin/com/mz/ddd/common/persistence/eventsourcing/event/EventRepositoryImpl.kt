@@ -1,5 +1,6 @@
 package com.mz.ddd.common.persistence.eventsourcing.event
 
+import com.mz.ddd.common.api.domain.Document
 import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventJournal
@@ -10,11 +11,11 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.Instant
 
-internal class EventRepositoryImpl<E : DomainEvent>(
+internal class EventRepositoryImpl<E : DomainEvent, S : Document>(
     private val domainTag: DomainTag,
     private val eventStorageAdapter: EventStorageAdapter,
     private val eventSerDesAdapter: EventSerDesAdapter<E>
-) : EventRepository<E> {
+) : EventRepository<E, S> {
 
     override fun persistAll(id: Id, events: List<E>): Mono<Void> {
 
@@ -24,7 +25,7 @@ internal class EventRepositoryImpl<E : DomainEvent>(
             createdAt = Instant.now(),
             tag = domainTag.value,
             payload = eventSerDesAdapter.serialize(event),
-            payloadType = eventSerDesAdapter.contentType()
+            payloadType = eventSerDesAdapter.contentType
         )
 
         return eventStorageAdapter.getEventJournalSequenceNumber(

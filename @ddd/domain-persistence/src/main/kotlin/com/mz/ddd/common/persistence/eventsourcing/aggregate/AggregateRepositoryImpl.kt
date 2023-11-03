@@ -1,5 +1,6 @@
 package com.mz.ddd.common.persistence.eventsourcing.aggregate
 
+import com.mz.ddd.common.api.domain.Document
 import com.mz.ddd.common.api.domain.DomainCommand
 import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.Id
@@ -11,10 +12,10 @@ import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.ReleaseLo
 import reactor.core.publisher.Mono
 
 
-internal class AggregateRepositoryImpl<A, C : DomainCommand, E : DomainEvent>(
+internal class AggregateRepositoryImpl<A, C : DomainCommand, E : DomainEvent, S : Document>(
     private val aggregateFactory: (Id) -> A,
     private val aggregateProcessor: AggregateProcessor<A, C, E>,
-    private val eventRepository: EventRepository<E>,
+    private val eventRepository: EventRepository<E, S>,
     private val lockManager: LockManager,
 ) : AggregateRepository<A, C, E> {
 

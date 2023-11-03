@@ -13,7 +13,7 @@ CREATE TABLE event_journal
     PRIMARY KEY (aggregate_id, sequence_nr)
 );
 
-CREATE TABLE snapshot_aggregate
+CREATE TABLE snapshot
 (
     aggregate_id text,
     sequence_nr  bigint,

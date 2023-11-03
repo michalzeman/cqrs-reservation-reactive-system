@@ -1,5 +1,6 @@
 package com.mz.ddd.common.persistence.eventsourcing.event
 
+import com.mz.ddd.common.api.domain.Document
 import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.validateNotBlank
@@ -15,7 +16,7 @@ data class DomainTag(val value: String) {
     }
 }
 
-interface EventRepository<E : DomainEvent> {
+interface EventRepository<E : DomainEvent, S : Document> {
 
     fun persistAll(id: Id, events: List<E>): Mono<Void>
 
