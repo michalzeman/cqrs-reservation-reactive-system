@@ -14,7 +14,7 @@ import reactor.test.StepVerifier
 class DomainPersistenceWorkFlowTest {
 
     @Autowired
-    lateinit var testDomainManager: DomainManager<TestAggregate, TestCommand, TestEvent, TestDocument>
+    lateinit var testAggregateManager: AggregateManager<TestAggregate, TestCommand, TestEvent, TestDocument>
 
     @Autowired
     lateinit var testAggregateRepository: AggregateRepository<TestAggregate, TestCommand, TestEvent>
@@ -26,7 +26,7 @@ class DomainPersistenceWorkFlowTest {
         val createTestAggregate = CreateTestAggregate(value = stringInitValue)
         val id = aggregateId
 
-        val aggregate = testDomainManager.execute(createTestAggregate, aggregateId)
+        val aggregate = testAggregateManager.execute(createTestAggregate, aggregateId)
 
         StepVerifier.create(aggregate)
             .expectNextCount(1)
@@ -52,8 +52,8 @@ class DomainPersistenceWorkFlowTest {
         val updatedValue = "I am now updated"
         val updateTestAggregate = UpdateTestValue(aggregateId = aggregateId, value = StringValueParam(updatedValue))
 
-        val aggregate = testDomainManager.execute(createTestAggregate, aggregateId)
-            .then(testDomainManager.execute(updateTestAggregate, aggregateId))
+        val aggregate = testAggregateManager.execute(createTestAggregate, aggregateId)
+            .then(testAggregateManager.execute(updateTestAggregate, aggregateId))
 
         StepVerifier.create(aggregate)
             .expectNextCount(1)

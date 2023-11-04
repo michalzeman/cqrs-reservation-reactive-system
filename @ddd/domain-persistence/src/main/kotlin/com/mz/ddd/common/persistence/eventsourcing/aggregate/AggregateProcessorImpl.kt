@@ -1,12 +1,13 @@
 package com.mz.ddd.common.persistence.eventsourcing.aggregate
 
+import com.mz.ddd.common.api.domain.Aggregate
 import com.mz.ddd.common.api.domain.DomainCommand
 import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.command.AggregateCommandHandler
 import com.mz.ddd.common.api.domain.event.AggregateEventHandler
 
 
-internal class AggregateProcessorImpl<A, C : DomainCommand, E : DomainEvent>(
+internal class AggregateProcessorImpl<A : Aggregate, C : DomainCommand, E : DomainEvent>(
     private val aggregateCommandHandler: AggregateCommandHandler<A, C, E>,
     private val aggregateEventHandler: AggregateEventHandler<A, E>
 ) : AggregateProcessor<A, C, E> {

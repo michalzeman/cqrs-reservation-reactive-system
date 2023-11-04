@@ -1,7 +1,7 @@
 package com.mz.ddd.common.persistence.eventsourcing.internal
 
 import com.mz.ddd.common.api.domain.newId
-import com.mz.ddd.common.persistence.eventsourcing.DomainPersistenceFactory.buildDomainManager
+import com.mz.ddd.common.persistence.eventsourcing.DomainPersistenceFactory.buildAggregateManager
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.CommandEffect
 import com.mz.ddd.common.persistence.eventsourcing.internal.util.*
@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 
 @ExtendWith(MockitoExtension::class)
-internal class DomainManagerImplTest {
+internal class AggregateManagerImplTest {
 
     @Test
     fun execute() {
@@ -96,7 +96,7 @@ internal class DomainManagerImplTest {
     private fun subject(
         aggregateRepository: AggregateRepository<TestAggregate, TestCommand, TestEvent>,
         aggregateMapper: (TestAggregate) -> String
-    ): com.mz.ddd.common.persistence.eventsourcing.DomainManager<TestAggregate, TestCommand, TestEvent, String> {
-        return buildDomainManager(aggregateRepository, aggregateMapper = aggregateMapper)
+    ): com.mz.ddd.common.persistence.eventsourcing.AggregateManager<TestAggregate, TestCommand, TestEvent, String> {
+        return buildAggregateManager(aggregateRepository, aggregateMapper = aggregateMapper)
     }
 }

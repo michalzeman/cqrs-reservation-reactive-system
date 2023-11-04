@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono
  * @param C - Domain command type -> mutation of Domain entity
  * @param S - State type, represents state/snapshot/document of domain entity
  */
-interface DomainManager<A, C : DomainCommand, E : DomainEvent, S> {
+interface AggregateManager<A, C : DomainCommand, E : DomainEvent, S> {
 
     /**
      * Apply changes to Domain entity.

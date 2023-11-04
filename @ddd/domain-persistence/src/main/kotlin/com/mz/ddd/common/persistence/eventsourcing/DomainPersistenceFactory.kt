@@ -1,5 +1,6 @@
 package com.mz.ddd.common.persistence.eventsourcing
 
+import com.mz.ddd.common.api.domain.Aggregate
 import com.mz.ddd.common.api.domain.DomainCommand
 import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.Id
@@ -11,7 +12,7 @@ import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.event.DomainTag
 import com.mz.ddd.common.persistence.eventsourcing.event.EventRepositoryImpl
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
-import com.mz.ddd.common.persistence.eventsourcing.internal.DomainManagerImpl
+import com.mz.ddd.common.persistence.eventsourcing.internal.AggregateManagerImpl
 import com.mz.ddd.common.persistence.eventsourcing.internal.PublishChanged
 import com.mz.ddd.common.persistence.eventsourcing.internal.PublishDocument
 import com.mz.ddd.common.persistence.eventsourcing.locking.internal.LockManagerImpl
@@ -35,7 +36,7 @@ data class DataStorageAdaptersConfig<E : DomainEvent>(
 
 object DomainPersistenceFactory {
 
-    fun <A, C : DomainCommand, E : DomainEvent> buildAggregateRepository(
+    fun <A : Aggregate, C : DomainCommand, E : DomainEvent> buildAggregateRepository(
         domainTag: DomainTag,
         aggregateFactory: (Id) -> A,
         aggregateCommandHandler: AggregateCommandHandler<A, C, E>,
@@ -67,12 +68,12 @@ object DomainPersistenceFactory {
      * E - Event type
      * S - State type
      */
-    fun <A, C : DomainCommand, E : DomainEvent, S> buildDomainManager(
+    fun <A, C : DomainCommand, E : DomainEvent, S> buildAggregateManager(
         aggregateRepository: AggregateRepository<A, C, E>,
         aggregateMapper: (A) -> S,
         publishChanged: PublishChanged<E>? = null,
         publishDocument: PublishDocument<S>? = null
-    ): DomainManager<A, C, E, S> =
-        DomainManagerImpl(aggregateRepository, aggregateMapper, publishChanged, publishDocument)
+    ): AggregateManager<A, C, E, S> =
+        AggregateManagerImpl(aggregateRepository, aggregateMapper, publishChanged, publishDocument)
 
 }

@@ -2,8 +2,8 @@ package com.mz.ddd.common.persistence.eventsourcing.wiring
 
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventStorageAdapter
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.EventStorageAdapterCassandraConfiguration
+import com.mz.ddd.common.persistence.eventsourcing.AggregateManager
 import com.mz.ddd.common.persistence.eventsourcing.DataStorageAdaptersConfig
-import com.mz.ddd.common.persistence.eventsourcing.DomainManager
 import com.mz.ddd.common.persistence.eventsourcing.DomainPersistenceFactory
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.JsonEventSerDesAdapter
@@ -48,8 +48,8 @@ class TestDomainPersistenceConfiguration {
     fun testDomainManager(
         testAggregateRepository: AggregateRepository<TestAggregate, TestCommand, TestEvent>,
         testAggregateMapper: (TestAggregate) -> TestDocument
-    ): DomainManager<TestAggregate, TestCommand, TestEvent, TestDocument> {
-        return DomainPersistenceFactory.buildDomainManager(testAggregateRepository, testAggregateMapper)
+    ): AggregateManager<TestAggregate, TestCommand, TestEvent, TestDocument> {
+        return DomainPersistenceFactory.buildAggregateManager(testAggregateRepository, testAggregateMapper)
     }
 
     @Bean

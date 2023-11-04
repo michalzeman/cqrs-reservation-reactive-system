@@ -7,12 +7,13 @@ import com.mz.customer.api.domain.event.CustomerRegistered
 import com.mz.customer.api.domain.event.CustomerReservationRequested
 import com.mz.ddd.common.api.domain.*
 
-sealed interface Customer {
-    val aggregateId: Id
-    val version: Version
+sealed class Customer : Aggregate() {
+    abstract val aggregateId: Id
+    abstract val version: Version
 }
 
-internal data class EmptyCustomerAggregate(override val aggregateId: Id, override val version: Version) : Customer {
+internal data class EmptyCustomerAggregate(override val aggregateId: Id, override val version: Version) :
+    Customer() {
     fun verifyRegisterCustomer(cmd: RegisterCustomer): List<CustomerEvent> {
         return listOf(
             CustomerRegistered(
@@ -43,7 +44,7 @@ internal data class CustomerAggregate(
     val firstName: FirstName,
     val email: Email,
     val reservations: List<Reservation> = emptyList()
-) : Customer {
+) : Customer() {
     fun verifyRequestNewCustomerReservation(cmd: RequestNewCustomerReservation): List<CustomerEvent> {
         return if (reservations.any { item -> item.id == cmd.reservationId }) {
             throw RuntimeException("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")

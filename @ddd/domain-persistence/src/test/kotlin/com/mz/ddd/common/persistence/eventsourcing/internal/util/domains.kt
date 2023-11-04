@@ -8,15 +8,15 @@ import kotlinx.serialization.Serializable
 
 val testTag = DomainTag(TestAggregate::class.java.name)
 
-sealed interface TestAggregate {
-    val aggregateId: Id
+sealed class TestAggregate : Aggregate() {
+    abstract val aggregateId: Id
 }
 
-data class EmptyTestAggregate(override val aggregateId: Id) : TestAggregate {
+data class EmptyTestAggregate(override val aggregateId: Id) : TestAggregate() {
 
 }
 
-data class ExistingTestAggregate(override val aggregateId: Id, val value: ValueVo) : TestAggregate {
+data class ExistingTestAggregate(override val aggregateId: Id, val value: ValueVo) : TestAggregate() {
 
 }
 
