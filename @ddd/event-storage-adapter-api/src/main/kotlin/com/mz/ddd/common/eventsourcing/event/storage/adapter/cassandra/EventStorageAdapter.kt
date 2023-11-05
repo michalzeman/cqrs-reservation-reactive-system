@@ -34,9 +34,14 @@ data class Snapshot(
 interface EventStorageAdapter {
 
     /**
-     * Save all events.
+     * Save all events and return last sequenceNumber.
      */
     fun save(eventJournals: List<EventJournal>): Mono<Long>
+
+    /**
+     * Save snapshot.
+     */
+    fun save(snapshot: Snapshot): Mono<Void>
 
     /**
      * Read all events for the given id.
@@ -57,4 +62,9 @@ interface EventStorageAdapter {
      * Sequence number is an index of the event for the given id.
      */
     fun getEventJournalSequenceNumber(query: SequenceNumberQuery): Mono<Long>
+
+    /**
+     * Get number of events created after last snapshot.
+     */
+    fun countOfEventsCreatedAfterLastSnapshot(query: SequenceNumberQuery): Mono<Long>
 }

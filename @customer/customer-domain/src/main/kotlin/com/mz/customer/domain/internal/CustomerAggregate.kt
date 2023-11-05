@@ -8,7 +8,6 @@ import com.mz.customer.api.domain.event.CustomerReservationRequested
 import com.mz.ddd.common.api.domain.*
 
 sealed class Customer : Aggregate() {
-    abstract val aggregateId: Id
     abstract val version: Version
 }
 

@@ -1,5 +1,6 @@
 package com.mz.ddd.common.persistence.eventsourcing.internal
 
+import com.mz.ddd.common.api.domain.Aggregate
 import com.mz.ddd.common.api.domain.DomainCommand
 import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.Id
@@ -10,7 +11,7 @@ import reactor.core.publisher.Mono
 typealias PublishDocument<S> = (S) -> Unit
 typealias PublishChanged<E> = (E) -> Unit
 
-internal class AggregateManagerImpl<A, C : DomainCommand, E : DomainEvent, S>(
+internal class AggregateManagerImpl<A : Aggregate, C : DomainCommand, E : DomainEvent, S>(
     private val aggregateRepository: AggregateRepository<A, C, E>,
     private val aggregateMapper: (A) -> S,
     private val publishChanged: PublishChanged<E>? = null,

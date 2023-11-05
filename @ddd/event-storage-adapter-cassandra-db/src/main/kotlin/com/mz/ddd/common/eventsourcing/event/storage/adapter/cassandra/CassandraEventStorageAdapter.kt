@@ -16,11 +16,19 @@ internal class CassandraEventStorageAdapter(
 ) : EventStorageAdapter {
 
     override fun save(eventJournals: List<EventJournal>): Mono<Long> {
+        val lastSequence = eventJournals.maxBy { it.sequenceNumber }.sequenceNumber
         return eventJournals.toMono()
             .map { events -> events.map { it.toEntity() } }
             .flatMapMany { eventJournalRepository.saveAll(it) }
-            .count()
+            .then(lastSequence.toMono())
             .log()
+    }
+
+    override fun save(snapshot: Snapshot): Mono<Void> {
+        return snapshot.toMono()
+            .map { it.toEntity() }
+            .flatMap { snapshotRepository.save(it) }
+            .then()
     }
 
     override fun readEvents(aggregateId: String, sequence: Long?): Flux<EventJournal> {
@@ -40,7 +48,7 @@ internal class CassandraEventStorageAdapter(
             .flatMap { snapshot ->
                 eventJournalRepository.findByAggregateIdAndSequenceNrGreaterThanEqual(
                     snapshot.aggregateId!!,
-                    snapshot.sequenceNr!!
+                    snapshot.sequenceNr!! + 1
                 )
                     .collectList()
                     .map { snapshot.map(it) }
@@ -49,6 +57,19 @@ internal class CassandraEventStorageAdapter(
 
     override fun getEventJournalSequenceNumber(query: SequenceNumberQuery): Mono<Long> {
         return eventJournalRepository.findMaxSequenceNuByAggregateId(query.aggregateId)
+            .switchIfEmpty(Mono.just(0L))
+    }
+
+    override fun countOfEventsCreatedAfterLastSnapshot(query: SequenceNumberQuery): Mono<Long> {
+        return snapshotRepository.findByAggregateId(query.aggregateId)
+            .take(1)
+            .singleOrEmpty()
+            .flatMap { snapshot ->
+                eventJournalRepository.countByAggregateIdAndSequenceNrGreaterThan(
+                    snapshot.aggregateId!!,
+                    snapshot.sequenceNr!!
+                )
+            }
             .switchIfEmpty(Mono.just(0L))
     }
 }

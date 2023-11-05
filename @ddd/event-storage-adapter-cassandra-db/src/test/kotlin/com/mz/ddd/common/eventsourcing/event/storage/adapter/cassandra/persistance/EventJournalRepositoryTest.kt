@@ -18,7 +18,6 @@ class EventJournalRepositoryTest {
     @Autowired
     internal lateinit var eventJournalRepository: EventJournalRepository
 
-    // beforeEach method that generate and store testing data
     @BeforeEach
     fun setUp() {
         // create 3 instances of EvenJournalEntity with respecting sequenceNr and store it into the DB
@@ -82,6 +81,13 @@ class EventJournalRepositoryTest {
     fun `find max sequenceNr by aggregateId`() {
         StepVerifier.create(eventJournalRepository.findMaxSequenceNuByAggregateId("1"))
             .expectNext(3)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `count events by aggregateId and greater then sequence number`() {
+        StepVerifier.create(eventJournalRepository.countByAggregateIdAndSequenceNrGreaterThan("1", 1))
+            .expectNext(2)
             .verifyComplete()
     }
 

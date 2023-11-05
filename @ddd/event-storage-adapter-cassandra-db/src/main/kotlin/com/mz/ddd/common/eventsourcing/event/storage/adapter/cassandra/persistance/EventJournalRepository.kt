@@ -21,6 +21,11 @@ internal interface EventJournalRepository : ReactiveCassandraRepository<EventJou
         sort: Sort = Sort.by(Sort.Direction.ASC, "sequenceNr")
     ): Flux<EventJournalEntity>
 
+    fun countByAggregateIdAndSequenceNrGreaterThan(
+        aggregateId: String,
+        sequenceNr: Long
+    ): Mono<Long>
+
     @Query("select max(sequence_nr) from event_journal where aggregate_id=:aggregateId")
     fun findMaxSequenceNuByAggregateId(@Param("aggregateId") aggregateId: String): Mono<Long>
 }

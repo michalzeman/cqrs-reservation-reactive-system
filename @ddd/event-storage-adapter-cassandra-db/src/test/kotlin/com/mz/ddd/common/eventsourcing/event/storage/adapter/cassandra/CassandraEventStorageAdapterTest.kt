@@ -122,8 +122,8 @@ class CassandraEventStorageAdapterTest {
     fun `readSnapshot by aggregate id`() {
         StepVerifier.create(cut.readSnapshot("1"))
             .assertNext {
-                assertThat(it.eventJournals.size).isEqualTo(3)
-                assertThat(it.eventJournals.map { ev -> ev.sequenceNumber }).isEqualTo(listOf(3L, 4L, 5L))
+                assertThat(it.eventJournals.size).isEqualTo(2)
+                assertThat(it.eventJournals.map { ev -> ev.sequenceNumber }).isEqualTo(listOf(4L, 5L))
             }
             .verifyComplete()
     }
@@ -132,6 +132,28 @@ class CassandraEventStorageAdapterTest {
     fun `getEventJournalSequenceNumber by SequenceNumberQuery`() {
         StepVerifier.create(cut.getEventJournalSequenceNumber(SequenceNumberQuery("1", "TestingAggregate")))
             .expectNext(5)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `save snapshot`() {
+        val snapshot = Snapshot(
+            aggregateId = "1",
+            sequenceNumber = 6,
+            createdAt = Instant.now(),
+            tag = "TestingAggregate",
+            payload = byteArrayOf(1),
+            payloadType = "string"
+        )
+
+        StepVerifier.create(cut.save(snapshot))
+            .verifyComplete()
+
+        StepVerifier.create(cut.readSnapshot("1"))
+            .assertNext {
+                assertThat(it.sequenceNumber).isEqualTo(6)
+                assertThat(it.eventJournals.size).isEqualTo(0)
+            }
             .verifyComplete()
     }
 }

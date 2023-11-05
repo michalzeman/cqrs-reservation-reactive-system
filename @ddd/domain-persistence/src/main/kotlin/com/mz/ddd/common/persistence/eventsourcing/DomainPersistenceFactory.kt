@@ -28,9 +28,9 @@ import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.LockStora
  *
  * @param lockStorageAdapter    - Lock storage adapter necessary for the lock and unlock of the Aggregate.
  */
-data class DataStorageAdaptersConfig<E : DomainEvent>(
+data class DataStorageAdaptersConfig<E : DomainEvent, A : Aggregate>(
     val eventStorageAdapter: EventStorageAdapter,
-    val eventSerDesAdapter: EventSerDesAdapter<E>,
+    val eventSerDesAdapter: EventSerDesAdapter<E, A>,
     val lockStorageAdapter: LockStorageAdapter
 )
 
@@ -41,7 +41,7 @@ object DomainPersistenceFactory {
         aggregateFactory: (Id) -> A,
         aggregateCommandHandler: AggregateCommandHandler<A, C, E>,
         aggregateEventHandler: AggregateEventHandler<A, E>,
-        dataStorageAdaptersConfig: DataStorageAdaptersConfig<E>
+        dataStorageAdaptersConfig: DataStorageAdaptersConfig<E, A>
     ): AggregateRepository<A, C, E> =
         AggregateRepositoryImpl(
             aggregateFactory,
@@ -68,7 +68,7 @@ object DomainPersistenceFactory {
      * E - Event type
      * S - State type
      */
-    fun <A, C : DomainCommand, E : DomainEvent, S> buildAggregateManager(
+    fun <A : Aggregate, C : DomainCommand, E : DomainEvent, S> buildAggregateManager(
         aggregateRepository: AggregateRepository<A, C, E>,
         aggregateMapper: (A) -> S,
         publishChanged: PublishChanged<E>? = null,

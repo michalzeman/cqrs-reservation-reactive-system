@@ -25,15 +25,15 @@ class TestDomainPersistenceConfiguration {
     @Bean
     fun dataStorageAdaptersConfig(
         eventStorageAdapter: EventStorageAdapter, lockStorageAdapter: LockStorageAdapter
-    ) = DataStorageAdaptersConfig(
+    ) = DataStorageAdaptersConfig<TestEvent, TestAggregate>(
         eventStorageAdapter,
-        JsonEventSerDesAdapter<TestEvent>({ serToJsonString(it) }, { desJson(it) }),
+        JsonEventSerDesAdapter({ serToJsonString(it) }, { desJson(it) }, { serToJsonString(it) }, { desJson(it) }),
         lockStorageAdapter
     )
 
     @Bean
     fun testAggregateRepository(
-        dataStorageAdaptersConfig: DataStorageAdaptersConfig<TestEvent>
+        dataStorageAdaptersConfig: DataStorageAdaptersConfig<TestEvent, TestAggregate>
     ): AggregateRepository<TestAggregate, TestCommand, TestEvent> {
         return DomainPersistenceFactory.buildAggregateRepository(
             testTag,

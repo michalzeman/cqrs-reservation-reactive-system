@@ -1,21 +1,51 @@
 package com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json
 
+import com.mz.ddd.common.api.domain.Aggregate
 import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventJournal
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.Snapshot
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+
+typealias Encoder<E> = (value: E) -> ByteArray
+typealias Decode<E> = (value: String) -> E
 
 /**
- * JSON event serialization/deserialization adapter.
+ * JSON event, snapshot serialization/deserialization adapter.
  */
-class JsonEventSerDesAdapter<E : DomainEvent>(
-    encode: Encoder<E>,
-    decode: Decode<E>
-) : JsonSerDesAdapter<E>(encode, decode), EventSerDesAdapter<E> {
+class JsonEventSerDesAdapter<E : DomainEvent, S : Aggregate>(
+    val encodeEvent: Encoder<E>,
+    val decodeEvent: Decode<E>,
+    val encodeAggregate: Encoder<S>,
+    val decodeAggregate: Decode<S>
+) : EventSerDesAdapter<E, S> {
 
-    override fun serialize(event: E) = encode(event)
+    override val contentType: String = "application/json"
+    override fun serialize(aggregate: S): ByteArray {
+        return encodeAggregate(aggregate)
+    }
+
+    override fun serialize(event: E) = encodeEvent(event)
 
     override fun deserialize(eventJournal: EventJournal): E {
         val rawPayload = eventJournal.payload
-        return decode(rawPayload.decodeToString())
+        return decodeEvent(rawPayload.decodeToString())
+    }
+
+    override fun deserialize(snapshot: Snapshot): S {
+        val rawPayload = snapshot.payload
+        return decodeAggregate(rawPayload.decodeToString())
     }
 }
+
+/**
+ * Kotlin native supported JSON serialization
+ */
+inline fun <reified T> serToJsonString(value: T) = Json.encodeToString<T>(value).encodeToByteArray()
+
+/**
+ * Kotlin native supported JSON deserialization
+ */
+inline fun <reified T> desJson(value: String): T = Json.decodeFromString<T>(value)

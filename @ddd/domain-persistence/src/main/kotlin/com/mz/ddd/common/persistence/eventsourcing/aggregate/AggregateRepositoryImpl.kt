@@ -1,6 +1,9 @@
 package com.mz.ddd.common.persistence.eventsourcing.aggregate
 
-import com.mz.ddd.common.api.domain.*
+import com.mz.ddd.common.api.domain.Aggregate
+import com.mz.ddd.common.api.domain.DomainCommand
+import com.mz.ddd.common.api.domain.DomainEvent
+import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.persistence.eventsourcing.event.EventRepository
 import com.mz.ddd.common.persistence.eventsourcing.locking.LockManager
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.AcquireLock
@@ -9,10 +12,10 @@ import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.ReleaseLo
 import reactor.core.publisher.Mono
 
 
-internal class AggregateRepositoryImpl<A : Aggregate, C : DomainCommand, E : DomainEvent, S : Document<E>>(
+internal class AggregateRepositoryImpl<A : Aggregate, C : DomainCommand, E : DomainEvent>(
     private val aggregateFactory: (Id) -> A,
     private val aggregateProcessor: AggregateProcessor<A, C, E>,
-    private val eventRepository: EventRepository<E, S>,
+    private val eventRepository: EventRepository<E, A>,
     private val lockManager: LockManager,
 ) : AggregateRepository<A, C, E> {
 
@@ -38,7 +41,7 @@ internal class AggregateRepositoryImpl<A : Aggregate, C : DomainCommand, E : Dom
                 aggregateProcessor.execute(aggregate, command)
                     .fold(
                         onSuccess = { success ->
-                            eventRepository.persistAll(id, success.events)
+                            eventRepository.persistAll(success)
                                 .and(releaseLock)
                                 .thenReturn(success)
                         },
