@@ -15,6 +15,8 @@ internal interface EventJournalRepository : ReactiveCassandraRepository<EventJou
         sort: Sort = Sort.by(Sort.Direction.ASC, "sequenceNr")
     ): Flux<EventJournalEntity>
 
+    fun countByAggregateId(aggregateId: String): Mono<Long>
+
     fun findByAggregateIdAndSequenceNrGreaterThanEqual(
         aggregateId: String,
         sequenceNr: Long,

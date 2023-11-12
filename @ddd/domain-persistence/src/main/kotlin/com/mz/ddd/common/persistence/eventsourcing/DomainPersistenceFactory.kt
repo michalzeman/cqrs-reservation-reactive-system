@@ -54,7 +54,8 @@ object DomainPersistenceFactory {
                 dataStorageAdaptersConfig.eventStorageAdapter,
                 dataStorageAdaptersConfig.eventSerDesAdapter
             ),
-            LockManagerImpl(dataStorageAdaptersConfig.lockStorageAdapter)
+            LockManagerImpl(dataStorageAdaptersConfig.lockStorageAdapter),
+            dataStorageAdaptersConfig.eventSerDesAdapter
         )
 
     /**

@@ -19,7 +19,7 @@ internal class EventRepositoryImpl<E : DomainEvent, A : Aggregate>(
     private val serDesAdapter: EventSerDesAdapter<E, A>
 ) : EventRepository<E, A> {
 
-    private val eventsPerSnapshot = 1
+    private val eventsPerSnapshot = 10
 
     override fun persistAll(id: Id, events: List<E>): Mono<Void> {
         return persistAllEventsAndReturnLastSeqNumber(id, events)
@@ -34,7 +34,7 @@ internal class EventRepositoryImpl<E : DomainEvent, A : Aggregate>(
             )
         ).cache()
 
-        return eventsCountAfterSnapshotCreated.map { it + effect.events.size <= eventsPerSnapshot }
+        return eventsCountAfterSnapshotCreated.map { it + effect.events.size >= eventsPerSnapshot }
             .flatMap { newSnapshotNeeded ->
                 if (newSnapshotNeeded) {
                     eventsCountAfterSnapshotCreated.flatMap {
@@ -44,6 +44,10 @@ internal class EventRepositoryImpl<E : DomainEvent, A : Aggregate>(
                     persistAll(effect.aggregate.aggregateId, effect.events)
                 }
             }
+    }
+
+    override fun readSnapshot(id: Id): Mono<Snapshot> {
+        return eventStorageAdapter.readSnapshot(id.value)
     }
 
     override fun read(id: Id): Flux<E> = eventStorageAdapter

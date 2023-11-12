@@ -49,7 +49,7 @@ class DomainPersistenceWorkFlowTest {
         val createTestAggregate = CreateTestAggregate(value = stringInitValue)
         val id = aggregateId
 
-        val updatedValue = "I am now updated"
+        val updatedValue = "Updated 1"
         val updateTestAggregate = UpdateTestValue(aggregateId = aggregateId, value = StringValueParam(updatedValue))
 
         val aggregate = testAggregateManager.execute(createTestAggregate, aggregateId)
@@ -68,6 +68,32 @@ class DomainPersistenceWorkFlowTest {
                 assertThat((it as ExistingTestAggregate).value.value.contains(updatedValue)).isTrue()
             }
             .verifyComplete()
+    }
+
+    @Test
+    fun `creation aggregate and update with 100 events, aggregate is updated`() {
+        val aggregateId = newId()
+        val stringInitValue = StringValueParam("Hello there\n")
+        val createTestAggregate = CreateTestAggregate(value = stringInitValue)
+        val id = aggregateId
+
+        val updateCommands = (1..100).map { i ->
+            val updatedValue = "Updated $i"
+            UpdateTestValue(aggregateId = aggregateId, value = StringValueParam(updatedValue))
+        }
+
+        val executions =
+            updateCommands.fold(testAggregateManager.execute(createTestAggregate, aggregateId)) { acc, cmd ->
+                acc.then(testAggregateManager.execute(cmd, aggregateId))
+            }
+
+        StepVerifier.create(executions)
+            .expectNextCount(1)
+            .verifyComplete()
+
+        val loadAggregate = testAggregateRepository.find(id).block()
+
+        assertThat(loadAggregate).isNotNull
     }
 
 }

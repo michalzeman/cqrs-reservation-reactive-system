@@ -21,7 +21,7 @@ internal class AggregateManagerImpl<A : Aggregate, C : DomainCommand, E : Domain
     override fun execute(command: C, id: Id): Mono<S> =
         aggregateRepository.execute(id, command)
             .map { effect ->
-                effect.events.forEach { event -> publishChanged?.invoke(event) }
+                publishChanged?.let { publisher -> effect.events.forEach(publisher::invoke) }
                 aggregateMapper(effect.aggregate)
             }
             .doOnNext { publishDocument?.invoke(it) }
@@ -29,11 +29,13 @@ internal class AggregateManagerImpl<A : Aggregate, C : DomainCommand, E : Domain
 
     override fun executeAndReturnEvents(command: C, id: Id): Mono<List<E>> =
         aggregateRepository.execute(command = command, id = id)
-            .doOnNext { effect ->
-                effect.events.forEach { event -> publishChanged?.invoke(event) }
-                aggregateMapper(effect.aggregate).also { state -> publishDocument?.invoke(state) }
+            .map { effect ->
+                publishDocument?.let { publisher ->
+                    aggregateMapper(effect.aggregate).also { state -> publisher.invoke(state) }
+                }
+                effect.events
             }
-            .map { it.events }
+            .doOnNext { events -> publishChanged?.let { events.forEach(it::invoke) } }
 
     override fun findById(id: Id): Mono<S> = aggregateRepository.find(id).map(aggregateMapper)
 }

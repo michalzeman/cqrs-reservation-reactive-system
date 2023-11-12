@@ -6,6 +6,10 @@ import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import java.time.Duration
 
+/**
+ * LockManagerImpl is responsible for acquiring and releasing locks.
+ * It uses [LockStorageAdapter] to store locks.
+ */
 internal class LockManagerImpl(
     private val lockStorageAdapter: LockStorageAdapter
 ) : LockManager {

@@ -8,16 +8,16 @@ import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.Snapshot
 /**
  * EventJournal serialization/deserialization contract.
  */
-interface EventSerDesAdapter<E : DomainEvent, S : Aggregate> {
+interface EventSerDesAdapter<E : DomainEvent, A : Aggregate> {
 
     val contentType: String
 
     fun serialize(event: E): ByteArray
 
-    fun serialize(aggregate: S): ByteArray
+    fun serialize(aggregate: A): ByteArray
 
     fun deserialize(eventJournal: EventJournal): E
 
-    fun deserialize(snapshot: Snapshot): S
+    fun deserialize(snapshot: Snapshot): A
 
 }

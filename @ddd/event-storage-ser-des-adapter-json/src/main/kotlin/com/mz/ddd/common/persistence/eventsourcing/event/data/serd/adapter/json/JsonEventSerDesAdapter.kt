@@ -15,15 +15,15 @@ typealias Decode<E> = (value: String) -> E
 /**
  * JSON event, snapshot serialization/deserialization adapter.
  */
-class JsonEventSerDesAdapter<E : DomainEvent, S : Aggregate>(
+class JsonEventSerDesAdapter<E : DomainEvent, A : Aggregate>(
     val encodeEvent: Encoder<E>,
     val decodeEvent: Decode<E>,
-    val encodeAggregate: Encoder<S>,
-    val decodeAggregate: Decode<S>
-) : EventSerDesAdapter<E, S> {
+    val encodeAggregate: Encoder<A>,
+    val decodeAggregate: Decode<A>
+) : EventSerDesAdapter<E, A> {
 
     override val contentType: String = "application/json"
-    override fun serialize(aggregate: S): ByteArray {
+    override fun serialize(aggregate: A): ByteArray {
         return encodeAggregate(aggregate)
     }
 
@@ -34,7 +34,7 @@ class JsonEventSerDesAdapter<E : DomainEvent, S : Aggregate>(
         return decodeEvent(rawPayload.decodeToString())
     }
 
-    override fun deserialize(snapshot: Snapshot): S {
+    override fun deserialize(snapshot: Snapshot): A {
         val rawPayload = snapshot.payload
         return decodeAggregate(rawPayload.decodeToString())
     }

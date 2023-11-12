@@ -7,6 +7,7 @@ import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistan
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.switchIfEmpty
 import reactor.kotlin.core.publisher.toMono
 
 @Component
@@ -57,7 +58,7 @@ internal class CassandraEventStorageAdapter(
 
     override fun getEventJournalSequenceNumber(query: SequenceNumberQuery): Mono<Long> {
         return eventJournalRepository.findMaxSequenceNuByAggregateId(query.aggregateId)
-            .switchIfEmpty(Mono.just(0L))
+            .switchIfEmpty { Mono.just(0L) }
     }
 
     override fun countOfEventsCreatedAfterLastSnapshot(query: SequenceNumberQuery): Mono<Long> {
@@ -70,6 +71,6 @@ internal class CassandraEventStorageAdapter(
                     snapshot.sequenceNr!!
                 )
             }
-            .switchIfEmpty(Mono.just(0L))
+            .switchIfEmpty { eventJournalRepository.countByAggregateId(query.aggregateId) }
     }
 }
