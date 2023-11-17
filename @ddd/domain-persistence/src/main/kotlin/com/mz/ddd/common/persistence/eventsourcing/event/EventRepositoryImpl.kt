@@ -7,6 +7,7 @@ import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventJour
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventStorageAdapter
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.SequenceNumberQuery
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.Snapshot
+import com.mz.ddd.common.persistence.eventsourcing.DomainPersistenceProperties
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.CommandEffect
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
 import reactor.core.publisher.Flux
@@ -16,10 +17,9 @@ import java.time.Instant
 internal class EventRepositoryImpl<E : DomainEvent, A : Aggregate>(
     private val domainTag: DomainTag,
     private val eventStorageAdapter: EventStorageAdapter,
-    private val serDesAdapter: EventSerDesAdapter<E, A>
+    private val serDesAdapter: EventSerDesAdapter<E, A>,
+    private val properties: DomainPersistenceProperties
 ) : EventRepository<E, A> {
-
-    private val eventsPerSnapshot = 10
 
     override fun persistAll(id: Id, events: List<E>): Mono<Void> {
         return persistAllEventsAndReturnLastSeqNumber(id, events)
@@ -34,7 +34,7 @@ internal class EventRepositoryImpl<E : DomainEvent, A : Aggregate>(
             )
         ).cache()
 
-        return eventsCountAfterSnapshotCreated.map { it + effect.events.size >= eventsPerSnapshot }
+        return eventsCountAfterSnapshotCreated.map { it + effect.events.size >= properties.eventsPerSnapshot }
             .flatMap { newSnapshotNeeded ->
                 if (newSnapshotNeeded) {
                     eventsCountAfterSnapshotCreated.flatMap {

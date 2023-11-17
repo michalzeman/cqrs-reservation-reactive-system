@@ -2,9 +2,7 @@ package com.mz.ddd.common.persistence.eventsourcing.wiring
 
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventStorageAdapter
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.EventStorageAdapterCassandraConfiguration
-import com.mz.ddd.common.persistence.eventsourcing.AggregateManager
-import com.mz.ddd.common.persistence.eventsourcing.DataStorageAdaptersConfig
-import com.mz.ddd.common.persistence.eventsourcing.DomainPersistenceFactory
+import com.mz.ddd.common.persistence.eventsourcing.*
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.JsonEventSerDesAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.desJson
@@ -18,17 +16,24 @@ import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 
 @Configuration
-@Import(EventStorageAdapterCassandraConfiguration::class, RedisLockStorageAdapterConfiguration::class)
+@Import(
+    EventStorageAdapterCassandraConfiguration::class,
+    RedisLockStorageAdapterConfiguration::class,
+    DomainPersistenceConfiguration::class
+)
 @ActiveProfiles("test")
 class TestDomainPersistenceConfiguration {
 
     @Bean
     fun dataStorageAdaptersConfig(
-        eventStorageAdapter: EventStorageAdapter, lockStorageAdapter: LockStorageAdapter
+        eventStorageAdapter: EventStorageAdapter,
+        lockStorageAdapter: LockStorageAdapter,
+        properties: DomainPersistenceProperties
     ) = DataStorageAdaptersConfig<TestEvent, TestAggregate>(
         eventStorageAdapter,
         JsonEventSerDesAdapter({ serToJsonString(it) }, { desJson(it) }, { serToJsonString(it) }, { desJson(it) }),
-        lockStorageAdapter
+        lockStorageAdapter,
+        properties
     )
 
     @Bean
@@ -64,5 +69,4 @@ class TestDomainPersistenceConfiguration {
             }
         }
     }
-
 }

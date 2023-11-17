@@ -31,7 +31,8 @@ import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.LockStora
 data class DataStorageAdaptersConfig<E : DomainEvent, A : Aggregate>(
     val eventStorageAdapter: EventStorageAdapter,
     val eventSerDesAdapter: EventSerDesAdapter<E, A>,
-    val lockStorageAdapter: LockStorageAdapter
+    val lockStorageAdapter: LockStorageAdapter,
+    val persistenceProperties: DomainPersistenceProperties
 )
 
 object DomainPersistenceFactory {
@@ -52,7 +53,8 @@ object DomainPersistenceFactory {
             EventRepositoryImpl(
                 domainTag,
                 dataStorageAdaptersConfig.eventStorageAdapter,
-                dataStorageAdaptersConfig.eventSerDesAdapter
+                dataStorageAdaptersConfig.eventSerDesAdapter,
+                dataStorageAdaptersConfig.persistenceProperties
             ),
             LockManagerImpl(dataStorageAdaptersConfig.lockStorageAdapter),
             dataStorageAdaptersConfig.eventSerDesAdapter

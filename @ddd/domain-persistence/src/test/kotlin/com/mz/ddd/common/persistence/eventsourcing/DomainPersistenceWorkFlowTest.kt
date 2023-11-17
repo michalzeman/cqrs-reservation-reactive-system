@@ -1,6 +1,7 @@
 package com.mz.ddd.common.persistence.eventsourcing
 
 import com.mz.ddd.common.api.domain.newId
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventStorageAdapter
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.internal.util.*
 import com.mz.ddd.common.persistence.eventsourcing.wiring.TestDomainPersistenceConfiguration
@@ -18,6 +19,9 @@ class DomainPersistenceWorkFlowTest {
 
     @Autowired
     lateinit var testAggregateRepository: AggregateRepository<TestAggregate, TestCommand, TestEvent>
+
+    @Autowired
+    lateinit var eventStorageAdapter: EventStorageAdapter
 
     @Test
     fun `should execute command for creation of aggregate, aggregate is created`() {
@@ -94,6 +98,14 @@ class DomainPersistenceWorkFlowTest {
         val loadAggregate = testAggregateRepository.find(id).block()
 
         assertThat(loadAggregate).isNotNull
+
+        StepVerifier.create(eventStorageAdapter.readEvents(id.value))
+            .expectNextCount(101)
+            .verifyComplete()
+
+        StepVerifier.create(eventStorageAdapter.readSnapshot(id.value))
+            .expectNextCount(1)
+            .verifyComplete()
     }
 
 }

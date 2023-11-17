@@ -5,6 +5,7 @@ dependencies {
     compileOnly(group = "org.springframework", name = "spring-context")
     compileOnly(group = "org.springframework", name = "spring-core")
     compileOnly(group = "org.springframework", name = "spring-webflux")
+    compileOnly("org.springframework.boot:spring-boot-starter")
 
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockito.core)
