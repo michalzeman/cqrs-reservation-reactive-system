@@ -7,6 +7,7 @@ import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.command.AggregateCommandHandler
 import com.mz.ddd.common.api.domain.event.AggregateEventHandler
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventStorageAdapter
+import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateProcessorImpl
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepositoryImpl
 import com.mz.ddd.common.persistence.eventsourcing.event.DomainTag
@@ -17,47 +18,51 @@ import com.mz.ddd.common.persistence.eventsourcing.internal.PublishChanged
 import com.mz.ddd.common.persistence.eventsourcing.internal.PublishDocument
 import com.mz.ddd.common.persistence.eventsourcing.locking.internal.LockManagerImpl
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.LockStorageAdapter
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Import
 
+@Import(DomainPersistenceConfiguration::class)
+abstract class AbstractEventSourcingConfiguration<A : Aggregate, C : DomainCommand, E : DomainEvent, S> {
 
-/**
- * Data storage adapters configuration.
- * @param eventStorageAdapter   - Data storage for persisting of domain events.
- * @param eventSerDesAdapter      - Domain event serializer and deserializer domain event payload to be capable
- *                                serialise and domain event is storing into the event storage and deserialize
- *                                domain event when is loading from the event storage.
- *
- * @param lockStorageAdapter    - Lock storage adapter necessary for the lock and unlock of the Aggregate.
- */
-data class DataStorageAdaptersConfig<E : DomainEvent, A : Aggregate>(
-    val eventStorageAdapter: EventStorageAdapter,
-    val eventSerDesAdapter: EventSerDesAdapter<E, A>,
-    val lockStorageAdapter: LockStorageAdapter,
-    val persistenceProperties: DomainPersistenceProperties
-)
+    @Autowired
+    lateinit var eventStorageAdapter: EventStorageAdapter
 
-object DomainPersistenceFactory {
+    @Autowired
+    lateinit var lockStorageAdapter: LockStorageAdapter
 
-    fun <A : Aggregate, C : DomainCommand, E : DomainEvent> buildAggregateRepository(
-        domainTag: DomainTag,
+    @Autowired
+    lateinit var domainPersistenceProperties: DomainPersistenceProperties
+
+    abstract fun aggregateRepository(): AggregateRepository<A, C, E>
+
+    abstract fun aggregateManager(
+        aggregateRepository: AggregateRepository<A, C, E>,
+        aggregateMapper: (A) -> S
+    ): AggregateManager<A, C, E, S>
+
+    abstract fun eventSerDesAdapter(): EventSerDesAdapter<E, A>
+
+    abstract fun domainTag(): DomainTag
+
+    protected fun buildAggregateRepository(
         aggregateFactory: (Id) -> A,
         aggregateCommandHandler: AggregateCommandHandler<A, C, E>,
-        aggregateEventHandler: AggregateEventHandler<A, E>,
-        dataStorageAdaptersConfig: DataStorageAdaptersConfig<E, A>
+        aggregateEventHandler: AggregateEventHandler<A, E>
     ): AggregateRepository<A, C, E> =
         AggregateRepositoryImpl(
             aggregateFactory,
-            com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateProcessorImpl(
+            AggregateProcessorImpl(
                 aggregateCommandHandler,
                 aggregateEventHandler
             ),
             EventRepositoryImpl(
-                domainTag,
-                dataStorageAdaptersConfig.eventStorageAdapter,
-                dataStorageAdaptersConfig.eventSerDesAdapter,
-                dataStorageAdaptersConfig.persistenceProperties
+                domainTag(),
+                eventStorageAdapter,
+                eventSerDesAdapter(),
+                domainPersistenceProperties
             ),
-            LockManagerImpl(dataStorageAdaptersConfig.lockStorageAdapter),
-            dataStorageAdaptersConfig.eventSerDesAdapter
+            LockManagerImpl(lockStorageAdapter),
+            eventSerDesAdapter()
         )
 
     /**
@@ -71,7 +76,7 @@ object DomainPersistenceFactory {
      * E - Event type
      * S - State type
      */
-    fun <A : Aggregate, C : DomainCommand, E : DomainEvent, S> buildAggregateManager(
+    protected fun buildAggregateManager(
         aggregateRepository: AggregateRepository<A, C, E>,
         aggregateMapper: (A) -> S,
         publishChanged: PublishChanged<E>? = null,

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration
 
 
 @Configuration
-class AppConfig {
+class CustomerConfiguration {
 
     @Bean
     fun session(): CqlSession {

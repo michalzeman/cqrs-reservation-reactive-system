@@ -1,7 +1,6 @@
 package com.mz.ddd.common.persistence.eventsourcing.internal
 
 import com.mz.ddd.common.api.domain.newId
-import com.mz.ddd.common.persistence.eventsourcing.DomainPersistenceFactory.buildAggregateManager
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.CommandEffect
 import com.mz.ddd.common.persistence.eventsourcing.internal.util.*
@@ -97,6 +96,6 @@ internal class AggregateManagerImplTest {
         aggregateRepository: AggregateRepository<TestAggregate, TestCommand, TestEvent>,
         aggregateMapper: (TestAggregate) -> String
     ): com.mz.ddd.common.persistence.eventsourcing.AggregateManager<TestAggregate, TestCommand, TestEvent, String> {
-        return buildAggregateManager(aggregateRepository, aggregateMapper = aggregateMapper)
+        return AggregateManagerImpl(aggregateRepository, aggregateMapper)
     }
 }
