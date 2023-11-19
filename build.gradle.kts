@@ -82,7 +82,9 @@ project(":common-components") {
 }
 
 tasks.register("runDockerComposeBeforeTests") {
-    dependsOn("testClasses")
+    val allProcessLiquibaseTasks = project.subprojects
+        .flatMap { project -> project.tasks.matching { it.name == "processLiquibase" } }
+    dependsOn(allProcessLiquibaseTasks)
     doLast {
         exec {
             commandLine("docker-compose", "up", "-d")
@@ -112,8 +114,8 @@ tasks.register("runDockerComposeBeforeTests") {
 tasks["test"].dependsOn("runDockerComposeBeforeTests")
 
 tasks.register("tearDownDockerCompose") {
-    val allTasks = project.subprojects.flatMap { project -> project.tasks.matching { it.name == "test" } }
-    mustRunAfter(allTasks)
+    val allTestTasks = project.subprojects.flatMap { project -> project.tasks.matching { it.name == "test" } }
+    mustRunAfter(allTestTasks)
     doLast {
         exec {
             commandLine("docker-compose", "down", "-v")

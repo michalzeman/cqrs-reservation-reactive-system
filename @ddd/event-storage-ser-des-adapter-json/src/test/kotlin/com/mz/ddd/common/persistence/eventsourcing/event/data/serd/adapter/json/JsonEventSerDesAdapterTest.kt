@@ -14,8 +14,9 @@ import org.junit.jupiter.api.Test
 @Serializable
 data class TestAggregate(override val aggregateId: Id, val createdAt: Instant = instantNow()) : Aggregate()
 
+@JvmInline
 @Serializable
-data class ValueVo(val value: String)
+value class ValueVo(val value: String)
 
 @Serializable
 sealed class TestEvent : DomainEvent {

@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
+import reactor.kotlin.core.publisher.toMono
 
 @Configuration
 @Import(
@@ -40,7 +41,7 @@ class TestDomainPersistenceConfiguration :
     @Bean
     override fun aggregateRepository(): AggregateRepository<TestAggregate, TestCommand, TestEvent> {
         return buildAggregateRepository(
-            { EmptyTestAggregate(it) },
+            { EmptyTestAggregate(it).toMono() },
             TestCommandHandler(),
             TestEventHandler(),
         )

@@ -20,6 +20,7 @@ import com.mz.ddd.common.persistence.eventsourcing.locking.internal.LockManagerI
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.LockStorageAdapter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
+import reactor.core.publisher.Mono
 
 @Import(DomainPersistenceConfiguration::class)
 abstract class AbstractEventSourcingConfiguration<A : Aggregate, C : DomainCommand, E : DomainEvent, S> {
@@ -45,7 +46,7 @@ abstract class AbstractEventSourcingConfiguration<A : Aggregate, C : DomainComma
     abstract fun domainTag(): DomainTag
 
     protected fun buildAggregateRepository(
-        aggregateFactory: (Id) -> A,
+        aggregateFactory: (Id) -> Mono<A>,
         aggregateCommandHandler: AggregateCommandHandler<A, C, E>,
         aggregateEventHandler: AggregateEventHandler<A, E>
     ): AggregateRepository<A, C, E> =

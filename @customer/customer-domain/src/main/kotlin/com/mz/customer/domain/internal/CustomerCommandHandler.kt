@@ -7,7 +7,7 @@ import com.mz.customer.api.domain.event.CustomerEvent
 import com.mz.ddd.common.api.domain.command.AggregateCommandHandler
 
 
-internal class CustomerCommandHandler : AggregateCommandHandler<Customer, CustomerCommand, CustomerEvent> {
+class CustomerCommandHandler : AggregateCommandHandler<Customer, CustomerCommand, CustomerEvent> {
 
     override fun execute(aggregate: Customer, command: CustomerCommand): Result<List<CustomerEvent>> {
         return when (aggregate) {

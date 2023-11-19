@@ -2,15 +2,17 @@ package com.mz.ddd.common.api.domain
 
 import kotlinx.serialization.Serializable
 
+@JvmInline
 @Serializable
-data class Id(val value: String) {
+value class Id(val value: String) {
     init {
         value.validateNotBlank()
     }
 }
 
+@JvmInline
 @Serializable
-data class Version(val value: Long = 0) {
+value class Version(val value: Long = 0) {
     init {
         assert(value >= 0)
     }
@@ -18,15 +20,17 @@ data class Version(val value: Long = 0) {
     fun increment(): Version = Version(value.inc())
 }
 
+@JvmInline
 @Serializable
-data class LastName(val value: String) {
+value class LastName(val value: String) {
     init {
         value.validateNotBlank()
     }
 }
 
+@JvmInline
 @Serializable
-data class FirstName(val value: String) {
+value class FirstName(val value: String) {
     init {
         value.validateNotBlank()
     }
@@ -35,8 +39,9 @@ data class FirstName(val value: String) {
 @Serializable
 data class Name(val lastName: LastName, val firstName: FirstName)
 
+@JvmInline
 @Serializable
-data class Email(val value: String) {
+value class Email(val value: String) {
     init {
         value.validateNotBlank()
         value.validateEmail()

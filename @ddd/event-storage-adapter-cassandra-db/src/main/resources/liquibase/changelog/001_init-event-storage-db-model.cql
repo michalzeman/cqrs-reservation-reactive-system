@@ -1,0 +1,25 @@
+create keyspace if not exists ${key_space} with replication = {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '1'};
+
+USE ${key_space};
+
+CREATE TABLE event_journal
+(
+    aggregate_id text,
+    sequence_nr  bigint,
+    created_at   timestamp,
+    tag          text,
+    payload      blob,
+    payload_type text,
+    PRIMARY KEY (aggregate_id, sequence_nr)
+);
+
+CREATE TABLE snapshot
+(
+    aggregate_id text,
+    sequence_nr  bigint,
+    created_at   timestamp,
+    tag          text,
+    payload      blob,
+    payload_type text,
+    PRIMARY KEY (aggregate_id, sequence_nr)
+);

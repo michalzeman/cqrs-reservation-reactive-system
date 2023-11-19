@@ -11,7 +11,11 @@ sealed class Customer : Aggregate() {
     abstract val version: Version
 }
 
-internal data class EmptyCustomerAggregate(override val aggregateId: Id, override val version: Version) :
+fun Id.getAggregate(): Customer {
+    return EmptyCustomerAggregate(this)
+}
+
+internal data class EmptyCustomerAggregate(override val aggregateId: Id, override val version: Version = Version(0)) :
     Customer() {
     fun verifyRegisterCustomer(cmd: RegisterCustomer): List<CustomerEvent> {
         return listOf(

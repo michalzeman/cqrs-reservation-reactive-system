@@ -4,10 +4,10 @@ project(":@ddd:common-domain-api")
 
 project(":@ddd:domain-persistence") {
     dependencies {
-        implementation(project(":@ddd:common-domain-api"))
-        implementation(project(":@ddd:lock-storage-adapter-api"))
-        implementation(project(":@ddd:event-storage-adapter-api"))
-        implementation(project(":@ddd:event-storage-ser-des-adapter-api"))
+        api(project(":@ddd:common-domain-api"))
+        api(project(":@ddd:lock-storage-adapter-api"))
+        api(project(":@ddd:event-storage-adapter-api"))
+        api(project(":@ddd:event-storage-ser-des-adapter-api"))
 
         testImplementation(project(":@ddd:lock-storage-adapter-redis"))
         testImplementation(project(":@ddd:event-storage-adapter-cassandra-db"))
