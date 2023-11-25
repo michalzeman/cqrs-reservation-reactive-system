@@ -10,3 +10,5 @@ enum class ReservationStatus {
 
 data class Reservation(val id: Id, val status: ReservationStatus)
 
+fun Set<Reservation>.existsReservation(id: Id) = this.any { it.id == id }
+

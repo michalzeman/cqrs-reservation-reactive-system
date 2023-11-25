@@ -2,10 +2,9 @@ package com.mz.customer.api.domain.event
 
 import com.mz.ddd.common.api.domain.*
 import kotlinx.datetime.Instant
-import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 
-@Polymorphic
+@Serializable
 sealed class CustomerEvent : DomainEvent {
     abstract val customerId: Id
 }

@@ -15,7 +15,7 @@ import reactor.kotlin.core.publisher.switchIfEmpty
 
 
 internal class AggregateRepositoryImpl<A : Aggregate, C : DomainCommand, E : DomainEvent>(
-    private val aggregateFactory: (Id) -> Mono<A>,
+    private val aggregateFactory: (Id) -> A,
     private val aggregateProcessor: AggregateProcessor<A, C, E>,
     private val eventRepository: EventRepository<E, A>,
     private val lockManager: LockManager,
@@ -61,14 +61,11 @@ internal class AggregateRepositoryImpl<A : Aggregate, C : DomainCommand, E : Dom
                 aggregateProcessor.applyEvents(aggregate, events)
             }
             .switchIfEmpty {
-                aggregateFactory(id)
-                    .flatMap {
-                        eventRepository
-                            .read(id)
-                            .reduceWith(
-                                { it },
-                                { aggregate, event -> aggregateProcessor.applyEvents(aggregate, listOf(event)) })
-                    }
+                eventRepository
+                    .read(id)
+                    .reduceWith(
+                        { aggregateFactory(id) },
+                        { aggregate, event -> aggregateProcessor.applyEvents(aggregate, listOf(event)) })
             }
     }
 }

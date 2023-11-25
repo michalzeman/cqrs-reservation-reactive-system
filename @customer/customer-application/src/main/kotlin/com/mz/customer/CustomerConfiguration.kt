@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
-import reactor.kotlin.core.publisher.toMono
 
 
 @Configuration
@@ -35,7 +34,7 @@ class CustomerConfiguration : AbstractEventSourcingConfiguration<
     @Bean("customerAggregateMapper")
     override fun aggregateRepository(): AggregateRepository<Customer, CustomerCommand, CustomerEvent> {
         return buildAggregateRepository(
-            { it.getAggregate().toMono() },
+            { it.getAggregate() },
             CustomerCommandHandler(),
             CustomerEventHandler(),
         )

@@ -1,31 +1,29 @@
 package com.mz.customer.domain.internal
 
 import com.mz.customer.api.domain.event.*
-import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.event.AggregateEventHandler
 
 class CustomerEventHandler : AggregateEventHandler<Customer, CustomerEvent> {
     override fun apply(aggregate: Customer, event: CustomerEvent): Customer {
         return when (aggregate) {
-            is EmptyCustomerAggregate -> newCustomer(aggregate, event)
-            is CustomerAggregate -> existingCustomer(aggregate, event)
+            is EmptyCustomer -> newCustomer(aggregate, event)
+            is ExistingCustomer -> existingCustomer(aggregate, event)
         }
     }
 
-    private fun newCustomer(aggregate: EmptyCustomerAggregate, event: DomainEvent): CustomerAggregate {
+    private fun newCustomer(aggregate: EmptyCustomer, event: CustomerEvent): ExistingCustomer {
         return when (event) {
             is CustomerRegistered -> aggregate.apply(event)
             else -> throw RuntimeException("Wrong event type $event for the empty customer aggregate")
         }
     }
 
-    private fun existingCustomer(aggregate: CustomerAggregate, event: DomainEvent): CustomerAggregate {
+    private fun existingCustomer(aggregate: ExistingCustomer, event: CustomerEvent): ExistingCustomer {
         return when (event) {
-            is CustomerRegistered -> throw RuntimeException("Wrong event type $event for the existing customer aggregate")
+            is CustomerRegistered -> throw RuntimeException("Wrong event type ${event::class} for the existing customer aggregate")
             is CustomerReservationRequested -> aggregate.apply(event)
-            is CustomerReservationConfirmed -> TODO()
-            is CustomerReservationDeclined -> TODO()
-            else -> throw RuntimeException("Wrong event type $event for the empty customer aggregate")
+            is CustomerReservationConfirmed -> aggregate.apply(event)
+            is CustomerReservationDeclined -> aggregate.apply(event)
         }
     }
 }

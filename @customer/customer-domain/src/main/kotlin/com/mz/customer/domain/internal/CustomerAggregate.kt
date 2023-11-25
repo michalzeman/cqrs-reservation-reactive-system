@@ -1,10 +1,7 @@
 package com.mz.customer.domain.internal
 
-import com.mz.customer.api.domain.command.RegisterCustomer
-import com.mz.customer.api.domain.command.RequestNewCustomerReservation
-import com.mz.customer.api.domain.event.CustomerEvent
-import com.mz.customer.api.domain.event.CustomerRegistered
-import com.mz.customer.api.domain.event.CustomerReservationRequested
+import com.mz.customer.api.domain.command.*
+import com.mz.customer.api.domain.event.*
 import com.mz.ddd.common.api.domain.*
 
 sealed class Customer : Aggregate() {
@@ -12,25 +9,19 @@ sealed class Customer : Aggregate() {
 }
 
 fun Id.getAggregate(): Customer {
-    return EmptyCustomerAggregate(this)
+    return EmptyCustomer(this)
 }
 
-internal data class EmptyCustomerAggregate(override val aggregateId: Id, override val version: Version = Version(0)) :
+internal data class EmptyCustomer(override val aggregateId: Id, override val version: Version = Version(0)) :
     Customer() {
     fun verifyRegisterCustomer(cmd: RegisterCustomer): List<CustomerEvent> {
         return listOf(
-            CustomerRegistered(
-                customerId = aggregateId,
-                correlationId = cmd.correlationId,
-                firstName = cmd.firstName,
-                lastName = cmd.lastName,
-                email = cmd.email
-            )
+            cmd.toEvent(aggregateId)
         )
     }
 
-    fun apply(event: CustomerRegistered): CustomerAggregate {
-        return CustomerAggregate(
+    fun apply(event: CustomerRegistered): ExistingCustomer {
+        return ExistingCustomer(
             aggregateId = this.aggregateId,
             version = this.version,
             lastName = event.lastName,
@@ -40,30 +31,56 @@ internal data class EmptyCustomerAggregate(override val aggregateId: Id, overrid
     }
 }
 
-internal data class CustomerAggregate(
+internal data class ExistingCustomer(
     override val aggregateId: Id,
     override val version: Version = Version(),
     val lastName: LastName,
     val firstName: FirstName,
     val email: Email,
-    val reservations: List<Reservation> = emptyList()
+    val reservations: Set<Reservation> = emptySet()
 ) : Customer() {
     fun verifyRequestNewCustomerReservation(cmd: RequestNewCustomerReservation): List<CustomerEvent> {
-        return if (reservations.any { item -> item.id == cmd.reservationId }) {
+        return if (reservations.existsReservation(cmd.reservationId)) {
             throw RuntimeException("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")
         } else {
-            return listOf(
-                CustomerReservationRequested(
-                    customerId = aggregateId,
-                    correlationId = cmd.correlationId,
-                    reservationId = cmd.reservationId
-                )
+            listOf(
+                cmd.toEvent()
             )
         }
     }
 
-    fun apply(event: CustomerReservationRequested): CustomerAggregate {
+    fun verifyUpdateCustomerReservationAsConfirmed(cmd: UpdateCustomerReservationAsConfirmed): List<CustomerEvent> {
+        return if (reservations.existsReservation(cmd.reservationId)) {
+            throw RuntimeException("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")
+        } else {
+            listOf(
+                cmd.toEvent()
+            )
+        }
+    }
+
+    fun verifyUpdateCustomerReservationAsDeclined(cmd: UpdateCustomerReservationAsDeclined): List<CustomerEvent> {
+        return if (reservations.existsReservation(cmd.reservationId)) {
+            throw RuntimeException("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")
+        } else {
+            listOf(
+                cmd.toEvent()
+            )
+        }
+    }
+
+    fun apply(event: CustomerReservationRequested): ExistingCustomer {
         val reservation = Reservation(event.reservationId, ReservationStatus.REQUESTED)
+        return this.copy(reservations = reservations.plus(reservation), version = version.increment())
+    }
+
+    fun apply(event: CustomerReservationConfirmed): ExistingCustomer {
+        val reservation = Reservation(event.reservationId, ReservationStatus.CREATED)
+        return this.copy(reservations = reservations.plus(reservation), version = version.increment())
+    }
+
+    fun apply(event: CustomerReservationDeclined): ExistingCustomer {
+        val reservation = Reservation(event.reservationId, ReservationStatus.DECLINED)
         return this.copy(reservations = reservations.plus(reservation), version = version.increment())
     }
 }
