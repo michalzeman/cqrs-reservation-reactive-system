@@ -7,6 +7,21 @@ project(":@customer:customer-application") {
         implementation(project(":@customer:customer-api"))
         implementation(project(":@customer:customer-domain-api"))
         implementation(project(":@customer:customer-domain"))
+        implementation(project(":@customer:customer-adapter-rest"))
+
+        implementation(project(":@ddd:domain-persistence"))
+        implementation(project(":@ddd:lock-storage-adapter-redis"))
+        implementation(project(":@ddd:event-storage-adapter-cassandra-db"))
+        implementation(project(":@ddd:event-storage-ser-des-adapter-json"))
+    }
+}
+
+project(":@customer:customer-adapter-rest") {
+    dependencies {
+        implementation(project(":@customer:customer-api"))
+        implementation(project(":@customer:customer-domain-api"))
+        implementation(project(":@customer:customer-domain"))
+        implementation(project(":common-components"))
     }
 }
 
@@ -20,6 +35,8 @@ project(":@customer:customer-domain") {
     dependencies {
         implementation(project(":@customer:customer-api"))
         implementation(project(":@customer:customer-domain-api"))
+
+        implementation(project(":@ddd:domain-persistence"))
     }
 }
 

@@ -3,16 +3,15 @@ package com.mz.customer
 import com.mz.customer.api.domain.CustomerDocument
 import com.mz.customer.api.domain.command.CustomerCommand
 import com.mz.customer.api.domain.event.CustomerEvent
-import com.mz.customer.domain.internal.Customer
-import com.mz.customer.domain.internal.CustomerCommandHandler
-import com.mz.customer.domain.internal.CustomerEventHandler
-import com.mz.customer.domain.internal.getAggregate
+import com.mz.customer.domain.internal.*
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.EventStorageAdapterCassandraConfiguration
 import com.mz.ddd.common.persistence.eventsourcing.AbstractEventSourcingConfiguration
 import com.mz.ddd.common.persistence.eventsourcing.AggregateManager
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
-import com.mz.ddd.common.persistence.eventsourcing.event.DomainTag
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
+import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.JsonEventSerDesAdapter
+import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.desJson
+import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.serToJsonString
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.redis.wiring.RedisLockStorageAdapterConfiguration
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
@@ -42,13 +41,16 @@ class CustomerConfiguration : AbstractEventSourcingConfiguration<
 
     @Bean("customerEventSerDesAdapter")
     override fun eventSerDesAdapter(): EventSerDesAdapter<CustomerEvent, Customer> {
-        TODO("Not yet implemented")
+        return JsonEventSerDesAdapter(
+            { serToJsonString(it) },
+            { desJson(it) },
+            { serToJsonString(it) },
+            { desJson(it) }
+        )
     }
 
     @Bean("customerDomainTag")
-    override fun domainTag(): DomainTag {
-        TODO("Not yet implemented")
-    }
+    override fun domainTag() = CUSTOMER_DOMAIN_TAG
 
     @Bean("customerAggregateManager")
     override fun aggregateManager(
@@ -56,12 +58,12 @@ class CustomerConfiguration : AbstractEventSourcingConfiguration<
         aggregateRepository: AggregateRepository<Customer, CustomerCommand, CustomerEvent>,
         aggregateMapper: (Customer) -> CustomerDocument
     ): AggregateManager<Customer, CustomerCommand, CustomerEvent, CustomerDocument> {
-        TODO("Not yet implemented")
+        return buildAggregateManager(aggregateRepository, aggregateMapper)
     }
 
     @Bean
     fun aggregateMapper(): (Customer) -> CustomerDocument {
-        TODO()
+        return { it.toDocument() }
     }
 
 }

@@ -7,7 +7,11 @@ import com.mz.customer.api.domain.event.CustomerReservationRequested
 import com.mz.ddd.common.api.domain.*
 import kotlinx.datetime.Instant
 
-sealed class CustomerCommand : DomainCommand
+val NEW_CUSTOMER_ID = Id("new-customer")
+
+sealed class CustomerCommand : DomainCommand {
+    abstract val customerId: Id
+}
 
 data class RegisterCustomer(
     val lastName: LastName,
@@ -15,12 +19,13 @@ data class RegisterCustomer(
     val email: Email,
     override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
-    override val commandId: Id = Id(uuid())
+    override val commandId: Id = Id(uuid()),
+    override val customerId: Id = NEW_CUSTOMER_ID
 ) : CustomerCommand()
 
 fun RegisterCustomer.toEvent(customerId: Id): CustomerRegistered {
     return CustomerRegistered(
-        customerId = customerId,
+        aggregateId = customerId,
         correlationId = this.correlationId,
         firstName = this.firstName,
         lastName = this.lastName,
@@ -29,7 +34,7 @@ fun RegisterCustomer.toEvent(customerId: Id): CustomerRegistered {
 }
 
 data class RequestNewCustomerReservation(
-    val customerId: Id,
+    override val customerId: Id,
     val reservationId: Id,
     override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
@@ -38,14 +43,14 @@ data class RequestNewCustomerReservation(
 
 fun RequestNewCustomerReservation.toEvent(): CustomerReservationRequested {
     return CustomerReservationRequested(
-        customerId = this.customerId,
+        aggregateId = this.customerId,
         reservationId = this.reservationId,
         correlationId = this.correlationId
     )
 }
 
 data class UpdateCustomerReservationAsConfirmed(
-    val customerId: Id,
+    override val customerId: Id,
     val reservationId: Id,
     override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
@@ -54,14 +59,14 @@ data class UpdateCustomerReservationAsConfirmed(
 
 fun UpdateCustomerReservationAsConfirmed.toEvent(): CustomerReservationConfirmed {
     return CustomerReservationConfirmed(
-        customerId = this.customerId,
+        aggregateId = this.customerId,
         reservationId = this.reservationId,
         correlationId = this.correlationId
     )
 }
 
 data class UpdateCustomerReservationAsDeclined(
-    val customerId: Id,
+    override val customerId: Id,
     val reservationId: Id,
     override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
@@ -70,7 +75,7 @@ data class UpdateCustomerReservationAsDeclined(
 
 fun UpdateCustomerReservationAsDeclined.toEvent(): CustomerReservationDeclined {
     return CustomerReservationDeclined(
-        customerId = this.customerId,
+        aggregateId = this.customerId,
         reservationId = this.reservationId,
         correlationId = this.correlationId
     )

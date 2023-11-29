@@ -1,7 +1,16 @@
+eventsourcing:
+  event-storage-adapter:
+    events-per-snapshot: 3
+
 spring:
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+
   data:
     cassandra:
       local-datacenter: datacenter1
-      keyspace-name: customer_keyspace
+      keyspace-name: customer_key_space
       contact-points: 127.0.0.1
       port: 9042

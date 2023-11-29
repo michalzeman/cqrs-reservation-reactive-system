@@ -1,4 +1,4 @@
-package com.mz.customer.domain.internal
+package com.mz.customer.api.domain
 
 import com.mz.ddd.common.api.domain.Id
 

@@ -1,5 +1,8 @@
 package com.mz.customer.domain.internal
 
+import com.mz.customer.api.domain.Reservation
+import com.mz.customer.api.domain.ReservationStatus
+import com.mz.customer.api.domain.existsReservation
 import com.mz.ddd.common.api.domain.Id
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue

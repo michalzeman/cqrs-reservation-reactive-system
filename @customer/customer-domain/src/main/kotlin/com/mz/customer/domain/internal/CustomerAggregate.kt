@@ -1,18 +1,45 @@
 package com.mz.customer.domain.internal
 
+import com.mz.customer.api.domain.CustomerDocument
+import com.mz.customer.api.domain.Reservation
+import com.mz.customer.api.domain.ReservationStatus
 import com.mz.customer.api.domain.command.*
 import com.mz.customer.api.domain.event.*
+import com.mz.customer.api.domain.existsReservation
 import com.mz.ddd.common.api.domain.*
+import com.mz.ddd.common.persistence.eventsourcing.event.DomainTag
+
+val CUSTOMER_DOMAIN_TAG = DomainTag("customer")
 
 sealed class Customer : Aggregate() {
     abstract val version: Version
 }
 
-fun Id.getAggregate(): Customer {
-    return EmptyCustomer(this)
+fun Customer.toDocument(): CustomerDocument {
+    return when (this) {
+        is EmptyCustomer -> error("Customer is not registered yet")
+        is ExistingCustomer -> CustomerDocument(
+            lastName = lastName,
+            firstName = firstName,
+            email = email,
+            version = version,
+            aggregateId = aggregateId,
+            reservations = reservations
+        )
+    }
 }
 
-internal data class EmptyCustomer(override val aggregateId: Id, override val version: Version = Version(0)) :
+fun Id.getAggregate(): Customer {
+    return when (this) {
+        NEW_CUSTOMER_ID -> EmptyCustomer(newId())
+        else -> EmptyCustomer(this)
+    }
+}
+
+internal data class EmptyCustomer(
+    override val aggregateId: Id = NEW_CUSTOMER_ID,
+    override val version: Version = Version(0)
+) :
     Customer() {
     fun verifyRegisterCustomer(cmd: RegisterCustomer): List<CustomerEvent> {
         return listOf(

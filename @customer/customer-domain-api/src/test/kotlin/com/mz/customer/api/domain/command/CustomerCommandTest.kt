@@ -16,7 +16,7 @@ class CustomerCommandTest {
         assertEquals("Doe", event.lastName.value)
         assertEquals("John", event.firstName.value)
         assertEquals("john.doe@example.com", event.email.value)
-        assertEquals("1", event.customerId.value)
+        assertEquals("1", event.aggregateId.value)
         assertEquals(event.correlationId, command.correlationId)
     }
 
@@ -24,7 +24,7 @@ class CustomerCommandTest {
     fun `RequestNewCustomerReservation command should correctly convert to CustomerReservationRequested event`() {
         val command = RequestNewCustomerReservation(Id("1"), Id("2"))
         val event = command.toEvent()
-        assertEquals("1", event.customerId.value)
+        assertEquals("1", event.aggregateId.value)
         assertEquals("2", event.reservationId.value)
         assertEquals(event.correlationId, command.correlationId)
     }
@@ -33,7 +33,7 @@ class CustomerCommandTest {
     fun `UpdateCustomerReservationAsConfirmed command should correctly convert to CustomerReservationConfirmed event`() {
         val command = UpdateCustomerReservationAsConfirmed(Id("1"), Id("2"))
         val event = command.toEvent()
-        assertEquals("1", event.customerId.value)
+        assertEquals("1", event.aggregateId.value)
         assertEquals("2", event.reservationId.value)
         assertEquals(event.correlationId, command.correlationId)
     }
@@ -42,7 +42,7 @@ class CustomerCommandTest {
     fun `UpdateCustomerReservationAsDeclined command should correctly convert to CustomerReservationDeclined event`() {
         val command = UpdateCustomerReservationAsDeclined(Id("1"), Id("2"))
         val event = command.toEvent()
-        assertEquals("1", event.customerId.value)
+        assertEquals("1", event.aggregateId.value)
         assertEquals("2", event.reservationId.value)
         assertEquals(event.correlationId, command.correlationId)
     }

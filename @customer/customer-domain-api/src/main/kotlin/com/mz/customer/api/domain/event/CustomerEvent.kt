@@ -2,16 +2,18 @@ package com.mz.customer.api.domain.event
 
 import com.mz.ddd.common.api.domain.*
 import kotlinx.datetime.Instant
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class CustomerEvent : DomainEvent {
-    abstract val customerId: Id
+    abstract val aggregateId: Id
 }
 
 @Serializable
+@SerialName("customer-registered")
 data class CustomerRegistered(
-    override val customerId: Id,
+    override val aggregateId: Id,
     val lastName: LastName,
     val firstName: FirstName,
     val email: Email,
@@ -21,27 +23,30 @@ data class CustomerRegistered(
 ) : CustomerEvent()
 
 @Serializable
+@SerialName("customer-reservation-requested")
 data class CustomerReservationRequested(
     val reservationId: Id,
-    override val customerId: Id,
+    override val aggregateId: Id,
     override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
     override val eventId: Id = Id(uuid())
 ) : CustomerEvent()
 
 @Serializable
+@SerialName("customer-reservation-confirmed")
 data class CustomerReservationConfirmed(
     val reservationId: Id,
-    override val customerId: Id,
+    override val aggregateId: Id,
     override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
     override val eventId: Id = Id(uuid())
 ) : CustomerEvent()
 
 @Serializable
+@SerialName("customer-reservation-declined")
 data class CustomerReservationDeclined(
     val reservationId: Id,
-    override val customerId: Id,
+    override val aggregateId: Id,
     override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
     override val eventId: Id = Id(uuid())

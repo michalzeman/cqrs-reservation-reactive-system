@@ -1,16 +1,10 @@
 apply {
     plugin("org.springframework.boot")
-//    plugin("org.jetbrains.kotlin.plugin.spring")
 }
 
 description = "Customer application"
 
 dependencies {
-    implementation(project(":@ddd:domain-persistence"))
-    implementation(project(":@ddd:lock-storage-adapter-redis"))
-    implementation(project(":@ddd:event-storage-adapter-cassandra-db"))
-    implementation(project(":@ddd:event-storage-ser-des-adapter-json"))
-
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
@@ -24,6 +18,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-data-cassandra-reactive")
     implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 

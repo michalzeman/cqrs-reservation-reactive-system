@@ -22,7 +22,7 @@ value class Version(val value: Long = 0) {
 
 @JvmInline
 @Serializable
-value class LastName(val value: String) {
+value class LastName(val value: String) : CharSequence by value {
     init {
         value.validateNotBlank()
     }
@@ -30,7 +30,7 @@ value class LastName(val value: String) {
 
 @JvmInline
 @Serializable
-value class FirstName(val value: String) {
+value class FirstName(val value: String) : CharSequence by value {
     init {
         value.validateNotBlank()
     }
@@ -41,7 +41,7 @@ data class Name(val lastName: LastName, val firstName: FirstName)
 
 @JvmInline
 @Serializable
-value class Email(val value: String) {
+value class Email(val value: String) : CharSequence by value {
     init {
         value.validateNotBlank()
         value.validateEmail()

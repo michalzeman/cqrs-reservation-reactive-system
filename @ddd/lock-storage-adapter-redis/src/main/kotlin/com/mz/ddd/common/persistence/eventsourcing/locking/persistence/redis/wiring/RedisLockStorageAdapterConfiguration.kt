@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate
+import org.springframework.data.redis.core.RedisTemplate
+
 
 @Configuration
 @ComponentScan("com.mz.ddd.common.persistence.eventsourcing.locking.persistence.redis")
@@ -16,12 +18,19 @@ class RedisLockStorageAdapterConfiguration(
 ) {
 
     @Bean
-    fun reactiveRedisConnectionFactory(): ReactiveRedisConnectionFactory {
-        return LettuceConnectionFactory(host, port)
+    fun redisConnectionFactory(): LettuceConnectionFactory {
+        return LettuceConnectionFactory(RedisStandaloneConfiguration(host, port))
     }
 
     @Bean
-    fun redisTemplate(factory: ReactiveRedisConnectionFactory): ReactiveStringRedisTemplate {
-        return ReactiveStringRedisTemplate(factory)
+    fun redisTemplate(lettuceConnectionFactory: LettuceConnectionFactory): RedisTemplate<String, String> {
+        val template = RedisTemplate<String, String>()
+        template.setConnectionFactory(lettuceConnectionFactory)
+        return template
+    }
+
+    @Bean
+    fun reactiveStringRedisTemplate(redisConnectionFactory: LettuceConnectionFactory): ReactiveStringRedisTemplate {
+        return ReactiveStringRedisTemplate(redisConnectionFactory)
     }
 }

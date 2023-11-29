@@ -1,5 +1,7 @@
 package com.mz.customer.domain.internal
 
+import com.mz.customer.api.domain.Reservation
+import com.mz.customer.api.domain.ReservationStatus
 import com.mz.customer.api.domain.command.RegisterCustomer
 import com.mz.customer.api.domain.command.RequestNewCustomerReservation
 import com.mz.customer.api.domain.command.UpdateCustomerReservationAsConfirmed
