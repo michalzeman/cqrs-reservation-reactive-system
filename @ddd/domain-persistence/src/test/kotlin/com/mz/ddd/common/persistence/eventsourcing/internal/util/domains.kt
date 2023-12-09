@@ -1,7 +1,6 @@
 package com.mz.ddd.common.persistence.eventsourcing.internal.util
 
 import com.mz.ddd.common.api.domain.*
-import com.mz.ddd.common.persistence.eventsourcing.event.DomainTag
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

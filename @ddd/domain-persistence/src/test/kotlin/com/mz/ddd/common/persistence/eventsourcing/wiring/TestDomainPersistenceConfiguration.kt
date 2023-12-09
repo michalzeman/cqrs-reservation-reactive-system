@@ -4,6 +4,7 @@ import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.Ev
 import com.mz.ddd.common.persistence.eventsourcing.AbstractEventSourcingConfiguration
 import com.mz.ddd.common.persistence.eventsourcing.AggregateManager
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
+import com.mz.ddd.common.persistence.eventsourcing.aggregate.CommandEffect
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.JsonEventSerDesAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.desJson
@@ -25,13 +26,13 @@ class TestDomainPersistenceConfiguration :
     AbstractEventSourcingConfiguration<TestAggregate, TestCommand, TestEvent, TestDocument>() {
 
     @Bean
-    fun testAggregateMapper(): (TestAggregate) -> TestDocument {
+    fun testAggregateMapper(): (CommandEffect<TestAggregate, TestEvent>) -> TestDocument {
         return {
-            when (it) {
-                is EmptyTestAggregate -> TestDocument(docId = it.aggregateId, value = "")
+            when (val agg = it.aggregate) {
+                is EmptyTestAggregate -> TestDocument(docId = agg.aggregateId, value = "")
                 is ExistingTestAggregate -> TestDocument(
-                    docId = it.aggregateId,
-                    value = it.value.value
+                    docId = agg.aggregateId,
+                    value = agg.value.value
                 )
             }
         }
@@ -49,7 +50,7 @@ class TestDomainPersistenceConfiguration :
     @Bean
     override fun aggregateManager(
         aggregateRepository: AggregateRepository<TestAggregate, TestCommand, TestEvent>,
-        aggregateMapper: (TestAggregate) -> TestDocument
+        aggregateMapper: (CommandEffect<TestAggregate, TestEvent>) -> TestDocument
     ): AggregateManager<TestAggregate, TestCommand, TestEvent, TestDocument> {
         return buildAggregateManager(aggregateRepository, testAggregateMapper())
     }

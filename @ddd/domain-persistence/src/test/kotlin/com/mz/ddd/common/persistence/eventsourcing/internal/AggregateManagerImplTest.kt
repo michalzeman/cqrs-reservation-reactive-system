@@ -78,10 +78,10 @@ internal class AggregateManagerImplTest {
             on { find(id) } doReturn Mono.just(aggregate)
         }
 
-        val aggregateMapper = { agg: TestAggregate ->
-            when (agg) {
+        val aggregateMapper = { agg: CommandEffect<TestAggregate, TestEvent> ->
+            when (val testAggregate = agg.aggregate) {
                 is EmptyTestAggregate -> "Empty aggregate ${aggregateId}"
-                is ExistingTestAggregate -> agg.value.value
+                is ExistingTestAggregate -> testAggregate.value.value
             }
         }
 
@@ -94,7 +94,7 @@ internal class AggregateManagerImplTest {
 
     private fun subject(
         aggregateRepository: AggregateRepository<TestAggregate, TestCommand, TestEvent>,
-        aggregateMapper: (TestAggregate) -> String
+        aggregateMapper: (CommandEffect<TestAggregate, TestEvent>) -> String
     ): com.mz.ddd.common.persistence.eventsourcing.AggregateManager<TestAggregate, TestCommand, TestEvent, String> {
         return AggregateManagerImpl(aggregateRepository, aggregateMapper)
     }

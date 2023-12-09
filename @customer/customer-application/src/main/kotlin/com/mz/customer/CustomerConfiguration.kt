@@ -8,6 +8,7 @@ import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.Ev
 import com.mz.ddd.common.persistence.eventsourcing.AbstractEventSourcingConfiguration
 import com.mz.ddd.common.persistence.eventsourcing.AggregateManager
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
+import com.mz.ddd.common.persistence.eventsourcing.aggregate.CommandEffect
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.JsonEventSerDesAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.desJson
@@ -56,14 +57,14 @@ class CustomerConfiguration : AbstractEventSourcingConfiguration<
     override fun aggregateManager(
         @Qualifier("customerAggregateMapper")
         aggregateRepository: AggregateRepository<Customer, CustomerCommand, CustomerEvent>,
-        aggregateMapper: (Customer) -> CustomerDocument
+        aggregateMapper: (CommandEffect<Customer, CustomerEvent>) -> CustomerDocument
     ): AggregateManager<Customer, CustomerCommand, CustomerEvent, CustomerDocument> {
         return buildAggregateManager(aggregateRepository, aggregateMapper)
     }
 
     @Bean
-    fun aggregateMapper(): (Customer) -> CustomerDocument {
-        return { it.toDocument() }
+    fun aggregateMapper(): (CommandEffect<Customer, CustomerEvent>) -> CustomerDocument {
+        return { it.aggregate.toDocument(it.events.toSet()) }
     }
 
 }

@@ -6,7 +6,7 @@ import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.Id
 import reactor.core.publisher.Mono
 
-data class CommandEffect<A : Aggregate, E : DomainEvent>(val aggregate: A, val events: List<E>)
+data class CommandEffect<A : Aggregate, E : DomainEvent>(val aggregate: A, val events: List<E> = listOf())
 
 interface AggregateRepository<A : Aggregate, C : DomainCommand, E : DomainEvent> {
 

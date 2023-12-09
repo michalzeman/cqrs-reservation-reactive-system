@@ -7,7 +7,6 @@ import com.mz.customer.api.domain.command.*
 import com.mz.customer.api.domain.event.*
 import com.mz.customer.api.domain.existsReservation
 import com.mz.ddd.common.api.domain.*
-import com.mz.ddd.common.persistence.eventsourcing.event.DomainTag
 
 val CUSTOMER_DOMAIN_TAG = DomainTag("customer")
 
@@ -15,7 +14,7 @@ sealed class Customer : Aggregate() {
     abstract val version: Version
 }
 
-fun Customer.toDocument(): CustomerDocument {
+fun Customer.toDocument(events: Set<CustomerEvent> = emptySet()): CustomerDocument {
     return when (this) {
         is EmptyCustomer -> error("Customer is not registered yet")
         is ExistingCustomer -> CustomerDocument(
@@ -24,7 +23,8 @@ fun Customer.toDocument(): CustomerDocument {
             email = email,
             version = version,
             aggregateId = aggregateId,
-            reservations = reservations
+            reservations = reservations,
+            events = events
         )
     }
 }

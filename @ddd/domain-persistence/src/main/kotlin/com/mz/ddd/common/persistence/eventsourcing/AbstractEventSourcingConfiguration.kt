@@ -1,16 +1,13 @@
 package com.mz.ddd.common.persistence.eventsourcing
 
-import com.mz.ddd.common.api.domain.Aggregate
-import com.mz.ddd.common.api.domain.DomainCommand
-import com.mz.ddd.common.api.domain.DomainEvent
-import com.mz.ddd.common.api.domain.Id
+import com.mz.ddd.common.api.domain.*
 import com.mz.ddd.common.api.domain.command.AggregateCommandHandler
 import com.mz.ddd.common.api.domain.event.AggregateEventHandler
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventStorageAdapter
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateProcessorImpl
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepositoryImpl
-import com.mz.ddd.common.persistence.eventsourcing.event.DomainTag
+import com.mz.ddd.common.persistence.eventsourcing.aggregate.CommandEffect
 import com.mz.ddd.common.persistence.eventsourcing.event.EventRepositoryImpl
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
 import com.mz.ddd.common.persistence.eventsourcing.internal.AggregateManagerImpl
@@ -37,7 +34,7 @@ abstract class AbstractEventSourcingConfiguration<A : Aggregate, C : DomainComma
 
     abstract fun aggregateManager(
         aggregateRepository: AggregateRepository<A, C, E>,
-        aggregateMapper: (A) -> S
+        aggregateMapper: (CommandEffect<A, E>) -> S
     ): AggregateManager<A, C, E, S>
 
     abstract fun eventSerDesAdapter(): EventSerDesAdapter<E, A>
@@ -78,7 +75,7 @@ abstract class AbstractEventSourcingConfiguration<A : Aggregate, C : DomainComma
      */
     protected fun buildAggregateManager(
         aggregateRepository: AggregateRepository<A, C, E>,
-        aggregateMapper: (A) -> S,
+        aggregateMapper: (CommandEffect<A, E>) -> S,
         publishChanged: PublishChanged<E>? = null,
         publishDocument: PublishDocument<S>? = null
     ): AggregateManager<A, C, E, S> =

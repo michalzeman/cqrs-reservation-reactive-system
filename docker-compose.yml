@@ -27,6 +27,7 @@ services:
       - 9042:9042
     volumes:
       - cassandra-db-data:/var/lib/cassandra
+      - ./src/main/Docker/liquibase/Cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
     networks:
       - reservation-system
     healthcheck:
