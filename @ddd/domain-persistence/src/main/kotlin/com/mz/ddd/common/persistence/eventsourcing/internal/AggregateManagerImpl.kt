@@ -1,18 +1,17 @@
 package com.mz.ddd.common.persistence.eventsourcing.internal
 
-import com.mz.ddd.common.api.domain.Aggregate
-import com.mz.ddd.common.api.domain.DomainCommand
-import com.mz.ddd.common.api.domain.DomainEvent
-import com.mz.ddd.common.api.domain.Id
+import com.mz.ddd.common.api.domain.*
 import com.mz.ddd.common.persistence.eventsourcing.AggregateManager
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.CommandEffect
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
 
-typealias PublishDocument<S> = (S) -> Unit
-typealias PublishChanged<E> = (E) -> Unit
+typealias PublishDocument<S> = (S) -> Mono<Void>
+typealias PublishChanged<E> = (E) -> Mono<Void>
 
-internal class AggregateManagerImpl<A : Aggregate, C : DomainCommand, E : DomainEvent, S>(
+internal class AggregateManagerImpl<A : Aggregate, C : DomainCommand, E : DomainEvent, S : Document<E>>(
     private val aggregateRepository: AggregateRepository<A, C, E>,
     private val aggregateMapper: (CommandEffect<A, E>) -> S,
     private val publishChanged: PublishChanged<E>? = null,
@@ -21,22 +20,31 @@ internal class AggregateManagerImpl<A : Aggregate, C : DomainCommand, E : Domain
 
     override fun execute(command: C, id: Id): Mono<S> =
         aggregateRepository.execute(id, command)
-            .map { effect ->
-                publishChanged?.let { publisher -> effect.events.forEach(publisher::invoke) }
-                aggregateMapper(effect)
+            .flatMap { effect ->
+                val document: S = aggregateMapper(effect)
+                publishChanged?.let { publisher ->
+                    Flux.fromIterable(effect.events)
+                        .flatMap { publisher.invoke(it) }
+                        .collectList().thenReturn(document)
+                } ?: document.toMono()
             }
-            .doOnNext { publishDocument?.invoke(it) }
+            .flatMap { publishDocument?.invoke(it)?.thenReturn(it) ?: it.toMono() }
 
 
     override fun executeAndReturnEvents(command: C, id: Id): Mono<List<E>> =
         aggregateRepository.execute(command = command, id = id)
-            .map { effect ->
+            .flatMap { effect ->
                 publishDocument?.let { publisher ->
-                    aggregateMapper(effect).also { state -> publisher.invoke(state) }
-                }
-                effect.events
+                    publisher(aggregateMapper(effect))
+                }?.thenReturn(effect.events) ?: effect.events.toMono()
             }
-            .doOnNext { events -> publishChanged?.let { events.forEach(it::invoke) } }
+            .flatMap { events ->
+                publishChanged?.let { publisher ->
+                    Flux.fromIterable(events)
+                        .flatMap { publisher.invoke(it) }
+                        .collectList().thenReturn(events)
+                } ?: events.toMono()
+            }
 
     override fun findById(id: Id): Mono<S> = aggregateRepository.find(id)
         .map { CommandEffect<A, E>(it) }

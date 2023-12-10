@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 
 @Import(DomainPersistenceConfiguration::class)
-abstract class AbstractEventSourcingConfiguration<A : Aggregate, C : DomainCommand, E : DomainEvent, S> {
+abstract class AbstractEventSourcingConfiguration<A : Aggregate, C : DomainCommand, E : DomainEvent, S : Document<E>> {
 
     @Autowired
     lateinit var eventStorageAdapter: EventStorageAdapter

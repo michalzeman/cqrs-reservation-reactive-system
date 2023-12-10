@@ -24,9 +24,8 @@ tasks.register<Copy>("processLiquibase") {
     }
 
     from("src/main/resources") // replace with your actual directory
-    include("**/changelog.xml")
+    include("**/event-sourcing-changelog.xml")
     into(destDir)
-    rename("changelog.xml", "event-sourcing-changelog.xml")
 }
 
 tasks.named("test") {

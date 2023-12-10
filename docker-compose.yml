@@ -65,7 +65,7 @@ services:
 
     command:
       - --url=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
-      - --changeLogFile=event-sourcing-changelog.xml
+      - --changeLogFile=customer-changelog.xml
       - --username=cassandra
       - --password=cassandra
       - --driver=com.simba.cassandra.jdbc42.Driver

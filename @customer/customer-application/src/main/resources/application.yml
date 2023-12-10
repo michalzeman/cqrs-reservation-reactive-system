@@ -11,6 +11,6 @@ spring:
   data:
     cassandra:
       local-datacenter: datacenter1
-      keyspace-name: customer_key_space
+      keyspace-name: customer_keyspace
       contact-points: 127.0.0.1
       port: 9042

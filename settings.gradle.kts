@@ -10,6 +10,9 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
+}
 
 dependencyResolutionManagement {
     versionCatalogs {
@@ -39,6 +42,7 @@ include("persistence-testing")
 include("@ddd")
 include("@ddd:common-domain-api")
 include("@ddd:domain-persistence")
+include("@ddd:domain-query")
 include("@ddd:lock-storage-adapter-api")
 include("@ddd:lock-storage-adapter-in-memory")
 include("@ddd:lock-storage-adapter-redis")

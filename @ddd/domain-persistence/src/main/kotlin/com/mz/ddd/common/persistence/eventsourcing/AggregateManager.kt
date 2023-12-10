@@ -1,5 +1,6 @@
 package com.mz.ddd.common.persistence.eventsourcing
 
+import com.mz.ddd.common.api.domain.Document
 import com.mz.ddd.common.api.domain.DomainCommand
 import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.api.domain.Id
@@ -11,7 +12,7 @@ import reactor.core.publisher.Mono
  * @param C - Domain command type -> mutation of Domain entity
  * @param S - State type, represents state/snapshot/document of domain entity
  */
-interface AggregateManager<A, C : DomainCommand, E : DomainEvent, S> {
+interface AggregateManager<A, C : DomainCommand, E : DomainEvent, S : Document<E>> {
 
     /**
      * Apply changes to Domain entity.

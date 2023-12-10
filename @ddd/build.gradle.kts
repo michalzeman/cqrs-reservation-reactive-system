@@ -15,6 +15,12 @@ project(":@ddd:domain-persistence") {
     }
 }
 
+project(":@ddd:domain-query") {
+    dependencies {
+        api(project(":@ddd:common-domain-api"))
+    }
+}
+
 project(":@ddd:lock-storage-adapter-in-memory") {
     dependencies {
         implementation(project(":@ddd:common-domain-api"))
