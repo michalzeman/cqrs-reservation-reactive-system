@@ -1,6 +1,5 @@
-eventsourcing:
-  event-storage-adapter:
-    events-per-snapshot: 3
+event.sourcing.domain-persistence:
+  events-per-snapshot: 3
 
 spring:
   redis:
