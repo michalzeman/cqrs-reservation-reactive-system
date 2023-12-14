@@ -4,5 +4,5 @@ import reactor.core.publisher.Mono
 
 interface DomainViewRepository {
 
-    fun save(queryableViews: Set<QueryableView<*>>): Mono<Void>
+    fun save(queryableData: Set<QueryableData<*>>): Mono<Void>
 }

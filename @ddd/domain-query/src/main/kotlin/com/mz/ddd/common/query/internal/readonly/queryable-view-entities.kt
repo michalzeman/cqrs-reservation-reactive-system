@@ -2,23 +2,29 @@ package com.mz.ddd.common.query.internal.readonly
 
 import com.mz.ddd.common.query.*
 import kotlinx.datetime.toKotlinInstant
+import org.springframework.data.cassandra.core.cql.PrimaryKeyType
 import org.springframework.data.cassandra.core.mapping.Column
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn
 import org.springframework.data.cassandra.core.mapping.Table
 import java.time.Instant
-import java.util.*
+
+
+/*
+(property_name, domain_tag, value)
+ */
 
 @Table("queryable_text_view")
 internal class QueryableTextViewEntity {
-    @Column("aggregate_id")
-    var aggregateId: UUID? = null
+    @PrimaryKeyColumn(name = "aggregate_id", type = PrimaryKeyType.CLUSTERED)
+    var aggregateId: String? = null
 
-    @Column("property_name")
+    @PrimaryKeyColumn(name = "property_name", type = PrimaryKeyType.PARTITIONED)
     var propertyName: String? = null
 
-    @Column("value")
+    @PrimaryKeyColumn(name = "value", type = PrimaryKeyType.PARTITIONED)
     var value: String? = null
 
-    @Column("domain_tag")
+    @PrimaryKeyColumn(name = "domain_tag", type = PrimaryKeyType.PARTITIONED)
     var domainTag: String? = null
 
     @Column("timestamp")
@@ -27,16 +33,16 @@ internal class QueryableTextViewEntity {
 
 @Table("queryable_boolean_view")
 internal class QueryableBooleanViewEntity {
-    @Column("aggregate_id")
-    var aggregateId: UUID? = null
+    @PrimaryKeyColumn(name = "aggregate_id", type = PrimaryKeyType.CLUSTERED)
+    var aggregateId: String? = null
 
-    @Column("property_name")
+    @PrimaryKeyColumn(name = "property_name", type = PrimaryKeyType.PARTITIONED)
     var propertyName: String? = null
 
-    @Column("value")
+    @PrimaryKeyColumn(name = "value", type = PrimaryKeyType.PARTITIONED)
     var value: Boolean? = null
 
-    @Column("domain_tag")
+    @PrimaryKeyColumn(name = "domain_tag", type = PrimaryKeyType.PARTITIONED)
     var domainTag: String? = null
 
     @Column("timestamp")
@@ -45,16 +51,16 @@ internal class QueryableBooleanViewEntity {
 
 @Table("queryable_timestamp_view")
 internal class QueryableTimestampViewEntity {
-    @Column("aggregate_id")
-    var aggregateId: UUID? = null
+    @PrimaryKeyColumn(name = "aggregate_id", type = PrimaryKeyType.CLUSTERED)
+    var aggregateId: String? = null
 
-    @Column("property_name")
+    @PrimaryKeyColumn(name = "property_name", type = PrimaryKeyType.PARTITIONED)
     var propertyName: String? = null
 
-    @Column("value")
+    @PrimaryKeyColumn(name = "value", type = PrimaryKeyType.PARTITIONED)
     var value: Instant? = null
 
-    @Column("domain_tag")
+    @PrimaryKeyColumn(name = "domain_tag", type = PrimaryKeyType.PARTITIONED)
     var domainTag: String? = null
 
     @Column("timestamp")
@@ -63,16 +69,16 @@ internal class QueryableTimestampViewEntity {
 
 @Table("queryable_long_view")
 internal class QueryableLongViewEntity {
-    @Column("aggregate_id")
-    var aggregateId: UUID? = null
+    @PrimaryKeyColumn(name = "aggregate_id", type = PrimaryKeyType.CLUSTERED)
+    var aggregateId: String? = null
 
-    @Column("property_name")
+    @PrimaryKeyColumn(name = "property_name", type = PrimaryKeyType.PARTITIONED)
     var propertyName: String? = null
 
-    @Column("value")
+    @PrimaryKeyColumn(name = "value", type = PrimaryKeyType.PARTITIONED)
     var value: Long? = null
 
-    @Column("domain_tag")
+    @PrimaryKeyColumn(name = "domain_tag", type = PrimaryKeyType.PARTITIONED)
     var domainTag: String? = null
 
     @Column("timestamp")
@@ -81,16 +87,16 @@ internal class QueryableLongViewEntity {
 
 @Table("queryable_double_view")
 internal class QueryableDoubleViewEntity {
-    @Column("aggregate_id")
-    var aggregateId: UUID? = null
+    @PrimaryKeyColumn(name = "aggregate_id", type = PrimaryKeyType.CLUSTERED)
+    var aggregateId: String? = null
 
-    @Column("property_name")
+    @PrimaryKeyColumn(name = "property_name", type = PrimaryKeyType.PARTITIONED)
     var propertyName: String? = null
 
-    @Column("value")
+    @PrimaryKeyColumn(name = "value", type = PrimaryKeyType.PARTITIONED)
     var value: Double? = null
 
-    @Column("domain_tag")
+    @PrimaryKeyColumn(name = "domain_tag", type = PrimaryKeyType.PARTITIONED)
     var domainTag: String? = null
 
     @Column("timestamp")

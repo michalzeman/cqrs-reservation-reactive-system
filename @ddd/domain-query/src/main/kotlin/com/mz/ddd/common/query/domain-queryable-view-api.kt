@@ -4,7 +4,7 @@ import com.mz.ddd.common.query.internal.save.*
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
 
-sealed class QueryableView<T> {
+sealed class QueryableData<T> {
     abstract val aggregateId: String
     abstract val propertyName: String
     abstract val domainTag: String
@@ -18,7 +18,7 @@ data class QueryableString(
     override val domainTag: String,
     override val timestamp: Instant,
     override val value: String
-) : QueryableView<String>()
+) : QueryableData<String>()
 
 data class QueryableBoolean(
     override val aggregateId: String,
@@ -26,7 +26,7 @@ data class QueryableBoolean(
     override val domainTag: String,
     override val timestamp: Instant,
     override val value: Boolean
-) : QueryableView<Boolean>()
+) : QueryableData<Boolean>()
 
 data class QueryableInstant(
     override val aggregateId: String,
@@ -34,7 +34,7 @@ data class QueryableInstant(
     override val domainTag: String,
     override val timestamp: Instant,
     override val value: Instant
-) : QueryableView<Instant>()
+) : QueryableData<Instant>()
 
 data class QueryableLong(
     override val aggregateId: String,
@@ -42,7 +42,7 @@ data class QueryableLong(
     override val domainTag: String,
     override val timestamp: Instant,
     override val value: Long
-) : QueryableView<Long>()
+) : QueryableData<Long>()
 
 data class QueryableDouble(
     override val aggregateId: String,
@@ -50,7 +50,7 @@ data class QueryableDouble(
     override val domainTag: String,
     override val timestamp: Instant,
     override val value: Double
-) : QueryableView<Double>()
+) : QueryableData<Double>()
 
 internal fun QueryableString.toEntity(): QueryableStringEntity {
     return QueryableStringEntity().apply {

@@ -13,18 +13,18 @@ internal class DomainViewRepositoryImpl(
     val queryableLongEntityRepository: QueryableLongEntityRepository,
     val queryableDoubleEntityRepository: QueryableDoubleEntityRepository
 ) : DomainViewRepository {
-    override fun save(queryableViews: Set<QueryableView<*>>): Mono<Void> {
-        val saveOperations = queryableViews.map { save(it) }
+    override fun save(queryableData: Set<QueryableData<*>>): Mono<Void> {
+        val saveOperations = queryableData.map { save(it) }
         return Flux.merge(saveOperations).then()
     }
 
-    private fun save(queryableView: QueryableView<*>): Mono<Void> {
-        return when (queryableView) {
-            is QueryableString -> queryableStringEntityRepository.save(queryableView.toEntity()).then()
-            is QueryableBoolean -> queryableBooleanEntityRepository.save(queryableView.toEntity()).then()
-            is QueryableDouble -> queryableDoubleEntityRepository.save(queryableView.toEntity()).then()
-            is QueryableInstant -> queryableInstantEntityRepository.save(queryableView.toEntity()).then()
-            is QueryableLong -> queryableLongEntityRepository.save(queryableView.toEntity()).then()
+    private fun save(queryableData: QueryableData<*>): Mono<Void> {
+        return when (queryableData) {
+            is QueryableString -> queryableStringEntityRepository.save(queryableData.toEntity()).then()
+            is QueryableBoolean -> queryableBooleanEntityRepository.save(queryableData.toEntity()).then()
+            is QueryableDouble -> queryableDoubleEntityRepository.save(queryableData.toEntity()).then()
+            is QueryableInstant -> queryableInstantEntityRepository.save(queryableData.toEntity()).then()
+            is QueryableLong -> queryableLongEntityRepository.save(queryableData.toEntity()).then()
         }
     }
 }

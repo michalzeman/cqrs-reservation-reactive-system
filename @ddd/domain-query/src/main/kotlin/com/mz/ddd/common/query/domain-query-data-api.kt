@@ -1,14 +1,50 @@
 package com.mz.ddd.common.query
 
+import kotlinx.datetime.Instant
+
 enum class OperationType {
     AND, OR, LIKE, NOT, EQUALS, GREATER_THAN, LESS_THAN
 }
 
-data class DomainViewQuery(
-    val queryableViewSet: Set<QueryableView<*>>,
-    val operationType: OperationType? = null
-)
+sealed interface QueryOperation
 
-data class QueryOperation(
-    val views: Set<DomainViewQuery>
-)
+data class DomainViewQuery(
+    val queryableDataSet: Set<QueryData<*>>,
+    val operationType: OperationType? = null
+) : QueryOperation
+
+sealed class QueryData<T> {
+    abstract val propertyName: String
+    abstract val domainTag: String
+    abstract val value: T
+}
+
+data class QueryString(
+    override val propertyName: String,
+    override val domainTag: String,
+    override val value: String
+) : QueryData<String>()
+
+data class QueryBoolean(
+    override val propertyName: String,
+    override val domainTag: String,
+    override val value: Boolean
+) : QueryData<Boolean>()
+
+data class QueryDouble(
+    override val propertyName: String,
+    override val domainTag: String,
+    override val value: Double
+) : QueryData<Double>()
+
+data class QueryLong(
+    override val propertyName: String,
+    override val domainTag: String,
+    override val value: Long
+) : QueryData<Long>()
+
+data class QueryInstant(
+    override val propertyName: String,
+    override val domainTag: String,
+    override val value: Instant
+) : QueryData<Instant>()

@@ -1,6 +1,7 @@
-package com.mz.customer.adapter.rest
+package com.mz.customer.adapter.rest.wiring
 
 import com.mz.common.components.adapter.http.onError
+import com.mz.customer.adapter.rest.CustomerHttpHandler
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,7 +16,7 @@ class CustomerAdapterRestConfiguration {
     lateinit var customerHttpHandler: CustomerHttpHandler
 
     @Bean
-    fun statisticRoute(): RouterFunction<ServerResponse> {
+    fun customerRoute(): RouterFunction<ServerResponse> {
         return RouterFunctions.route()
             .add(customerHttpHandler.route())
             .onError(

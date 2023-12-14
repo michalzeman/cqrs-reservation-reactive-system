@@ -1,9 +1,11 @@
 package com.mz.ddd.common.query
 
+import com.mz.ddd.common.api.domain.Id
 import reactor.core.publisher.Flux
 
 data class DomainView(
-    val views: Set<QueryableView<*>>
+    val aggregateId: Id,
+    val views: Set<QueryableData<*>>
 )
 
 interface DomainViewReadOnlyRepository {

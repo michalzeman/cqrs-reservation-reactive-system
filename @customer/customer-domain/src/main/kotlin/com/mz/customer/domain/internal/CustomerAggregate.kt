@@ -7,6 +7,7 @@ import com.mz.customer.api.domain.command.*
 import com.mz.customer.api.domain.event.*
 import com.mz.customer.api.domain.existsReservation
 import com.mz.ddd.common.api.domain.*
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 val CUSTOMER_DOMAIN_TAG = DomainTag("customer")
@@ -39,6 +40,7 @@ fun Id.getAggregate(): Customer {
 }
 
 @Serializable
+@SerialName("empty-customer")
 internal data class EmptyCustomer(
     override val aggregateId: Id = NEW_CUSTOMER_ID,
     override val version: Version = Version(0)
@@ -62,6 +64,7 @@ internal data class EmptyCustomer(
 }
 
 @Serializable
+@SerialName("existing-customer")
 internal data class ExistingCustomer(
     override val aggregateId: Id,
     override val version: Version = Version(),

@@ -20,10 +20,15 @@ fun <T : Any> ServerResponse.BodyBuilder.mapToResponse(result: T): Mono<ServerRe
 fun <E : Throwable> onError(e: E, logger: (E) -> Unit): Mono<ServerResponse> {
     return Mono.fromCallable {
         logger(e)
-        ErrorMessage(e.message ?: "")
+        e
     }.flatMap { error ->
-        ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        val httpStatus = when (error) {
+            is IllegalStateException -> HttpStatus.PRECONDITION_FAILED
+            else -> HttpStatus.INTERNAL_SERVER_ERROR
+        }
+        val errorMessage = ErrorMessage(error.message ?: "")
+        ServerResponse.status(httpStatus)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(BodyInserters.fromValue(error))
+            .body(BodyInserters.fromValue(errorMessage))
     }
 }
