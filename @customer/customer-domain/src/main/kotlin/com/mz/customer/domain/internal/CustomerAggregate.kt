@@ -75,7 +75,7 @@ internal data class ExistingCustomer(
 ) : Customer() {
     fun verifyRequestNewCustomerReservation(cmd: RequestNewCustomerReservation): List<CustomerEvent> {
         return if (reservations.existsReservation(cmd.reservationId)) {
-            throw RuntimeException("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")
+            error("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")
         } else {
             listOf(
                 cmd.toEvent()
@@ -85,7 +85,7 @@ internal data class ExistingCustomer(
 
     fun verifyUpdateCustomerReservationAsConfirmed(cmd: UpdateCustomerReservationAsConfirmed): List<CustomerEvent> {
         return if (reservations.existsReservation(cmd.reservationId)) {
-            throw RuntimeException("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")
+            error("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")
         } else {
             listOf(
                 cmd.toEvent()
@@ -95,7 +95,7 @@ internal data class ExistingCustomer(
 
     fun verifyUpdateCustomerReservationAsDeclined(cmd: UpdateCustomerReservationAsDeclined): List<CustomerEvent> {
         return if (reservations.existsReservation(cmd.reservationId)) {
-            throw RuntimeException("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")
+            error("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")
         } else {
             listOf(
                 cmd.toEvent()
