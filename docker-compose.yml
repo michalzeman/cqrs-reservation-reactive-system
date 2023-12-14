@@ -18,16 +18,15 @@ services:
     depends_on:
       cassandra-db:
         condition: service_healthy
-    #    command: /bin/bash -c "sleep 60 && echo loading cassandra keyspace && cqlsh cassandra-db -f /create-liquibase-keyspace.cql"
     command: /bin/bash -c "echo loading cassandra keyspace && cqlsh cassandra-db -f /create-liquibase-keyspace.cql"
 
   cassandra-db:
-    image: cassandra:4.1.3
+    build:
+      context: ./src/main/Docker/Cassandra
     ports:
       - 9042:9042
     volumes:
       - cassandra-db-data:/var/lib/cassandra
-      - ./src/main/Docker/liquibase/Cassandra/cassandra.yaml:/etc/cassandra/cassandra.yaml
     networks:
       - reservation-system
     healthcheck:
@@ -37,40 +36,54 @@ services:
       retries: 10
 
   cassandra-liquibase-ddd-testing:
-    image: liquibase/liquibase:4.23.2
+    build:
+      context: ./src/main/Docker/liquibase/Cassandra
     volumes:
       - ./@ddd/event-storage-adapter-cassandra-db/build/cassandra-db/liquibase/changelog:/liquibase/changelog
-      - ./src/main/Docker/liquibase/Cassandra/lib:/liquibase/lib
+    environment:
+      - URL=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
+      - CHANGELOG_FILE=event-sourcing-changelog.xml
+      - USERNAME=cassandra
+      - PASSWORD=cassandra
+      - DRIVER=com.simba.cassandra.jdbc42.Driver
+      - DEFAULT_SCHEMA_NAME=ddd_testing_keyspace
     depends_on:
       - cassandra-db-init-liquibase-keyspace
 
-    command:
-      - --url=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
-      - --changeLogFile=event-sourcing-changelog.xml
-      - --username=cassandra
-      - --password=cassandra
-      - --driver=com.simba.cassandra.jdbc42.Driver
-      - --defaultSchemaName=ddd_testing_keyspace
-      - update
+    #    command:
+    #      - --url=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
+    #      - --changeLogFile=event-sourcing-changelog.xml
+    #      - --username=cassandra
+    #      - --password=cassandra
+    #      - --driver=com.simba.cassandra.jdbc42.Driver
+    #      - --defaultSchemaName=ddd_testing_keyspace
+    #      - update
     networks:
       - reservation-system
 
   cassandra-liquibase-customer:
-    image: liquibase/liquibase:4.23.2
+    build:
+      context: ./src/main/Docker/liquibase/Cassandra
     volumes:
       - ./@customer/build/cassandra-db/liquibase/changelog:/liquibase/changelog
-      - ./src/main/Docker/liquibase/Cassandra/lib:/liquibase/lib
+    environment:
+      - URL=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
+      - CHANGELOG_FILE=customer-changelog.xml
+      - USERNAME=cassandra
+      - PASSWORD=cassandra
+      - DRIVER=com.simba.cassandra.jdbc42.Driver
+      - DEFAULT_SCHEMA_NAME=ddd_testing_keyspace
     depends_on:
       - cassandra-db-init-liquibase-keyspace
 
-    command:
-      - --url=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
-      - --changeLogFile=customer-changelog.xml
-      - --username=cassandra
-      - --password=cassandra
-      - --driver=com.simba.cassandra.jdbc42.Driver
-      - --defaultSchemaName=ddd_testing_keyspace
-      - update
+    #    command:
+    #      - --url=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
+    #      - --changeLogFile=customer-changelog.xml
+    #      - --username=cassandra
+    #      - --password=cassandra
+    #      - --driver=com.simba.cassandra.jdbc42.Driver
+    #      - --defaultSchemaName=ddd_testing_keyspace
+    #      - update
     networks:
       - reservation-system
 
