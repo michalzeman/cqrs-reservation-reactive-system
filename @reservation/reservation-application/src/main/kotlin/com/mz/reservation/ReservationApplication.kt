@@ -1,4 +1,4 @@
-package reservation
+package com.mz.reservation
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

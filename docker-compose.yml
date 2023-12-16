@@ -50,14 +50,6 @@ services:
     depends_on:
       - cassandra-db-init-liquibase-keyspace
 
-    #    command:
-    #      - --url=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
-    #      - --changeLogFile=event-sourcing-changelog.xml
-    #      - --username=cassandra
-    #      - --password=cassandra
-    #      - --driver=com.simba.cassandra.jdbc42.Driver
-    #      - --defaultSchemaName=ddd_testing_keyspace
-    #      - update
     networks:
       - reservation-system
 
@@ -76,14 +68,24 @@ services:
     depends_on:
       - cassandra-db-init-liquibase-keyspace
 
-    #    command:
-    #      - --url=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
-    #      - --changeLogFile=customer-changelog.xml
-    #      - --username=cassandra
-    #      - --password=cassandra
-    #      - --driver=com.simba.cassandra.jdbc42.Driver
-    #      - --defaultSchemaName=ddd_testing_keyspace
-    #      - update
+    networks:
+      - reservation-system
+
+  cassandra-liquibase-reservation:
+    build:
+      context: ./src/main/Docker/liquibase/Cassandra
+    volumes:
+      - ./@reservation/build/cassandra-db/liquibase/changelog:/liquibase/changelog
+    environment:
+      - URL=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
+      - CHANGELOG_FILE=reservation-changelog.xml
+      - USERNAME=cassandra
+      - PASSWORD=cassandra
+      - DRIVER=com.simba.cassandra.jdbc42.Driver
+      - DEFAULT_SCHEMA_NAME=ddd_testing_keyspace
+    depends_on:
+      - cassandra-db-init-liquibase-keyspace
+
     networks:
       - reservation-system
 
