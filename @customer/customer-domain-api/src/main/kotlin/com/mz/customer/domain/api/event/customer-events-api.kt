@@ -36,6 +36,7 @@ data class CustomerReservationRequested(
 @SerialName("customer-reservation-confirmed")
 data class CustomerReservationConfirmed(
     val reservationId: Id,
+    val requestId: Id,
     override val aggregateId: Id,
     override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
@@ -46,6 +47,7 @@ data class CustomerReservationConfirmed(
 @SerialName("customer-reservation-declined")
 data class CustomerReservationDeclined(
     val reservationId: Id,
+    val requestId: Id,
     override val aggregateId: Id,
     override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),

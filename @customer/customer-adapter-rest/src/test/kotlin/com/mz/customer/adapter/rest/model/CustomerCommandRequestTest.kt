@@ -64,6 +64,7 @@ class CustomerCommandRequestTest {
             {
                 "type":"update-customer-reservation-as-confirmed",
                 "customerId":"123",
+                "requestId":"012",
                 "reservationId":"456",
                 "correlationId":"789",
                 "createdAt":"2021-03-01T00:00:00.000Z",
@@ -85,6 +86,7 @@ class CustomerCommandRequestTest {
             {
                 "type":"update-customer-reservation-as-declined",
                 "customerId":"123",
+                "requestId":"012",
                 "reservationId":"456",
                 "correlationId":"789",
                 "createdAt":"2021-03-01T00:00:00.000Z",

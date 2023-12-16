@@ -26,29 +26,30 @@ class CustomerWorkflowTest {
             email = Email("test-${randomString}@test.com")
         )
 
-        val reservationId = uuid()
+        val requestId = uuid()
 
         val result = customerApi.execute(registerCustomer).block()
 
         val newCustomerReservation = RequestNewCustomerReservation(
             customerId = result!!.aggregateId,
-            reservationId = Id(reservationId)
+            reservationId = Id(requestId)
         )
 
         StepVerifier.create(customerApi.execute(newCustomerReservation))
             .assertNext { document ->
-                document.reservations.any { it.id.value == reservationId && it.status == ReservationStatus.REQUESTED }
+                document.reservations.any { it.id.value == requestId && it.status == ReservationStatus.REQUESTED }
             }
             .verifyComplete()
 
         val updateCustomerReservationAsConfirmed = UpdateCustomerReservationAsConfirmed(
             customerId = result.aggregateId,
-            reservationId = Id(reservationId)
+            requestId = Id(requestId),
+            reservationId = newId()
         )
 
         StepVerifier.create(customerApi.execute(updateCustomerReservationAsConfirmed))
             .assertNext { document ->
-                document.reservations.any { it.id.value == reservationId && it.status == ReservationStatus.CONFIRMED }
+                document.reservations.any { it.id.value == requestId && it.status == ReservationStatus.CONFIRMED }
             }
             .verifyComplete()
     }
@@ -62,29 +63,30 @@ class CustomerWorkflowTest {
             email = Email("test-${randomString}@test.com")
         )
 
-        val reservationId = uuid()
+        val requestId = uuid()
 
         val result = customerApi.execute(registerCustomer).block()
 
         val newCustomerReservation = RequestNewCustomerReservation(
             customerId = result!!.aggregateId,
-            reservationId = Id(reservationId)
+            reservationId = Id(requestId)
         )
 
         StepVerifier.create(customerApi.execute(newCustomerReservation))
             .assertNext { document ->
-                document.reservations.any { it.id.value == reservationId && it.status == ReservationStatus.REQUESTED }
+                document.reservations.any { it.id.value == requestId && it.status == ReservationStatus.REQUESTED }
             }
             .verifyComplete()
 
         val updateCustomerReservationAsDeclined = UpdateCustomerReservationAsConfirmed(
             customerId = result.aggregateId,
-            reservationId = Id(reservationId)
+            requestId = Id(requestId),
+            reservationId = newId()
         )
 
         StepVerifier.create(customerApi.execute(updateCustomerReservationAsDeclined))
             .assertNext { document ->
-                document.reservations.any { it.id.value == reservationId && it.status == ReservationStatus.DECLINED }
+                document.reservations.any { it.id.value == requestId && it.status == ReservationStatus.DECLINED }
             }
             .verifyComplete()
     }

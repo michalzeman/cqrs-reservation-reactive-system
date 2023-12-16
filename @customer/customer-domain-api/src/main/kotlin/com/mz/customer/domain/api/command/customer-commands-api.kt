@@ -52,6 +52,7 @@ fun RequestNewCustomerReservation.toEvent(): CustomerReservationRequested {
 data class UpdateCustomerReservationAsConfirmed(
     override val customerId: Id,
     val reservationId: Id,
+    val requestId: Id,
     override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
     override val commandId: Id = Id(uuid())
@@ -61,13 +62,15 @@ fun UpdateCustomerReservationAsConfirmed.toEvent(): CustomerReservationConfirmed
     return CustomerReservationConfirmed(
         aggregateId = this.customerId,
         reservationId = this.reservationId,
-        correlationId = this.correlationId
+        correlationId = this.correlationId,
+        requestId = this.requestId
     )
 }
 
 data class UpdateCustomerReservationAsDeclined(
     override val customerId: Id,
     val reservationId: Id,
+    val requestId: Id,
     override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
     override val commandId: Id = Id(uuid())
@@ -77,6 +80,7 @@ fun UpdateCustomerReservationAsDeclined.toEvent(): CustomerReservationDeclined {
     return CustomerReservationDeclined(
         aggregateId = this.customerId,
         reservationId = this.reservationId,
-        correlationId = this.correlationId
+        correlationId = this.correlationId,
+        requestId = this.reservationId
     )
 }

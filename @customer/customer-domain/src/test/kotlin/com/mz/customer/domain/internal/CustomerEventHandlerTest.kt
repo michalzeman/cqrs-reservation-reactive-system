@@ -1,5 +1,7 @@
 package com.mz.customer.domain.internal
 
+import com.mz.customer.domain.api.Reservation
+import com.mz.customer.domain.api.ReservationStatus
 import com.mz.customer.domain.api.event.CustomerRegistered
 import com.mz.customer.domain.api.event.CustomerReservationConfirmed
 import com.mz.customer.domain.api.event.CustomerReservationDeclined
@@ -54,21 +56,41 @@ class CustomerEventHandlerTest {
 
     @Test
     fun `applying CustomerReservationConfirmed event to ExistingCustomer should return ExistingCustomer`() {
+        val existingReservation = Reservation(Id("reservation:2"), ReservationStatus.REQUESTED)
         val existingCustomer =
-            ExistingCustomer(Id("1"), Version(2), LastName("Doe"), FirstName("John"), Email("john.doe@example.com"))
-        val event = CustomerReservationConfirmed(Id("1"), Id("2"))
+            ExistingCustomer(
+                Id("1"),
+                Version(2),
+                LastName("Doe"),
+                FirstName("John"),
+                Email("john.doe@example.com"),
+                setOf(existingReservation)
+            )
+        val event = CustomerReservationConfirmed(Id("1"), Id("reservation:2"), newId())
         val result = eventHandler.apply(existingCustomer, event)
         assertTrue(result is ExistingCustomer)
         assertEquals(result.version, Version(3))
+        assertTrue((result as ExistingCustomer).reservations.all { it.status == ReservationStatus.CONFIRMED })
+        assertTrue(result.reservations.all { it.id == Id("1") })
     }
 
     @Test
     fun `applying CustomerReservationDeclined event to ExistingCustomer should return ExistingCustomer`() {
+        val existingReservation = Reservation(Id("reservation:2"), ReservationStatus.REQUESTED)
         val existingCustomer =
-            ExistingCustomer(Id("1"), Version(2), LastName("Doe"), FirstName("John"), Email("john.doe@example.com"))
-        val event = CustomerReservationDeclined(Id("1"), Id("2"))
+            ExistingCustomer(
+                Id("1"),
+                Version(2),
+                LastName("Doe"),
+                FirstName("John"),
+                Email("john.doe@example.com"),
+                setOf(existingReservation)
+            )
+        val event = CustomerReservationDeclined(Id("1"), Id("reservation:2"), newId())
         val result = eventHandler.apply(existingCustomer, event)
         assertTrue(result is ExistingCustomer)
         assertEquals(result.version, Version(3))
+        assertTrue((result as ExistingCustomer).reservations.all { it.status == ReservationStatus.DECLINED })
+        assertTrue(result.reservations.all { it.id == Id("1") })
     }
 }

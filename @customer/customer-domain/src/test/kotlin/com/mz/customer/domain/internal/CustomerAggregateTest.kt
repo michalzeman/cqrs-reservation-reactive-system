@@ -65,7 +65,7 @@ class CustomerAggregateTest {
                 setOf(existingReservation)
             )
         val updateCustomerReservationAsConfirmedCommand =
-            UpdateCustomerReservationAsConfirmed(Id("1"), Id("reservation:2"))
+            UpdateCustomerReservationAsConfirmed(Id("1"), newId(), Id("reservation:2"))
         val events =
             existingCustomer.verifyUpdateCustomerReservationAsConfirmed(updateCustomerReservationAsConfirmedCommand)
         assertTrue(events.single() is CustomerReservationConfirmed)
@@ -82,7 +82,7 @@ class CustomerAggregateTest {
                 Email("john.doe@example.com"),
             )
         val updateCustomerReservationAsConfirmedCommand =
-            UpdateCustomerReservationAsConfirmed(Id("1"), Id("reservation:2"))
+            UpdateCustomerReservationAsConfirmed(Id("1"), newId(), Id("reservation:2"))
 
         assertThrows<RuntimeException> {
             existingCustomer.verifyUpdateCustomerReservationAsConfirmed(updateCustomerReservationAsConfirmedCommand)
@@ -102,7 +102,7 @@ class CustomerAggregateTest {
                 setOf(existingReservation)
             )
         val updateCustomerReservationAsDeclinedCommand =
-            UpdateCustomerReservationAsDeclined(Id("1"), Id("reservation:2"))
+            UpdateCustomerReservationAsDeclined(Id("1"), Id("reservation:2"), newId())
         val events =
             existingCustomer.verifyUpdateCustomerReservationAsDeclined(updateCustomerReservationAsDeclinedCommand)
         assertTrue(events.single() is CustomerReservationDeclined)
@@ -119,7 +119,7 @@ class CustomerAggregateTest {
                 Email("john.doe@example.com"),
             )
         val updateCustomerReservationAsDeclinedCommand =
-            UpdateCustomerReservationAsDeclined(Id("1"), Id("reservation:2"))
+            UpdateCustomerReservationAsDeclined(Id("1"), Id("reservation:2"), newId())
         assertThrows<RuntimeException> {
             existingCustomer.verifyUpdateCustomerReservationAsDeclined(updateCustomerReservationAsDeclinedCommand)
         }

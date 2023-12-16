@@ -1,9 +1,6 @@
 package com.mz.customer.domain.api.command
 
-import com.mz.ddd.common.api.domain.Email
-import com.mz.ddd.common.api.domain.FirstName
-import com.mz.ddd.common.api.domain.Id
-import com.mz.ddd.common.api.domain.LastName
+import com.mz.ddd.common.api.domain.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -31,7 +28,7 @@ class CustomerCommandTest {
 
     @Test
     fun `UpdateCustomerReservationAsConfirmed command should correctly convert to CustomerReservationConfirmed event`() {
-        val command = UpdateCustomerReservationAsConfirmed(Id("1"), Id("2"))
+        val command = UpdateCustomerReservationAsConfirmed(Id("1"), Id("2"), newId())
         val event = command.toEvent()
         assertEquals("1", event.aggregateId.value)
         assertEquals("2", event.reservationId.value)
@@ -40,7 +37,7 @@ class CustomerCommandTest {
 
     @Test
     fun `UpdateCustomerReservationAsDeclined command should correctly convert to CustomerReservationDeclined event`() {
-        val command = UpdateCustomerReservationAsDeclined(Id("1"), Id("2"))
+        val command = UpdateCustomerReservationAsDeclined(Id("1"), Id("2"), newId())
         val event = command.toEvent()
         assertEquals("1", event.aggregateId.value)
         assertEquals("2", event.reservationId.value)

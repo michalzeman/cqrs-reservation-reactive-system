@@ -61,7 +61,8 @@ class CustomerCommandHandlerTest {
                 Email("john.doe@example.com"),
                 setOf(reservation)
             )
-        val updateCustomerReservationAsConfirmedCommand = UpdateCustomerReservationAsConfirmed(Id("1"), Id("2"))
+        val updateCustomerReservationAsConfirmedCommand =
+            UpdateCustomerReservationAsConfirmed(Id("1"), Id("3"), Id("2"))
         val result = commandHandler.execute(existingCustomer, updateCustomerReservationAsConfirmedCommand)
         assertTrue(result.isSuccess)
         assertTrue(result.getOrThrow().single() is CustomerReservationConfirmed)
@@ -71,7 +72,8 @@ class CustomerCommandHandlerTest {
     fun `confirming a reservation should produce a error`() {
         val existingCustomer =
             ExistingCustomer(Id("1"), Version(2), LastName("Doe"), FirstName("John"), Email("john.doe@example.com"))
-        val updateCustomerReservationAsConfirmedCommand = UpdateCustomerReservationAsConfirmed(Id("1"), Id("2"))
+        val updateCustomerReservationAsConfirmedCommand =
+            UpdateCustomerReservationAsConfirmed(Id("1"), Id("2"), Id("3"))
         val result = commandHandler.execute(existingCustomer, updateCustomerReservationAsConfirmedCommand)
         assertTrue(result.isFailure)
     }
@@ -88,7 +90,7 @@ class CustomerCommandHandlerTest {
                 Email("john.doe@example.com"),
                 setOf(reservation)
             )
-        val updateCustomerReservationAsDeclinedCommand = UpdateCustomerReservationAsDeclined(Id("1"), Id("2"))
+        val updateCustomerReservationAsDeclinedCommand = UpdateCustomerReservationAsDeclined(Id("1"), Id("2"), newId())
         val result = commandHandler.execute(existingCustomer, updateCustomerReservationAsDeclinedCommand)
         assertTrue(result.isSuccess)
         assertTrue(result.getOrThrow().single() is CustomerReservationDeclined)
@@ -98,7 +100,7 @@ class CustomerCommandHandlerTest {
     fun `declining a reservation should produce error`() {
         val existingCustomer =
             ExistingCustomer(Id("1"), Version(3), LastName("Doe"), FirstName("John"), Email("john.doe@example.com"))
-        val updateCustomerReservationAsDeclinedCommand = UpdateCustomerReservationAsDeclined(Id("1"), Id("2"))
+        val updateCustomerReservationAsDeclinedCommand = UpdateCustomerReservationAsDeclined(Id("1"), Id("2"), newId())
         val result = commandHandler.execute(existingCustomer, updateCustomerReservationAsDeclinedCommand)
         assertTrue(result.isFailure)
     }

@@ -71,6 +71,7 @@ data class NewCustomerReservationRequest(
 data class UpdateCustomerReservationAsConfirmedRequest(
     val customerId: String,
     val reservationId: String,
+    val requestId: String,
     val correlationId: String = uuid(),
     val createdAt: Instant = instantNow(),
     val commandId: String = uuid()
@@ -78,6 +79,7 @@ data class UpdateCustomerReservationAsConfirmedRequest(
     override fun toCommand(): CustomerCommand {
         return UpdateCustomerReservationAsConfirmed(
             customerId = Id(customerId),
+            requestId = Id(requestId),
             reservationId = Id(reservationId),
             correlationId = Id(correlationId),
             createdAt = createdAt,
@@ -89,6 +91,7 @@ data class UpdateCustomerReservationAsConfirmedRequest(
 data class UpdateCustomerReservationAsDeclinedRequest(
     val customerId: String,
     val reservationId: String,
+    val requestId: String,
     val correlationId: String = uuid(),
     val createdAt: Instant = instantNow(),
     val commandId: String = uuid()
@@ -96,6 +99,7 @@ data class UpdateCustomerReservationAsDeclinedRequest(
     override fun toCommand(): CustomerCommand {
         return UpdateCustomerReservationAsDeclined(
             customerId = Id(customerId),
+            requestId = Id(requestId),
             reservationId = Id(reservationId),
             correlationId = Id(correlationId),
             createdAt = createdAt,

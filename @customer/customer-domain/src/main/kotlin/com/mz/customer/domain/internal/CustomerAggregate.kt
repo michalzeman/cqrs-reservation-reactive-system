@@ -1,11 +1,8 @@
 package com.mz.customer.domain.internal
 
-import com.mz.customer.domain.api.CustomerDocument
-import com.mz.customer.domain.api.Reservation
-import com.mz.customer.domain.api.ReservationStatus
+import com.mz.customer.domain.api.*
 import com.mz.customer.domain.api.command.*
 import com.mz.customer.domain.api.event.*
-import com.mz.customer.domain.api.existsReservation
 import com.mz.ddd.common.api.domain.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -73,7 +70,7 @@ internal data class ExistingCustomer(
     val email: Email,
     val reservations: Set<Reservation> = emptySet()
 ) : Customer() {
-    fun verifyRequestNewCustomerReservation(cmd: RequestNewCustomerReservation): List<CustomerEvent> {
+    internal fun verifyRequestNewCustomerReservation(cmd: RequestNewCustomerReservation): List<CustomerEvent> {
         return if (reservations.existsReservation(cmd.reservationId)) {
             error("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")
         } else {
@@ -83,8 +80,8 @@ internal data class ExistingCustomer(
         }
     }
 
-    fun verifyUpdateCustomerReservationAsConfirmed(cmd: UpdateCustomerReservationAsConfirmed): List<CustomerEvent> {
-        return if (!reservations.existsReservation(cmd.reservationId)) {
+    internal fun verifyUpdateCustomerReservationAsConfirmed(cmd: UpdateCustomerReservationAsConfirmed): List<CustomerEvent> {
+        return if (!reservations.existsReservation(cmd.requestId)) {
             error("Can't confirm the reservation id=${cmd.reservationId}, reservation doesn't exist")
         } else {
             listOf(
@@ -93,28 +90,26 @@ internal data class ExistingCustomer(
         }
     }
 
-    fun verifyUpdateCustomerReservationAsDeclined(cmd: UpdateCustomerReservationAsDeclined): List<CustomerEvent> {
-        return if (!reservations.existsReservation(cmd.reservationId)) {
-            error("Can't decline the reservation id=${cmd.reservationId}, reservation doesn't exist")
-        } else {
+    internal fun verifyUpdateCustomerReservationAsDeclined(cmd: UpdateCustomerReservationAsDeclined): List<CustomerEvent> {
+        return if (reservations.existsReservation(cmd.reservationId) || reservations.existsReservation(cmd.requestId)) {
             listOf(
                 cmd.toEvent()
             )
+        } else {
+            error("Can't decline the reservation id=${cmd.reservationId}, reservation doesn't exist")
         }
     }
 
-    fun apply(event: CustomerReservationRequested): ExistingCustomer {
+    internal fun apply(event: CustomerReservationRequested): ExistingCustomer {
         val reservation = Reservation(event.reservationId, ReservationStatus.REQUESTED)
         return this.copy(reservations = reservations.plus(reservation), version = version.increment())
     }
 
-    fun apply(event: CustomerReservationConfirmed): ExistingCustomer {
-        val reservation = Reservation(event.reservationId, ReservationStatus.CONFIRMED)
-        return this.copy(reservations = reservations.plus(reservation), version = version.increment())
+    internal fun apply(event: CustomerReservationConfirmed): ExistingCustomer {
+        return this.copy(reservations = reservations.apply(event), version = version.increment())
     }
 
-    fun apply(event: CustomerReservationDeclined): ExistingCustomer {
-        val reservation = Reservation(event.reservationId, ReservationStatus.DECLINED)
-        return this.copy(reservations = reservations.plus(reservation), version = version.increment())
+    internal fun apply(event: CustomerReservationDeclined): ExistingCustomer {
+        return this.copy(reservations = reservations.apply(event), version = version.increment())
     }
 }
