@@ -1,10 +1,10 @@
 package com.mz.customer
 
-import com.mz.customer.api.domain.ReservationStatus
-import com.mz.customer.api.domain.command.RegisterCustomer
-import com.mz.customer.api.domain.command.RequestNewCustomerReservation
-import com.mz.customer.api.domain.command.UpdateCustomerReservationAsConfirmed
 import com.mz.customer.domain.CustomerApi
+import com.mz.customer.domain.api.ReservationStatus
+import com.mz.customer.domain.api.command.RegisterCustomer
+import com.mz.customer.domain.api.command.RequestNewCustomerReservation
+import com.mz.customer.domain.api.command.UpdateCustomerReservationAsConfirmed
 import com.mz.ddd.common.api.domain.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

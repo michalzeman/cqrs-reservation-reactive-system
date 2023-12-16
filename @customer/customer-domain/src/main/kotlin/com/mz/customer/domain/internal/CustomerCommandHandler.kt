@@ -1,7 +1,7 @@
 package com.mz.customer.domain.internal
 
-import com.mz.customer.api.domain.command.*
-import com.mz.customer.api.domain.event.CustomerEvent
+import com.mz.customer.domain.api.command.*
+import com.mz.customer.domain.api.event.CustomerEvent
 import com.mz.ddd.common.api.domain.command.AggregateCommandHandler
 
 

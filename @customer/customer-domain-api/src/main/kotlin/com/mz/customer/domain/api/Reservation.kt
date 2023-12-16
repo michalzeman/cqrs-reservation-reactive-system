@@ -1,4 +1,4 @@
-package com.mz.customer.api.domain
+package com.mz.customer.domain.api
 
 import com.mz.ddd.common.api.domain.Id
 import kotlinx.serialization.Serializable

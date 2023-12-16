@@ -1,6 +1,6 @@
-package com.mz.customer.api.domain
+package com.mz.customer.domain.api
 
-import com.mz.customer.api.domain.event.CustomerEvent
+import com.mz.customer.domain.api.event.CustomerEvent
 import com.mz.ddd.common.api.domain.*
 import kotlinx.datetime.Instant
 

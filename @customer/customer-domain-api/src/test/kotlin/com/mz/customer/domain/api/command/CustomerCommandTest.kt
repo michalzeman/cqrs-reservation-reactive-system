@@ -1,4 +1,4 @@
-package com.mz.customer.api.domain.command
+package com.mz.customer.domain.api.command
 
 import com.mz.ddd.common.api.domain.Email
 import com.mz.ddd.common.api.domain.FirstName

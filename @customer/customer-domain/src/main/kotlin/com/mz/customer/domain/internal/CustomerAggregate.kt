@@ -1,11 +1,11 @@
 package com.mz.customer.domain.internal
 
-import com.mz.customer.api.domain.CustomerDocument
-import com.mz.customer.api.domain.Reservation
-import com.mz.customer.api.domain.ReservationStatus
-import com.mz.customer.api.domain.command.*
-import com.mz.customer.api.domain.event.*
-import com.mz.customer.api.domain.existsReservation
+import com.mz.customer.domain.api.CustomerDocument
+import com.mz.customer.domain.api.Reservation
+import com.mz.customer.domain.api.ReservationStatus
+import com.mz.customer.domain.api.command.*
+import com.mz.customer.domain.api.event.*
+import com.mz.customer.domain.api.existsReservation
 import com.mz.ddd.common.api.domain.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

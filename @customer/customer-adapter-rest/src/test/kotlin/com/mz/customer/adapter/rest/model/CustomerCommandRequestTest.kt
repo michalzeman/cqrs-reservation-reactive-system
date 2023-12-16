@@ -3,10 +3,10 @@ package com.mz.customer.adapter.rest.model
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.mz.common.components.json.registerRequiredModules
-import com.mz.customer.api.domain.command.RegisterCustomer
-import com.mz.customer.api.domain.command.RequestNewCustomerReservation
-import com.mz.customer.api.domain.command.UpdateCustomerReservationAsConfirmed
-import com.mz.customer.api.domain.command.UpdateCustomerReservationAsDeclined
+import com.mz.customer.domain.api.command.RegisterCustomer
+import com.mz.customer.domain.api.command.RequestNewCustomerReservation
+import com.mz.customer.domain.api.command.UpdateCustomerReservationAsConfirmed
+import com.mz.customer.domain.api.command.UpdateCustomerReservationAsDeclined
 import kotlinx.datetime.Instant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

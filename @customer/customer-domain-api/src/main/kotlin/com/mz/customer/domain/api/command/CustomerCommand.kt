@@ -1,9 +1,9 @@
-package com.mz.customer.api.domain.command
+package com.mz.customer.domain.api.command
 
-import com.mz.customer.api.domain.event.CustomerRegistered
-import com.mz.customer.api.domain.event.CustomerReservationConfirmed
-import com.mz.customer.api.domain.event.CustomerReservationDeclined
-import com.mz.customer.api.domain.event.CustomerReservationRequested
+import com.mz.customer.domain.api.event.CustomerRegistered
+import com.mz.customer.domain.api.event.CustomerReservationConfirmed
+import com.mz.customer.domain.api.event.CustomerReservationDeclined
+import com.mz.customer.domain.api.event.CustomerReservationRequested
 import com.mz.ddd.common.api.domain.*
 import kotlinx.datetime.Instant
 

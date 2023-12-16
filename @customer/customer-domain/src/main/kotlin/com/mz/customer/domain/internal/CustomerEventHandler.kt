@@ -1,6 +1,6 @@
 package com.mz.customer.domain.internal
 
-import com.mz.customer.api.domain.event.*
+import com.mz.customer.domain.api.event.*
 import com.mz.ddd.common.api.domain.event.AggregateEventHandler
 
 class CustomerEventHandler : AggregateEventHandler<Customer, CustomerEvent> {

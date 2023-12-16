@@ -2,7 +2,7 @@ package com.mz.customer.adapter.rest.model
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.mz.customer.api.domain.command.*
+import com.mz.customer.domain.api.command.*
 import com.mz.ddd.common.api.domain.*
 import kotlinx.datetime.Instant
 

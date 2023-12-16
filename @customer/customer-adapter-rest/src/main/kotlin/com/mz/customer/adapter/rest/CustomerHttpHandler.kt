@@ -2,8 +2,8 @@ package com.mz.customer.adapter.rest
 
 import com.mz.common.components.adapter.http.HttpHandler
 import com.mz.customer.adapter.rest.model.CustomerCommandRequest
-import com.mz.customer.api.domain.command.RegisterCustomer
 import com.mz.customer.domain.CustomerApi
+import com.mz.customer.domain.api.command.RegisterCustomer
 import com.mz.ddd.common.api.domain.Id
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component

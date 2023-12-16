@@ -1,10 +1,10 @@
 package com.mz.customer.domain.internal.view
 
-import com.mz.customer.api.domain.CustomerDocument
 import com.mz.customer.domain.CustomerProperties
 import com.mz.customer.domain.CustomerQuery
 import com.mz.customer.domain.CustomerView
 import com.mz.customer.domain.FindCustomerByEmail
+import com.mz.customer.domain.api.CustomerDocument
 import com.mz.customer.domain.internal.CUSTOMER_DOMAIN_TAG
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.instantNow

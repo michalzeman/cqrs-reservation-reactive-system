@@ -1,9 +1,9 @@
 package com.mz.customer.domain
 
-import com.mz.customer.api.domain.CustomerDocument
-import com.mz.customer.api.domain.command.CustomerCommand
-import com.mz.customer.api.domain.command.RegisterCustomer
-import com.mz.customer.api.domain.event.CustomerEvent
+import com.mz.customer.domain.api.CustomerDocument
+import com.mz.customer.domain.api.command.CustomerCommand
+import com.mz.customer.domain.api.command.RegisterCustomer
+import com.mz.customer.domain.api.event.CustomerEvent
 import com.mz.customer.domain.internal.Customer
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.persistence.eventsourcing.AggregateManager

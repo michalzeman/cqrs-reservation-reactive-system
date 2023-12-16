@@ -1,9 +1,9 @@
 package com.mz.customer.domain.internal
 
-import com.mz.customer.api.domain.event.CustomerRegistered
-import com.mz.customer.api.domain.event.CustomerReservationConfirmed
-import com.mz.customer.api.domain.event.CustomerReservationDeclined
-import com.mz.customer.api.domain.event.CustomerReservationRequested
+import com.mz.customer.domain.api.event.CustomerRegistered
+import com.mz.customer.domain.api.event.CustomerReservationConfirmed
+import com.mz.customer.domain.api.event.CustomerReservationDeclined
+import com.mz.customer.domain.api.event.CustomerReservationRequested
 import com.mz.ddd.common.api.domain.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

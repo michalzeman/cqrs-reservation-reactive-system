@@ -1,6 +1,6 @@
 package com.mz.customer.domain
 
-import com.mz.customer.api.domain.CustomerDocument
+import com.mz.customer.domain.api.CustomerDocument
 import com.mz.ddd.common.api.domain.Email
 import com.mz.ddd.common.api.domain.Id
 import reactor.core.publisher.Flux

@@ -1,4 +1,4 @@
-package com.mz.customer.api.domain.event
+package com.mz.customer.domain.api.event
 
 import com.mz.ddd.common.api.domain.*
 import kotlinx.datetime.Instant

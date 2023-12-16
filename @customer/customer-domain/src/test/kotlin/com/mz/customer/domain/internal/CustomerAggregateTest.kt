@@ -1,15 +1,15 @@
 package com.mz.customer.domain.internal
 
-import com.mz.customer.api.domain.Reservation
-import com.mz.customer.api.domain.ReservationStatus
-import com.mz.customer.api.domain.command.RegisterCustomer
-import com.mz.customer.api.domain.command.RequestNewCustomerReservation
-import com.mz.customer.api.domain.command.UpdateCustomerReservationAsConfirmed
-import com.mz.customer.api.domain.command.UpdateCustomerReservationAsDeclined
-import com.mz.customer.api.domain.event.CustomerRegistered
-import com.mz.customer.api.domain.event.CustomerReservationConfirmed
-import com.mz.customer.api.domain.event.CustomerReservationDeclined
-import com.mz.customer.api.domain.event.CustomerReservationRequested
+import com.mz.customer.domain.api.Reservation
+import com.mz.customer.domain.api.ReservationStatus
+import com.mz.customer.domain.api.command.RegisterCustomer
+import com.mz.customer.domain.api.command.RequestNewCustomerReservation
+import com.mz.customer.domain.api.command.UpdateCustomerReservationAsConfirmed
+import com.mz.customer.domain.api.command.UpdateCustomerReservationAsDeclined
+import com.mz.customer.domain.api.event.CustomerRegistered
+import com.mz.customer.domain.api.event.CustomerReservationConfirmed
+import com.mz.customer.domain.api.event.CustomerReservationDeclined
+import com.mz.customer.domain.api.event.CustomerReservationRequested
 import com.mz.ddd.common.api.domain.*
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
