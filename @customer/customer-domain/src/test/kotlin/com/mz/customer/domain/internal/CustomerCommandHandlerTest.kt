@@ -1,5 +1,7 @@
 package com.mz.customer.domain.internal
 
+import com.mz.customer.api.domain.Reservation
+import com.mz.customer.api.domain.ReservationStatus
 import com.mz.customer.api.domain.command.RegisterCustomer
 import com.mz.customer.api.domain.command.RequestNewCustomerReservation
 import com.mz.customer.api.domain.command.UpdateCustomerReservationAsConfirmed
@@ -49,8 +51,16 @@ class CustomerCommandHandlerTest {
 
     @Test
     fun `confirming a reservation should produce a CustomerReservationConfirmed event`() {
+        val reservation = Reservation(Id("2"), ReservationStatus.REQUESTED)
         val existingCustomer =
-            ExistingCustomer(Id("1"), Version(2), LastName("Doe"), FirstName("John"), Email("john.doe@example.com"))
+            ExistingCustomer(
+                Id("1"),
+                Version(2),
+                LastName("Doe"),
+                FirstName("John"),
+                Email("john.doe@example.com"),
+                setOf(reservation)
+            )
         val updateCustomerReservationAsConfirmedCommand = UpdateCustomerReservationAsConfirmed(Id("1"), Id("2"))
         val result = commandHandler.execute(existingCustomer, updateCustomerReservationAsConfirmedCommand)
         assertTrue(result.isSuccess)
@@ -58,12 +68,38 @@ class CustomerCommandHandlerTest {
     }
 
     @Test
+    fun `confirming a reservation should produce a error`() {
+        val existingCustomer =
+            ExistingCustomer(Id("1"), Version(2), LastName("Doe"), FirstName("John"), Email("john.doe@example.com"))
+        val updateCustomerReservationAsConfirmedCommand = UpdateCustomerReservationAsConfirmed(Id("1"), Id("2"))
+        val result = commandHandler.execute(existingCustomer, updateCustomerReservationAsConfirmedCommand)
+        assertTrue(result.isFailure)
+    }
+
+    @Test
     fun `declining a reservation should produce a CustomerReservationDeclined event`() {
+        val reservation = Reservation(Id("2"), ReservationStatus.REQUESTED)
+        val existingCustomer =
+            ExistingCustomer(
+                Id("1"),
+                Version(3),
+                LastName("Doe"),
+                FirstName("John"),
+                Email("john.doe@example.com"),
+                setOf(reservation)
+            )
+        val updateCustomerReservationAsDeclinedCommand = UpdateCustomerReservationAsDeclined(Id("1"), Id("2"))
+        val result = commandHandler.execute(existingCustomer, updateCustomerReservationAsDeclinedCommand)
+        assertTrue(result.isSuccess)
+        assertTrue(result.getOrThrow().single() is CustomerReservationDeclined)
+    }
+
+    @Test
+    fun `declining a reservation should produce error`() {
         val existingCustomer =
             ExistingCustomer(Id("1"), Version(3), LastName("Doe"), FirstName("John"), Email("john.doe@example.com"))
         val updateCustomerReservationAsDeclinedCommand = UpdateCustomerReservationAsDeclined(Id("1"), Id("2"))
         val result = commandHandler.execute(existingCustomer, updateCustomerReservationAsDeclinedCommand)
-        assertTrue(result.isSuccess)
-        val event = result.getOrThrow().single() as CustomerReservationDeclined
+        assertTrue(result.isFailure)
     }
 }

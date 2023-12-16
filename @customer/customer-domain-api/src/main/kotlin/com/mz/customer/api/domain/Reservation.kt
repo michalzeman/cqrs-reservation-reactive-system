@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 enum class ReservationStatus {
     REQUESTED,
     DECLINED,
-    CREATED,
+    CONFIRMED,
 }
 
 @Serializable

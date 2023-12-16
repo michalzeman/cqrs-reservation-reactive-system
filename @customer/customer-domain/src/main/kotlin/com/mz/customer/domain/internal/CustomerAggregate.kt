@@ -84,8 +84,8 @@ internal data class ExistingCustomer(
     }
 
     fun verifyUpdateCustomerReservationAsConfirmed(cmd: UpdateCustomerReservationAsConfirmed): List<CustomerEvent> {
-        return if (reservations.existsReservation(cmd.reservationId)) {
-            error("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")
+        return if (!reservations.existsReservation(cmd.reservationId)) {
+            error("Can't confirm the reservation id=${cmd.reservationId}, reservation doesn't exist")
         } else {
             listOf(
                 cmd.toEvent()
@@ -94,8 +94,8 @@ internal data class ExistingCustomer(
     }
 
     fun verifyUpdateCustomerReservationAsDeclined(cmd: UpdateCustomerReservationAsDeclined): List<CustomerEvent> {
-        return if (reservations.existsReservation(cmd.reservationId)) {
-            error("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")
+        return if (!reservations.existsReservation(cmd.reservationId)) {
+            error("Can't decline the reservation id=${cmd.reservationId}, reservation doesn't exist")
         } else {
             listOf(
                 cmd.toEvent()
@@ -109,7 +109,7 @@ internal data class ExistingCustomer(
     }
 
     fun apply(event: CustomerReservationConfirmed): ExistingCustomer {
-        val reservation = Reservation(event.reservationId, ReservationStatus.CREATED)
+        val reservation = Reservation(event.reservationId, ReservationStatus.CONFIRMED)
         return this.copy(reservations = reservations.plus(reservation), version = version.increment())
     }
 

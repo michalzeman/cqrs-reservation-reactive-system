@@ -54,8 +54,16 @@ class CustomerAggregateTest {
 
     @Test
     fun `confirming a reservation should produce a CustomerReservationConfirmed event`() {
+        val existingReservation = Reservation(Id("reservation:2"), ReservationStatus.REQUESTED)
         val existingCustomer =
-            ExistingCustomer(Id("1"), Version(1), LastName("Doe"), FirstName("John"), Email("john.doe@example.com"))
+            ExistingCustomer(
+                Id("1"),
+                Version(1),
+                LastName("Doe"),
+                FirstName("John"),
+                Email("john.doe@example.com"),
+                setOf(existingReservation)
+            )
         val updateCustomerReservationAsConfirmedCommand =
             UpdateCustomerReservationAsConfirmed(Id("1"), Id("reservation:2"))
         val events =
@@ -64,12 +72,56 @@ class CustomerAggregateTest {
     }
 
     @Test
-    fun `declining a reservation should produce a CustomerReservationDeclined event`() {
+    fun `confirming non existing reservation should produce a error`() {
         val existingCustomer =
-            ExistingCustomer(Id("1"), Version(2), LastName("Doe"), FirstName("John"), Email("john.doe@example.com"))
-        val updateCustomerReservationAsDeclinedCommand = UpdateCustomerReservationAsDeclined(Id("1"), Id("2"))
+            ExistingCustomer(
+                Id("1"),
+                Version(1),
+                LastName("Doe"),
+                FirstName("John"),
+                Email("john.doe@example.com"),
+            )
+        val updateCustomerReservationAsConfirmedCommand =
+            UpdateCustomerReservationAsConfirmed(Id("1"), Id("reservation:2"))
+
+        assertThrows<RuntimeException> {
+            existingCustomer.verifyUpdateCustomerReservationAsConfirmed(updateCustomerReservationAsConfirmedCommand)
+        }
+    }
+
+    @Test
+    fun `declining a reservation should produce a CustomerReservationDeclined event`() {
+        val existingReservation = Reservation(Id("reservation:2"), ReservationStatus.REQUESTED)
+        val existingCustomer =
+            ExistingCustomer(
+                Id("1"),
+                Version(2),
+                LastName("Doe"),
+                FirstName("John"),
+                Email("john.doe@example.com"),
+                setOf(existingReservation)
+            )
+        val updateCustomerReservationAsDeclinedCommand =
+            UpdateCustomerReservationAsDeclined(Id("1"), Id("reservation:2"))
         val events =
             existingCustomer.verifyUpdateCustomerReservationAsDeclined(updateCustomerReservationAsDeclinedCommand)
         assertTrue(events.single() is CustomerReservationDeclined)
+    }
+
+    @Test
+    fun `declining non reservation should produce a error`() {
+        val existingCustomer =
+            ExistingCustomer(
+                Id("1"),
+                Version(2),
+                LastName("Doe"),
+                FirstName("John"),
+                Email("john.doe@example.com"),
+            )
+        val updateCustomerReservationAsDeclinedCommand =
+            UpdateCustomerReservationAsDeclined(Id("1"), Id("reservation:2"))
+        assertThrows<RuntimeException> {
+            existingCustomer.verifyUpdateCustomerReservationAsDeclined(updateCustomerReservationAsDeclinedCommand)
+        }
     }
 }
