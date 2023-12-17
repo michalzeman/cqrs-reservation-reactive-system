@@ -1,6 +1,11 @@
 package com.mz.ddd.common.persistence.eventsourcing
 
-import com.mz.ddd.common.api.domain.*
+import com.mz.ddd.common.api.domain.Aggregate
+import com.mz.ddd.common.api.domain.Document
+import com.mz.ddd.common.api.domain.DomainCommand
+import com.mz.ddd.common.api.domain.DomainEvent
+import com.mz.ddd.common.api.domain.DomainTag
+import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.command.AggregateCommandHandler
 import com.mz.ddd.common.api.domain.event.AggregateEventHandler
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventStorageAdapter

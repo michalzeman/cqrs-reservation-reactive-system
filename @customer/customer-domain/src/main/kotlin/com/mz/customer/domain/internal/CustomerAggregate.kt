@@ -1,9 +1,29 @@
 package com.mz.customer.domain.internal
 
-import com.mz.customer.domain.api.*
-import com.mz.customer.domain.api.command.*
-import com.mz.customer.domain.api.event.*
-import com.mz.ddd.common.api.domain.*
+import com.mz.customer.domain.api.CustomerDocument
+import com.mz.customer.domain.api.CustomerEvent
+import com.mz.customer.domain.api.CustomerRegistered
+import com.mz.customer.domain.api.CustomerReservationConfirmed
+import com.mz.customer.domain.api.CustomerReservationDeclined
+import com.mz.customer.domain.api.CustomerReservationRequested
+import com.mz.customer.domain.api.NEW_CUSTOMER_ID
+import com.mz.customer.domain.api.RegisterCustomer
+import com.mz.customer.domain.api.RequestNewCustomerReservation
+import com.mz.customer.domain.api.Reservation
+import com.mz.customer.domain.api.ReservationStatus
+import com.mz.customer.domain.api.UpdateCustomerReservationAsConfirmed
+import com.mz.customer.domain.api.UpdateCustomerReservationAsDeclined
+import com.mz.customer.domain.api.apply
+import com.mz.customer.domain.api.existsReservation
+import com.mz.customer.domain.api.toEvent
+import com.mz.ddd.common.api.domain.Aggregate
+import com.mz.ddd.common.api.domain.DomainTag
+import com.mz.ddd.common.api.domain.Email
+import com.mz.ddd.common.api.domain.FirstName
+import com.mz.ddd.common.api.domain.Id
+import com.mz.ddd.common.api.domain.LastName
+import com.mz.ddd.common.api.domain.Version
+import com.mz.ddd.common.api.domain.newId
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -101,7 +121,7 @@ internal data class ExistingCustomer(
     }
 
     internal fun apply(event: CustomerReservationRequested): ExistingCustomer {
-        val reservation = Reservation(event.reservationId, ReservationStatus.REQUESTED)
+        val reservation = Reservation(event.reservationId, ReservationStatus.REQUESTED, event.reservationPeriod)
         return this.copy(reservations = reservations.plus(reservation), version = version.increment())
     }
 

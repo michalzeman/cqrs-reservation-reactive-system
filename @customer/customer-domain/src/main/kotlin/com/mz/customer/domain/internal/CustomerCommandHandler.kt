@@ -1,7 +1,11 @@
 package com.mz.customer.domain.internal
 
-import com.mz.customer.domain.api.command.*
-import com.mz.customer.domain.api.event.CustomerEvent
+import com.mz.customer.domain.api.CustomerCommand
+import com.mz.customer.domain.api.CustomerEvent
+import com.mz.customer.domain.api.RegisterCustomer
+import com.mz.customer.domain.api.RequestNewCustomerReservation
+import com.mz.customer.domain.api.UpdateCustomerReservationAsConfirmed
+import com.mz.customer.domain.api.UpdateCustomerReservationAsDeclined
 import com.mz.ddd.common.api.domain.command.AggregateCommandHandler
 
 

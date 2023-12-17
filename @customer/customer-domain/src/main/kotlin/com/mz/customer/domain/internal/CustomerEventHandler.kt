@@ -1,6 +1,10 @@
 package com.mz.customer.domain.internal
 
-import com.mz.customer.domain.api.event.*
+import com.mz.customer.domain.api.CustomerEvent
+import com.mz.customer.domain.api.CustomerRegistered
+import com.mz.customer.domain.api.CustomerReservationConfirmed
+import com.mz.customer.domain.api.CustomerReservationDeclined
+import com.mz.customer.domain.api.CustomerReservationRequested
 import com.mz.ddd.common.api.domain.event.AggregateEventHandler
 
 class CustomerEventHandler : AggregateEventHandler<Customer, CustomerEvent> {

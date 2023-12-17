@@ -1,6 +1,11 @@
 package com.mz.ddd.common.query
 
-import com.mz.ddd.common.query.internal.save.*
+import com.mz.ddd.common.query.internal.save.QueryableBooleanEntity
+import com.mz.ddd.common.query.internal.save.QueryableDoubleEntity
+import com.mz.ddd.common.query.internal.save.QueryableInstantEntity
+import com.mz.ddd.common.query.internal.save.QueryableKey
+import com.mz.ddd.common.query.internal.save.QueryableLongEntity
+import com.mz.ddd.common.query.internal.save.QueryableStringEntity
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
 

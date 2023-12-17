@@ -1,6 +1,10 @@
 package com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json
 
-import com.mz.ddd.common.api.domain.*
+import com.mz.ddd.common.api.domain.Aggregate
+import com.mz.ddd.common.api.domain.DomainEvent
+import com.mz.ddd.common.api.domain.Id
+import com.mz.ddd.common.api.domain.instantNow
+import com.mz.ddd.common.api.domain.newId
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventJournal
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.Snapshot
 import kotlinx.datetime.Instant

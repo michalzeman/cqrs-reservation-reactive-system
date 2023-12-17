@@ -1,16 +1,23 @@
 package com.mz.customer.domain.internal
 
+import com.mz.customer.domain.api.CustomerRegistered
+import com.mz.customer.domain.api.CustomerReservationConfirmed
+import com.mz.customer.domain.api.CustomerReservationDeclined
+import com.mz.customer.domain.api.CustomerReservationRequested
+import com.mz.customer.domain.api.RegisterCustomer
+import com.mz.customer.domain.api.RequestNewCustomerReservation
 import com.mz.customer.domain.api.Reservation
+import com.mz.customer.domain.api.ReservationPeriod
 import com.mz.customer.domain.api.ReservationStatus
-import com.mz.customer.domain.api.command.RegisterCustomer
-import com.mz.customer.domain.api.command.RequestNewCustomerReservation
-import com.mz.customer.domain.api.command.UpdateCustomerReservationAsConfirmed
-import com.mz.customer.domain.api.command.UpdateCustomerReservationAsDeclined
-import com.mz.customer.domain.api.event.CustomerRegistered
-import com.mz.customer.domain.api.event.CustomerReservationConfirmed
-import com.mz.customer.domain.api.event.CustomerReservationDeclined
-import com.mz.customer.domain.api.event.CustomerReservationRequested
-import com.mz.ddd.common.api.domain.*
+import com.mz.customer.domain.api.UpdateCustomerReservationAsConfirmed
+import com.mz.customer.domain.api.UpdateCustomerReservationAsDeclined
+import com.mz.ddd.common.api.domain.Email
+import com.mz.ddd.common.api.domain.FirstName
+import com.mz.ddd.common.api.domain.Id
+import com.mz.ddd.common.api.domain.LastName
+import com.mz.ddd.common.api.domain.Version
+import com.mz.ddd.common.api.domain.instantNow
+import com.mz.ddd.common.api.domain.newId
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -43,7 +50,8 @@ class CustomerCommandHandlerTest {
     fun `requesting a new reservation should produce a CustomerReservationRequested event`() {
         val existingCustomer =
             ExistingCustomer(Id("1"), Version(2), LastName("Doe"), FirstName("John"), Email("john.doe@example.com"))
-        val requestNewCustomerReservationCommand = RequestNewCustomerReservation(Id("1"), Id("2"))
+        val requestNewCustomerReservationCommand =
+            RequestNewCustomerReservation(Id("1"), Id("2"), ReservationPeriod(instantNow(), instantNow()))
         val result = commandHandler.execute(existingCustomer, requestNewCustomerReservationCommand)
         assertTrue(result.isSuccess)
         assertTrue(result.getOrThrow().single() is CustomerReservationRequested)
@@ -51,7 +59,8 @@ class CustomerCommandHandlerTest {
 
     @Test
     fun `confirming a reservation should produce a CustomerReservationConfirmed event`() {
-        val reservation = Reservation(Id("2"), ReservationStatus.REQUESTED)
+        val reservation =
+            Reservation(Id("2"), ReservationStatus.REQUESTED, ReservationPeriod(instantNow(), instantNow()))
         val existingCustomer =
             ExistingCustomer(
                 Id("1"),
@@ -80,7 +89,8 @@ class CustomerCommandHandlerTest {
 
     @Test
     fun `declining a reservation should produce a CustomerReservationDeclined event`() {
-        val reservation = Reservation(Id("2"), ReservationStatus.REQUESTED)
+        val reservation =
+            Reservation(Id("2"), ReservationStatus.REQUESTED, ReservationPeriod(instantNow(), instantNow()))
         val existingCustomer =
             ExistingCustomer(
                 Id("1"),

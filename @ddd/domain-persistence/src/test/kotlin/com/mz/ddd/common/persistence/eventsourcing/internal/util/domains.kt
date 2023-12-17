@@ -1,6 +1,13 @@
 package com.mz.ddd.common.persistence.eventsourcing.internal.util
 
-import com.mz.ddd.common.api.domain.*
+import com.mz.ddd.common.api.domain.Aggregate
+import com.mz.ddd.common.api.domain.Document
+import com.mz.ddd.common.api.domain.DomainCommand
+import com.mz.ddd.common.api.domain.DomainEvent
+import com.mz.ddd.common.api.domain.DomainTag
+import com.mz.ddd.common.api.domain.Id
+import com.mz.ddd.common.api.domain.instantNow
+import com.mz.ddd.common.api.domain.uuid
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

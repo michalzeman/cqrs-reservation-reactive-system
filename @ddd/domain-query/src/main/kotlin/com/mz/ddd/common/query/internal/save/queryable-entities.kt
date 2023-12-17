@@ -1,9 +1,17 @@
 package com.mz.ddd.common.query.internal.save
 
-import com.mz.ddd.common.query.*
+import com.mz.ddd.common.query.QueryableBoolean
+import com.mz.ddd.common.query.QueryableDouble
+import com.mz.ddd.common.query.QueryableInstant
+import com.mz.ddd.common.query.QueryableLong
+import com.mz.ddd.common.query.QueryableString
 import kotlinx.datetime.toKotlinInstant
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType
-import org.springframework.data.cassandra.core.mapping.*
+import org.springframework.data.cassandra.core.mapping.Column
+import org.springframework.data.cassandra.core.mapping.PrimaryKey
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyClass
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn
+import org.springframework.data.cassandra.core.mapping.Table
 import java.time.Instant
 
 @PrimaryKeyClass

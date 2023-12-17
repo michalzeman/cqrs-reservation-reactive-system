@@ -3,11 +3,15 @@ package com.mz.customer.adapter.rest
 import com.mz.common.components.adapter.http.HttpHandler
 import com.mz.customer.adapter.rest.model.CustomerCommandRequest
 import com.mz.customer.domain.CustomerApi
-import com.mz.customer.domain.api.command.RegisterCustomer
+import com.mz.customer.domain.api.RegisterCustomer
 import com.mz.ddd.common.api.domain.Id
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.server.RequestPredicates.*
+import org.springframework.web.reactive.function.server.RequestPredicates.GET
+import org.springframework.web.reactive.function.server.RequestPredicates.POST
+import org.springframework.web.reactive.function.server.RequestPredicates.PUT
+import org.springframework.web.reactive.function.server.RequestPredicates.accept
+import org.springframework.web.reactive.function.server.RequestPredicates.path
 import org.springframework.web.reactive.function.server.RouterFunction
 import org.springframework.web.reactive.function.server.RouterFunctions
 import org.springframework.web.reactive.function.server.ServerRequest

@@ -1,7 +1,17 @@
 package com.mz.ddd.common.query.internal.readonly
 
 import com.mz.ddd.common.api.domain.Id
-import com.mz.ddd.common.query.*
+import com.mz.ddd.common.query.DomainView
+import com.mz.ddd.common.query.DomainViewQuery
+import com.mz.ddd.common.query.DomainViewReadOnlyRepository
+import com.mz.ddd.common.query.QueryBoolean
+import com.mz.ddd.common.query.QueryData
+import com.mz.ddd.common.query.QueryDouble
+import com.mz.ddd.common.query.QueryInstant
+import com.mz.ddd.common.query.QueryLong
+import com.mz.ddd.common.query.QueryOperation
+import com.mz.ddd.common.query.QueryString
+import com.mz.ddd.common.query.QueryableData
 import kotlinx.datetime.toJavaInstant
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux

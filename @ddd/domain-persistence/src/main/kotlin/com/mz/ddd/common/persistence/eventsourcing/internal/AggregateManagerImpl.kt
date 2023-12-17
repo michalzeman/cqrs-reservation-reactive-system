@@ -1,6 +1,10 @@
 package com.mz.ddd.common.persistence.eventsourcing.internal
 
-import com.mz.ddd.common.api.domain.*
+import com.mz.ddd.common.api.domain.Aggregate
+import com.mz.ddd.common.api.domain.Document
+import com.mz.ddd.common.api.domain.DomainCommand
+import com.mz.ddd.common.api.domain.DomainEvent
+import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.persistence.eventsourcing.AggregateManager
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.CommandEffect

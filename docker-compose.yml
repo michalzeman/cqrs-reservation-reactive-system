@@ -38,6 +38,7 @@ services:
   cassandra-liquibase-ddd-testing:
     build:
       context: ./src/main/Docker/liquibase/Cassandra
+    container_name: reservation-system-liquibase-ddd-testing
     volumes:
       - ./@ddd/event-storage-adapter-cassandra-db/build/cassandra-db/liquibase/changelog:/liquibase/changelog
     environment:
@@ -56,6 +57,7 @@ services:
   cassandra-liquibase-customer:
     build:
       context: ./src/main/Docker/liquibase/Cassandra
+    container_name: reservation-system-liquibase-customer
     volumes:
       - ./@customer/build/cassandra-db/liquibase/changelog:/liquibase/changelog
     environment:
@@ -74,6 +76,7 @@ services:
   cassandra-liquibase-reservation:
     build:
       context: ./src/main/Docker/liquibase/Cassandra
+    container_name: reservation-system-liquibase-reservation
     volumes:
       - ./@reservation/build/cassandra-db/liquibase/changelog:/liquibase/changelog
     environment:

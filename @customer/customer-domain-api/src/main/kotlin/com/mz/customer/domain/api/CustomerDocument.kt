@@ -1,7 +1,13 @@
 package com.mz.customer.domain.api
 
-import com.mz.customer.domain.api.event.CustomerEvent
-import com.mz.ddd.common.api.domain.*
+import com.mz.ddd.common.api.domain.Document
+import com.mz.ddd.common.api.domain.Email
+import com.mz.ddd.common.api.domain.FirstName
+import com.mz.ddd.common.api.domain.Id
+import com.mz.ddd.common.api.domain.LastName
+import com.mz.ddd.common.api.domain.Version
+import com.mz.ddd.common.api.domain.instantNow
+import com.mz.ddd.common.api.domain.newId
 import kotlinx.datetime.Instant
 
 data class CustomerDocument(

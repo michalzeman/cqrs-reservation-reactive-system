@@ -1,11 +1,18 @@
 package com.mz.customer
 
 import com.mz.customer.domain.CustomerApi
+import com.mz.customer.domain.api.RegisterCustomer
+import com.mz.customer.domain.api.RequestNewCustomerReservation
+import com.mz.customer.domain.api.ReservationPeriod
 import com.mz.customer.domain.api.ReservationStatus
-import com.mz.customer.domain.api.command.RegisterCustomer
-import com.mz.customer.domain.api.command.RequestNewCustomerReservation
-import com.mz.customer.domain.api.command.UpdateCustomerReservationAsConfirmed
-import com.mz.ddd.common.api.domain.*
+import com.mz.customer.domain.api.UpdateCustomerReservationAsConfirmed
+import com.mz.ddd.common.api.domain.Email
+import com.mz.ddd.common.api.domain.FirstName
+import com.mz.ddd.common.api.domain.Id
+import com.mz.ddd.common.api.domain.LastName
+import com.mz.ddd.common.api.domain.instantNow
+import com.mz.ddd.common.api.domain.newId
+import com.mz.ddd.common.api.domain.uuid
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -32,7 +39,8 @@ class CustomerWorkflowTest {
 
         val newCustomerReservation = RequestNewCustomerReservation(
             customerId = result!!.aggregateId,
-            reservationId = Id(requestId)
+            reservationId = Id(requestId),
+            ReservationPeriod(instantNow(), instantNow())
         )
 
         StepVerifier.create(customerApi.execute(newCustomerReservation))
@@ -69,7 +77,8 @@ class CustomerWorkflowTest {
 
         val newCustomerReservation = RequestNewCustomerReservation(
             customerId = result!!.aggregateId,
-            reservationId = Id(requestId)
+            reservationId = Id(requestId),
+            ReservationPeriod(instantNow(), instantNow())
         )
 
         StepVerifier.create(customerApi.execute(newCustomerReservation))

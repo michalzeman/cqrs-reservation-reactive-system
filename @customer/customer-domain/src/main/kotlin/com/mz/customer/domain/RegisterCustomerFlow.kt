@@ -1,9 +1,9 @@
 package com.mz.customer.domain
 
+import com.mz.customer.domain.api.CustomerCommand
 import com.mz.customer.domain.api.CustomerDocument
-import com.mz.customer.domain.api.command.CustomerCommand
-import com.mz.customer.domain.api.command.RegisterCustomer
-import com.mz.customer.domain.api.event.CustomerEvent
+import com.mz.customer.domain.api.CustomerEvent
+import com.mz.customer.domain.api.RegisterCustomer
 import com.mz.customer.domain.internal.Customer
 import com.mz.ddd.common.persistence.eventsourcing.AggregateManager
 import org.springframework.stereotype.Component

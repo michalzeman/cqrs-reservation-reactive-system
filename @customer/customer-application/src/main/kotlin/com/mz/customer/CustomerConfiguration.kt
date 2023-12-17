@@ -1,10 +1,15 @@
 package com.mz.customer
 
 import com.mz.customer.domain.CustomerView
+import com.mz.customer.domain.api.CustomerCommand
 import com.mz.customer.domain.api.CustomerDocument
-import com.mz.customer.domain.api.command.CustomerCommand
-import com.mz.customer.domain.api.event.CustomerEvent
-import com.mz.customer.domain.internal.*
+import com.mz.customer.domain.api.CustomerEvent
+import com.mz.customer.domain.internal.CUSTOMER_DOMAIN_TAG
+import com.mz.customer.domain.internal.Customer
+import com.mz.customer.domain.internal.CustomerCommandHandler
+import com.mz.customer.domain.internal.CustomerEventHandler
+import com.mz.customer.domain.internal.getAggregate
+import com.mz.customer.domain.internal.toDocument
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.EventStorageAdapterCassandraConfiguration
 import com.mz.ddd.common.persistence.eventsourcing.AbstractEventSourcingConfiguration
 import com.mz.ddd.common.persistence.eventsourcing.AggregateManager

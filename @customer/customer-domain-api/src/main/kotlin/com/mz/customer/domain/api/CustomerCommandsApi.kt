@@ -1,10 +1,12 @@
-package com.mz.customer.domain.api.command
+package com.mz.customer.domain.api
 
-import com.mz.customer.domain.api.event.CustomerRegistered
-import com.mz.customer.domain.api.event.CustomerReservationConfirmed
-import com.mz.customer.domain.api.event.CustomerReservationDeclined
-import com.mz.customer.domain.api.event.CustomerReservationRequested
-import com.mz.ddd.common.api.domain.*
+import com.mz.ddd.common.api.domain.DomainCommand
+import com.mz.ddd.common.api.domain.Email
+import com.mz.ddd.common.api.domain.FirstName
+import com.mz.ddd.common.api.domain.Id
+import com.mz.ddd.common.api.domain.LastName
+import com.mz.ddd.common.api.domain.instantNow
+import com.mz.ddd.common.api.domain.uuid
 import kotlinx.datetime.Instant
 
 val NEW_CUSTOMER_ID = Id("new-customer")
@@ -36,6 +38,7 @@ fun RegisterCustomer.toEvent(customerId: Id): CustomerRegistered {
 data class RequestNewCustomerReservation(
     override val customerId: Id,
     val reservationId: Id,
+    val reservationPeriod: ReservationPeriod,
     override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
     override val commandId: Id = Id(uuid())
@@ -45,7 +48,8 @@ fun RequestNewCustomerReservation.toEvent(): CustomerReservationRequested {
     return CustomerReservationRequested(
         aggregateId = this.customerId,
         reservationId = this.reservationId,
-        correlationId = this.correlationId
+        correlationId = this.correlationId,
+        reservationPeriod = this.reservationPeriod
     )
 }
 

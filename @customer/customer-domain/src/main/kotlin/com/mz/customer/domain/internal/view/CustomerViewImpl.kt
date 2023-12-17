@@ -8,7 +8,11 @@ import com.mz.customer.domain.api.CustomerDocument
 import com.mz.customer.domain.internal.CUSTOMER_DOMAIN_TAG
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.instantNow
-import com.mz.ddd.common.query.*
+import com.mz.ddd.common.query.DomainViewQuery
+import com.mz.ddd.common.query.DomainViewReadOnlyRepository
+import com.mz.ddd.common.query.DomainViewRepository
+import com.mz.ddd.common.query.QueryString
+import com.mz.ddd.common.query.QueryableString
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

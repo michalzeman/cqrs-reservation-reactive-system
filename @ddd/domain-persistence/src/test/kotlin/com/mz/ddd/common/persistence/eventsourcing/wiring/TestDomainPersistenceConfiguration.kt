@@ -9,7 +9,15 @@ import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.Event
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.JsonEventSerDesAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.desJson
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.serToJsonString
-import com.mz.ddd.common.persistence.eventsourcing.internal.util.*
+import com.mz.ddd.common.persistence.eventsourcing.internal.util.EmptyTestAggregate
+import com.mz.ddd.common.persistence.eventsourcing.internal.util.ExistingTestAggregate
+import com.mz.ddd.common.persistence.eventsourcing.internal.util.TestAggregate
+import com.mz.ddd.common.persistence.eventsourcing.internal.util.TestCommand
+import com.mz.ddd.common.persistence.eventsourcing.internal.util.TestCommandHandler
+import com.mz.ddd.common.persistence.eventsourcing.internal.util.TestDocument
+import com.mz.ddd.common.persistence.eventsourcing.internal.util.TestEvent
+import com.mz.ddd.common.persistence.eventsourcing.internal.util.TestEventHandler
+import com.mz.ddd.common.persistence.eventsourcing.internal.util.testTag
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.redis.wiring.RedisLockStorageAdapterConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

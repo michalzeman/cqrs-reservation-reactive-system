@@ -3,10 +3,10 @@ package com.mz.customer.adapter.rest.model
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.mz.common.components.json.registerRequiredModules
-import com.mz.customer.domain.api.command.RegisterCustomer
-import com.mz.customer.domain.api.command.RequestNewCustomerReservation
-import com.mz.customer.domain.api.command.UpdateCustomerReservationAsConfirmed
-import com.mz.customer.domain.api.command.UpdateCustomerReservationAsDeclined
+import com.mz.customer.domain.api.RegisterCustomer
+import com.mz.customer.domain.api.RequestNewCustomerReservation
+import com.mz.customer.domain.api.UpdateCustomerReservationAsConfirmed
+import com.mz.customer.domain.api.UpdateCustomerReservationAsDeclined
 import kotlinx.datetime.Instant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -44,6 +44,8 @@ class CustomerCommandRequestTest {
                 "type":"new-customer-reservation",
                 "customerId":"123",
                 "reservationId":"456",
+                "startTime":"2021-03-01T00:00:00.000Z",
+                "endTime":"2021-03-01T01:00:00.000Z",
                 "correlationId":"789",
                 "createdAt":"2021-03-01T00:00:00.000Z",
                 "commandId":"012"
