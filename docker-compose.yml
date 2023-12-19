@@ -59,7 +59,7 @@ services:
       context: ./src/main/Docker/liquibase/Cassandra
     container_name: reservation-system-liquibase-customer
     volumes:
-      - ./@customer/build/cassandra-db/liquibase/changelog:/liquibase/changelog
+      - ./customer/build/cassandra-db/liquibase/changelog:/liquibase/changelog
     environment:
       - URL=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
       - CHANGELOG_FILE=customer-changelog.xml
@@ -78,7 +78,7 @@ services:
       context: ./src/main/Docker/liquibase/Cassandra
     container_name: reservation-system-liquibase-reservation
     volumes:
-      - ./@reservation/build/cassandra-db/liquibase/changelog:/liquibase/changelog
+      - ./reservation/build/cassandra-db/liquibase/changelog:/liquibase/changelog
     environment:
       - URL=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
       - CHANGELOG_FILE=reservation-changelog.xml

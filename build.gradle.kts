@@ -60,6 +60,8 @@ subprojects {
         testImplementation("org.junit.jupiter:junit-jupiter")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
         testImplementation("org.mockito:mockito-junit-jupiter")
+        testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+
 
     }
 
