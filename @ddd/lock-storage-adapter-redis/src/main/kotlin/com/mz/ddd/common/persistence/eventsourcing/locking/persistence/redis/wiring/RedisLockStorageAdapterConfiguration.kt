@@ -13,8 +13,8 @@ import org.springframework.data.redis.core.RedisTemplate
 @Configuration
 @ComponentScan("com.mz.ddd.common.persistence.eventsourcing.locking.persistence.redis")
 class RedisLockStorageAdapterConfiguration(
-    @Value("\${spring.redis.host}") val host: String,
-    @Value("\${spring.redis.port}") val port: Int
+    @Value("\${spring.data.redis.host}") val host: String,
+    @Value("\${spring.data.redis.port}") val port: Int
 ) {
 
     @Bean

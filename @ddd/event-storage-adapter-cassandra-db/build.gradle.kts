@@ -12,7 +12,7 @@ dependencies {
 }
 
 tasks.register<Copy>("processLiquibase") {
-    val destDir = "$buildDir/cassandra-db"
+    val destDir = "${layout.buildDirectory.get().asFile}/cassandra-db"
     from("src/main/resources") // replace with your actual directory
     include("**/*.cql")
     into(destDir)

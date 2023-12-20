@@ -1,13 +1,15 @@
 val springframeworkBootVersion: String by settings
 val kotlinVersion: String by settings
 val springDependencyManagementVersion: String by settings
+val kotlinxSerializationJsonVersion: String by settings
+val mockitoCoreVersion: String by settings
 
 
 pluginManagement {
     repositories {
         mavenCentral()
-        maven { url = uri("https://plugins.gradle.org/m2/") }
         gradlePluginPortal()
+        maven { url = uri("https://plugins.gradle.org/m2/") }
     }
 }
 plugins {
@@ -29,9 +31,12 @@ dependencyResolutionManagement {
             library("projectreactor-blockhound", "io.projectreactor.tools:blockhound:1.0.4.RELEASE")
             library("apache-commons-lang3", "org.apache.commons:commons-lang3:3.9")
             library("assertj-core", "org.assertj:assertj-core:3.14.0")
-            library("mockito-core", "org.mockito:mockito-core:4.0.0")
-            library("mockito-kotlin", "org.mockito.kotlin:mockito-kotlin:4.0.0")
-            library("kotlinx-serialization-json", "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+            library("mockito-core", "org.mockito:mockito-core:$mockitoCoreVersion")
+            library("mockito-kotlin", "org.mockito.kotlin:mockito-kotlin:$mockitoCoreVersion")
+            library(
+                "kotlinx-serialization-json",
+                "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion"
+            )
         }
     }
 }

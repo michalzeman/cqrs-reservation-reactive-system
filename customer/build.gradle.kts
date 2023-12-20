@@ -48,7 +48,8 @@ dependencies {
 }
 
 tasks.register<Copy>("processLiquibase") {
-    val destDir = "$buildDir/cassandra-db"
+//    val destDir = "$buildDir/cassandra-db"
+    val destDir = "${layout.buildDirectory.get().asFile}/cassandra-db"
 
     val buildDbDir = file(destDir)
     if (buildDbDir.exists()) buildDbDir.deleteRecursively()
@@ -59,7 +60,7 @@ tasks.register<Copy>("processLiquibase") {
 }
 
 tasks.register<Copy>("processCustomerLiquibase") {
-    val destDir = "$buildDir/cassandra-db"
+    val destDir = "${layout.buildDirectory.get().asFile}/cassandra-db"
     from("src/main/resources") // replace with your actual directory
     include("**/*.cql")
     into(destDir)
@@ -76,7 +77,7 @@ tasks.register<Copy>("processCustomerLiquibase") {
 }
 
 tasks.register<Copy>("extractedEventSourceChangelog") {
-    val destDir = "$buildDir/cassandra-db"
+    val destDir = "${layout.buildDirectory.get().asFile}/cassandra-db"
 
     dependsOn(":@ddd:event-storage-adapter-cassandra-db:jar")
 
@@ -109,7 +110,7 @@ tasks.register<Copy>("extractedEventSourceChangelog") {
 }
 
 tasks.register<Copy>("extractedDomainQueryChangelog") {
-    val destDir = "$buildDir/cassandra-db"
+    val destDir = "${layout.buildDirectory.get().asFile}/cassandra-db"
 
     dependsOn(":@ddd:domain-query:jar")
 

@@ -3,6 +3,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val kotlinxSerializationJsonVersion: String by project
 val springframeworkBootVersion: String by project
 val springCloudVersion: String by project
+val mockitoCoreVersion: String by project
+val kotlinxDatetimeVersion: String by project
+val reactorKotlinExtensionsVersion: String by project
 
 plugins {
     alias(libs.plugins.springframework.boot) apply false
@@ -19,11 +22,12 @@ allprojects {
     }
 }
 
+val jvmTargetVersion = "17"
+
 subprojects {
 
-    val jvmTargetVersion = "17"
-
     apply {
+        plugin("java")
         plugin("kotlin")
         plugin("org.jetbrains.kotlin.plugin.serialization")
         plugin("java-library")
@@ -31,14 +35,19 @@ subprojects {
         plugin("org.jetbrains.kotlin.plugin.spring")
     }
 
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(jvmTargetVersion))
+        }
+    }
+
     group = "com.mz.reservation"
     version = "0.0.1-SNAPSHOT"
-    java.sourceCompatibility = JavaVersion.VERSION_17
 
     dependencyManagement {
         imports {
-            mavenBom("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
-            mavenBom("org.springframework.boot:spring-boot-dependencies:${springframeworkBootVersion}")
+            mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
+            mavenBom("org.springframework.boot:spring-boot-dependencies:$springframeworkBootVersion")
         }
     }
 
@@ -47,20 +56,19 @@ subprojects {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
         implementation("org.jetbrains.kotlin:kotlin-serialization")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${kotlinxSerializationJsonVersion}")
-        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-
-        // https://mvnrepository.com/artifact/io.projectreactor.kotlin/reactor-kotlin-extensions
-        implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.2.2")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion")
+        implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
+        implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:$reactorKotlinExtensionsVersion")
 
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("io.projectreactor:reactor-test")
 
-        testImplementation("org.junit.jupiter:junit-jupiter")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+        testImplementation("org.junit.jupiter:junit-jupiter")
         testImplementation("org.mockito:mockito-junit-jupiter")
-        testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+        testImplementation("org.mockito:mockito-core:$mockitoCoreVersion")
+        testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoCoreVersion")
 
 
     }
