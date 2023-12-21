@@ -11,7 +11,9 @@ import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.AcquireLo
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.LockReleased
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.ReleaseLock
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import reactor.kotlin.core.publisher.switchIfEmpty
+import reactor.kotlin.core.publisher.toMono
 
 
 internal class AggregateRepositoryImpl<A : Aggregate, C : DomainCommand, E : DomainEvent>(
@@ -22,22 +24,33 @@ internal class AggregateRepositoryImpl<A : Aggregate, C : DomainCommand, E : Dom
     private val serDesAdapter: EventSerDesAdapter<E, A>
 ) : AggregateRepository<A, C, E> {
 
-    override fun execute(id: Id, command: C): Mono<CommandEffect<A, E>> =
-        lockManager.acquireLock(AcquireLock({ id.value }, { command.toString() }))
-            .then(
-                executeCommandViaCommandProcessor(
-                    id,
-                    command,
-                    lockManager.releaseLock(ReleaseLock { id.value })
-                )
-            )
+    override fun execute(
+        id: Id,
+        command: C,
+        exclusivePreExecute: (() -> Mono<Boolean>)?
+    ): Mono<CommandEffect<A, E>> {
+        val passed = exclusivePreExecute?.invoke()?.publishOn(Schedulers.boundedElastic()) ?: true.toMono()
+        return lockManager.acquireLock(AcquireLock({ id.value }, { command.toString() }))
+            .flatMap { passed }
+            .flatMap { canExecute ->
+                if (canExecute) {
+                    executeCommandViaCommandProcessor(
+                        id,
+                        command
+                    )
+                } else {
+                    Mono.error(IllegalStateException("Command $command can not be executed, exclusive precondition failed"))
+                }
+            }
+            .flatMap { releaseLock(id).thenReturn(it) }
+            .onErrorResume { error -> releaseLock(id).then(Mono.error(error)) }
+    }
 
     override fun find(id: Id): Mono<A> = getAggregate(id)
 
     private fun executeCommandViaCommandProcessor(
         id: Id,
-        command: C,
-        releaseLock: Mono<LockReleased>
+        command: C
     ): Mono<CommandEffect<A, E>> =
         getAggregate(id)
             .flatMap { aggregate ->
@@ -45,10 +58,9 @@ internal class AggregateRepositoryImpl<A : Aggregate, C : DomainCommand, E : Dom
                     .fold(
                         onSuccess = { success ->
                             eventRepository.persistAll(success)
-                                .and(releaseLock)
                                 .thenReturn(success)
                         },
-                        onFailure = { exc -> releaseLock.then(Mono.error(exc)) }
+                        onFailure = { exc -> Mono.error(exc) }
                     )
             }
 
@@ -67,5 +79,9 @@ internal class AggregateRepositoryImpl<A : Aggregate, C : DomainCommand, E : Dom
                         { aggregateFactory(id) },
                         { aggregate, event -> aggregateProcessor.applyEvents(aggregate, listOf(event)) })
             }
+    }
+
+    private fun releaseLock(id: Id): Mono<LockReleased> {
+        return lockManager.releaseLock(ReleaseLock { id.value })
     }
 }

@@ -3,9 +3,12 @@ package com.mz.reservationsystem.domain.timeslot.internal
 import com.mz.ddd.common.api.domain.Aggregate
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.Version
+import com.mz.ddd.common.api.domain.newId
 import com.mz.reservationsystem.domain.api.timeslot.CreateTimeSlot
+import com.mz.reservationsystem.domain.api.timeslot.NEW_TIME_SLOT_ID
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotCommand
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotCreated
+import com.mz.reservationsystem.domain.api.timeslot.TimeSlotDocument
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotEvent
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotUpdated
 import com.mz.reservationsystem.domain.api.timeslot.UpdateTimeSlot
@@ -15,11 +18,35 @@ import kotlinx.datetime.isDistantPast
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+
 @Serializable
 sealed class TimeSlotAggregate : Aggregate() {
     abstract fun apply(event: TimeSlotEvent): TimeSlotAggregate
 
     abstract fun verify(cmd: TimeSlotCommand): List<TimeSlotEvent>
+}
+
+fun TimeSlotAggregate.toDocument(events: Set<TimeSlotEvent> = emptySet()): TimeSlotDocument {
+    return when (this) {
+        is NoneTimeSlotAggregate -> error("Time slot is not created yet")
+        is SomeTimeSlotAggregate -> TimeSlotDocument(
+            aggregateId = aggregateId,
+            version = version,
+            startTime = startTime,
+            endTime = endTime,
+            booked = booked,
+            valid = valid,
+            reservationId = reservationId,
+            events = events
+        )
+    }
+}
+
+fun Id.getAggregate(): TimeSlotAggregate {
+    return when (this) {
+        NEW_TIME_SLOT_ID -> NoneTimeSlotAggregate(newId())
+        else -> NoneTimeSlotAggregate(this)
+    }
 }
 
 @Serializable
@@ -30,7 +57,7 @@ data class NoneTimeSlotAggregate(override val aggregateId: Id) : TimeSlotAggrega
         return when (cmd) {
             is CreateTimeSlot -> {
                 validateDates(cmd.endTime, cmd.startTime)
-                listOf(cmd.toEvent())
+                listOf(cmd.toEvent(aggregateId))
             }
 
             is UpdateTimeSlot -> error("Wrong command type ${cmd::class} for the none time slot aggregate")

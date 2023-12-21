@@ -1,12 +1,15 @@
 package com.mz.reservationsystem.domain.api.timeslot
 
 import com.mz.ddd.common.api.domain.DomainCommand
+import com.mz.ddd.common.api.domain.DomainTag
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.newId
 import kotlinx.datetime.Instant
 
 val NEW_TIME_SLOT_ID: Id = Id("new-time-slot")
+
+val TIME_SLOT_DOMAIN_TAG = DomainTag("time-slot")
 
 sealed class TimeSlotCommand : DomainCommand {
     abstract val aggregateId: Id
@@ -22,9 +25,9 @@ data class CreateTimeSlot(
     override val commandId: Id = newId()
 ) : TimeSlotCommand()
 
-fun CreateTimeSlot.toEvent(): TimeSlotCreated {
+fun CreateTimeSlot.toEvent(aggregateId: Id): TimeSlotCreated {
     return TimeSlotCreated(
-        aggregateId = this.aggregateId,
+        aggregateId = aggregateId,
         startTime = this.startTime,
         endTime = this.endTime,
         booked = this.booked,

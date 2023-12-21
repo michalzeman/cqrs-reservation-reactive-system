@@ -1,0 +1,14 @@
+event.sourcing.domain-persistence:
+  events-per-snapshot: 3
+
+spring:
+  cassandra:
+    local-datacenter: datacenter1
+    port: 9042
+    contact-points: 127.0.0.1
+    keyspace-name: reservation_keyspace
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0

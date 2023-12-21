@@ -23,11 +23,11 @@ class RegisterCustomerFlow(
     private val customerView: CustomerView
 ) {
     operator fun invoke(cmd: RegisterCustomer): Mono<CustomerDocument> {
-        val exists = customerView.find(FindCustomerByEmail(cmd.email)).count()
-
-        return exists.flatMap { ex ->
-            if (ex > 0) error("Customer already exist")
-            else aggregateManager.execute(cmd, cmd.customerId)
-        }
+        val verifyOfExistingCustomer = customerView.find(FindCustomerByEmail(cmd.email)).count()
+            .map { count ->
+                if (count > 0) error("Customer already exist")
+                else true
+            }
+        return aggregateManager.execute(cmd, cmd.customerId, { verifyOfExistingCustomer })
     }
 }

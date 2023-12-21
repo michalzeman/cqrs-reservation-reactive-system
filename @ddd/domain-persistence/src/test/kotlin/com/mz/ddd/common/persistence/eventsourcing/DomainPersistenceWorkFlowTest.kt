@@ -66,7 +66,7 @@ class DomainPersistenceWorkFlowTest {
         val updateTestAggregate = UpdateTestValue(aggregateId = aggregateId, value = StringValueParam(updatedValue))
 
         val aggregate = testAggregateManager.execute(createTestAggregate, aggregateId)
-            .then(testAggregateManager.execute(updateTestAggregate, aggregateId))
+            .flatMap { testAggregateManager.execute(updateTestAggregate, aggregateId) }
 
         StepVerifier.create(aggregate)
             .expectNextCount(1)

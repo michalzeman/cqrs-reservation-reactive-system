@@ -22,8 +22,8 @@ internal class AggregateManagerImpl<A : Aggregate, C : DomainCommand, E : Domain
     private val publishDocument: PublishDocument<S>? = null
 ) : AggregateManager<A, C, E, S> {
 
-    override fun execute(command: C, id: Id): Mono<S> =
-        aggregateRepository.execute(id, command)
+    override fun execute(command: C, id: Id, exclusivePreExecute: (() -> Mono<Boolean>)?): Mono<S> =
+        aggregateRepository.execute(id, command, exclusivePreExecute)
             .flatMap { effect ->
                 val document: S = aggregateMapper(effect)
                 publishChanged?.let { publisher ->
@@ -35,8 +35,12 @@ internal class AggregateManagerImpl<A : Aggregate, C : DomainCommand, E : Domain
             .flatMap { publishDocument?.invoke(it)?.thenReturn(it) ?: it.toMono() }
 
 
-    override fun executeAndReturnEvents(command: C, id: Id): Mono<List<E>> =
-        aggregateRepository.execute(command = command, id = id)
+    override fun executeAndReturnEvents(
+        command: C,
+        id: Id,
+        exclusivePreExecute: (() -> Mono<Boolean>)?
+    ): Mono<List<E>> =
+        aggregateRepository.execute(id, command, exclusivePreExecute)
             .flatMap { effect ->
                 publishDocument?.let { publisher ->
                     publisher(aggregateMapper(effect))

@@ -63,7 +63,7 @@ abstract class AbstractEventSourcingConfiguration<A : Aggregate, C : DomainComma
                 eventSerDesAdapter(),
                 domainPersistenceProperties
             ),
-            LockManagerImpl(lockStorageAdapter),
+            LockManagerImpl(lockStorageAdapter, domainPersistenceProperties),
             eventSerDesAdapter()
         )
 

@@ -2,6 +2,7 @@ package com.mz.reservationsystem.domain.api.timeslot
 
 import com.mz.ddd.common.api.domain.Document
 import com.mz.ddd.common.api.domain.Id
+import com.mz.ddd.common.api.domain.Version
 import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.newId
 import kotlinx.datetime.Instant
@@ -10,6 +11,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 class TimeSlotDocument(
     val aggregateId: Id,
+    val version: Version,
     val startTime: Instant,
     val endTime: Instant,
     val booked: Boolean,

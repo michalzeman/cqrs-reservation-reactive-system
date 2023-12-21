@@ -8,6 +8,7 @@ project(":customer:customer-application") {
         implementation(project(":customer:customer-domain-api"))
         implementation(project(":customer:customer-domain"))
         implementation(project(":customer:customer-adapter-rest"))
+        implementation(project(":common-components"))
 
         implementation(project(":@ddd:domain-persistence"))
         implementation(project(":@ddd:lock-storage-adapter-redis"))

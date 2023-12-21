@@ -1,5 +1,8 @@
 package com.mz.customer
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.mz.common.components.json.registerRequiredModules
 import com.mz.customer.domain.CustomerView
 import com.mz.customer.domain.api.CustomerCommand
 import com.mz.customer.domain.api.CustomerDocument
@@ -26,6 +29,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 
+private const val CUSTOMER_AGGREGATE_REPOSITORY_BEAN = "customerAggregateRepository"
+private const val CUSTOMER_AGGREGATE_MANAGER_BEAN = "customerAggregateManager"
 
 @Configuration
 @Import(
@@ -41,7 +46,7 @@ class CustomerConfiguration(
         CustomerEvent,
         CustomerDocument>() {
 
-    @Bean("customerAggregateMapper")
+    @Bean(CUSTOMER_AGGREGATE_REPOSITORY_BEAN)
     override fun aggregateRepository(): AggregateRepository<Customer, CustomerCommand, CustomerEvent> {
         return buildAggregateRepository(
             { it.getAggregate() },
@@ -63,9 +68,9 @@ class CustomerConfiguration(
     @Bean("customerDomainTag")
     override fun domainTag() = CUSTOMER_DOMAIN_TAG
 
-    @Bean("customerAggregateManager")
+    @Bean(CUSTOMER_AGGREGATE_MANAGER_BEAN)
     override fun aggregateManager(
-        @Qualifier("customerAggregateMapper")
+        @Qualifier(CUSTOMER_AGGREGATE_REPOSITORY_BEAN)
         aggregateRepository: AggregateRepository<Customer, CustomerCommand, CustomerEvent>,
         aggregateMapper: (CommandEffect<Customer, CustomerEvent>) -> CustomerDocument
     ): AggregateManager<Customer, CustomerCommand, CustomerEvent, CustomerDocument> {
@@ -77,4 +82,8 @@ class CustomerConfiguration(
         return { it.aggregate.toDocument(it.events.toSet()) }
     }
 
+    @Bean
+    fun objectMapper(): ObjectMapper {
+        return jacksonObjectMapper().registerRequiredModules()
+    }
 }
