@@ -1,10 +1,6 @@
 package com.mz.reservationsystem
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.mz.common.components.json.registerRequiredModules
 import com.mz.ddd.common.api.domain.DomainTag
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.EventStorageAdapterCassandraConfiguration
 import com.mz.ddd.common.persistence.eventsourcing.AbstractEventSourcingConfiguration
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.CommandEffect
@@ -12,8 +8,6 @@ import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.Event
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.JsonEventSerDesAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.desJson
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.serToJsonString
-import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.redis.wiring.RedisLockStorageAdapterConfiguration
-import com.mz.ddd.common.query.wiring.DomainViewConfiguration
 import com.mz.reservationsystem.domain.api.timeslot.TIME_SLOT_DOMAIN_TAG
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotCommand
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotDocument
@@ -27,22 +21,14 @@ import com.mz.reservationsystem.domain.timeslot.TimeSlotAggregateManager
 import com.mz.reservationsystem.domain.timeslot.TimeSlotView
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Import
 
 private const val TIME_SLOT_AGGREGATE_REPOSITORY_BEAN = "timeSlotAggregateRepository"
 private const val TIME_SLOT_AGGREGATE_MANAGER_BEAN = "timeSlotAggregateManager"
 
 
 @Configuration
-@Import(
-    EventStorageAdapterCassandraConfiguration::class,
-    RedisLockStorageAdapterConfiguration::class,
-    DomainViewConfiguration::class
-)
-@ComponentScan("com.mz.reservationsystem.domain.**")
-class TimeSlotConfiguration(
+class TimeSlotAggregateConfiguration(
     private val timeSlotView: TimeSlotView
 ) :
     AbstractEventSourcingConfiguration<TimeSlotAggregate, TimeSlotCommand, TimeSlotEvent, TimeSlotDocument>() {
@@ -81,10 +67,5 @@ class TimeSlotConfiguration(
     @Bean("timeSlotAggregateMapper")
     fun aggregateMapper(): (CommandEffect<TimeSlotAggregate, TimeSlotEvent>) -> TimeSlotDocument {
         return { it.aggregate.toDocument(it.events.toSet()) }
-    }
-
-    @Bean
-    fun objectMapper(): ObjectMapper {
-        return jacksonObjectMapper().registerRequiredModules()
     }
 }

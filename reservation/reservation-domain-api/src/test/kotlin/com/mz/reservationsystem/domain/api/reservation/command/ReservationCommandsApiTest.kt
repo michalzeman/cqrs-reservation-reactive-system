@@ -20,7 +20,7 @@ class ReservationCommandsApiTest {
             startTime = instantNow(),
             endTime = instantNow().plus(duration = Duration.parse("PT1H")),
         )
-        val event = command.toDomainEvent()
+        val event = command.toDomainEvent(Id("1"))
         assertEquals("1", event.aggregateId.value)
         assertEquals("2", event.customerId.value)
         assertEquals("3", event.requestId.value)
@@ -33,13 +33,9 @@ class ReservationCommandsApiTest {
     fun `DeclineReservation to ReservationDeclined`() {
         val command = DeclineReservation(
             aggregateId = Id("1"),
-            customerId = Id("2"),
-            requestId = Id("3")
         )
         val event = command.toDomainEvent()
         assertEquals("1", event.aggregateId.value)
-        assertEquals("2", event.customerId.value)
-        assertEquals("3", event.requestId.value)
         assertEquals(event.correlationId, command.correlationId)
     }
 }

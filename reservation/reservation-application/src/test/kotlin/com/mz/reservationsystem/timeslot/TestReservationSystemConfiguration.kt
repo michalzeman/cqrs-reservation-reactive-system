@@ -2,7 +2,8 @@ package com.mz.reservationsystem.timeslot
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.mz.common.components.json.registerRequiredModules
-import com.mz.reservationsystem.TimeSlotConfiguration
+import com.mz.reservationsystem.ReservationSystemConfiguration
+import com.mz.reservationsystem.TimeSlotAggregateConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
@@ -16,7 +17,8 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
 @Import(
-    TimeSlotConfiguration::class,
+    TimeSlotAggregateConfiguration::class,
+    ReservationSystemConfiguration::class
 )
 @ComponentScan("com.mz.reservationsystem.**")
 @ActiveProfiles("test")

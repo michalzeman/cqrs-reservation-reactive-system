@@ -30,8 +30,6 @@ data class ReservationRequested(
 @SerialName("reservation-declined")
 data class ReservationDeclined(
     override val aggregateId: Id,
-    val customerId: Id,
-    val requestId: Id,
     override val correlationId: Id = newId(),
     override val createdAt: Instant = instantNow(),
     override val eventId: Id = newId()
@@ -41,8 +39,7 @@ data class ReservationDeclined(
 @SerialName("reservation-accepted")
 data class ReservationAccepted(
     override val aggregateId: Id,
-    val customerId: Id,
-    val requestId: Id,
+    val timeSlotId: Id,
     override val correlationId: Id = newId(),
     override val createdAt: Instant = instantNow(),
     override val eventId: Id = newId()
