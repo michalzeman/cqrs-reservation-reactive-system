@@ -1,6 +1,8 @@
 package com.mz.reservationsystem.domain.timeslot.internal
 
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotCreated
+import com.mz.reservationsystem.domain.internal.timeslot.NoneTimeSlotAggregate
+import com.mz.reservationsystem.domain.internal.timeslot.TimeSlotEventHandler
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension

@@ -15,6 +15,24 @@ sealed class TimeSlotCommand : DomainCommand {
     abstract val aggregateId: Id
 }
 
+data class BookTimeSlot(
+    override val aggregateId: Id,
+    val reservationId: Id,
+    val booked: Boolean,
+    override val correlationId: Id = newId(),
+    override val commandId: Id = newId(),
+    override val createdAt: Instant = instantNow(),
+) : TimeSlotCommand()
+
+fun BookTimeSlot.toEvent(): TimeSlotBooked {
+    return TimeSlotBooked(
+        aggregateId = this.aggregateId,
+        booked = this.booked,
+        reservationId = this.reservationId,
+        correlationId = this.correlationId
+    )
+}
+
 data class CreateTimeSlot(
     override val aggregateId: Id = NEW_TIME_SLOT_ID,
     val startTime: Instant,

@@ -19,4 +19,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-cassandra-reactive")
     implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

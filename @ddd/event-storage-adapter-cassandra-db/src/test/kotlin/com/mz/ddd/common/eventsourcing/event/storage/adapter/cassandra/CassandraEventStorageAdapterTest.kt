@@ -1,9 +1,9 @@
 package com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra
 
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.EventJournalEntity
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.EventJournalRepository
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.SnapshotEntity
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.SnapshotRepository
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.EventJournalEntity
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.EventJournalRepository
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.SnapshotEntity
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.SnapshotRepository
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.EventStorageAdapterCassandraConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach

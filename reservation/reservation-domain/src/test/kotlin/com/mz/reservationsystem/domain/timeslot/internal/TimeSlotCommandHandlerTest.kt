@@ -1,6 +1,8 @@
 package com.mz.reservationsystem.domain.timeslot.internal
 
 import com.mz.reservationsystem.domain.api.timeslot.CreateTimeSlot
+import com.mz.reservationsystem.domain.internal.timeslot.NoneTimeSlotAggregate
+import com.mz.reservationsystem.domain.internal.timeslot.TimeSlotCommandHandler
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

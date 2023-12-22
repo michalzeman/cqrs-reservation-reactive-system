@@ -1,6 +1,7 @@
 package com.mz.ddd.common.query.internal.readonly
 
 import com.mz.ddd.common.api.domain.Id
+import com.mz.ddd.common.query.BetweenInstantQuery
 import com.mz.ddd.common.query.DomainView
 import com.mz.ddd.common.query.DomainViewQuery
 import com.mz.ddd.common.query.DomainViewReadOnlyRepository
@@ -27,6 +28,7 @@ internal class DomainViewReadOnlyRepositoryImpl(
     override fun find(queryOperation: QueryOperation): Flux<DomainView> {
         return when (queryOperation) {
             is DomainViewQuery -> domainViewQuery(queryOperation)
+            is BetweenInstantQuery -> betweenInstantQuery(queryOperation)
         }
     }
 
@@ -77,5 +79,30 @@ internal class DomainViewReadOnlyRepositoryImpl(
             ).map { it.toDataClass() }
 
         }
+    }
+
+    private fun betweenInstantQuery(query: BetweenInstantQuery): Flux<DomainView> {
+        val byStart = queryableTimestampViewEntityRepository.findByPropertyNameAndDomainTagAndValueBetween(
+            propertyName = query.startTimePropertyName,
+            domainTag = query.domainTag,
+            value1 = query.startTime.toJavaInstant(),
+            value2 = query.endTime.toJavaInstant()
+        ).map { it.toDataClass() }
+        val byEnd = queryableTimestampViewEntityRepository.findByPropertyNameAndDomainTagAndValueBetween(
+            propertyName = query.endTimePropertyName,
+            domainTag = query.domainTag,
+            value1 = query.startTime.toJavaInstant(),
+            value2 = query.endTime.toJavaInstant()
+        ).map { it.toDataClass() }
+        return Flux.merge(byStart, byEnd)
+            .collectList()
+            .map { views ->
+                views.groupBy { it.aggregateId }
+            }
+            .flatMapIterable {
+                it.entries
+                    .map { entry -> DomainView(Id(entry.key), entry.value.toSet()) }
+            }
+            .filter { it.views.isNotEmpty() }
     }
 }

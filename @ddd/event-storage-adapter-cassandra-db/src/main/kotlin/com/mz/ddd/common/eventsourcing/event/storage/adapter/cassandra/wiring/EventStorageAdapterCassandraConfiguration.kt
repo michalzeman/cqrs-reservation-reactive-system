@@ -1,6 +1,6 @@
 package com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring
 
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.EventJournalRepository
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.EventJournalRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration

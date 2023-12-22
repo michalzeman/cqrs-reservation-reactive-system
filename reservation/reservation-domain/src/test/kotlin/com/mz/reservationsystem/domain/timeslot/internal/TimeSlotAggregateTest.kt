@@ -2,10 +2,15 @@ package com.mz.reservationsystem.domain.timeslot.internal
 
 import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.newId
+import com.mz.reservationsystem.domain.api.timeslot.BookTimeSlot
 import com.mz.reservationsystem.domain.api.timeslot.CreateTimeSlot
+import com.mz.reservationsystem.domain.api.timeslot.TimeSlotBooked
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotCreated
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotUpdated
 import com.mz.reservationsystem.domain.api.timeslot.UpdateTimeSlot
+import com.mz.reservationsystem.domain.api.timeslot.toEvent
+import com.mz.reservationsystem.domain.internal.timeslot.NoneTimeSlotAggregate
+import com.mz.reservationsystem.domain.internal.timeslot.SomeTimeSlotAggregate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -147,6 +152,36 @@ class TimeSlotAggregateTest {
         assertThatThrownBy {
             aggregate.verify(updateTimeSlot)
         }.isInstanceOf(IllegalStateException::class.java)
+    }
+
+    @Test
+    fun `should book time slot`() {
+        val startTime = instantNow().plus(Duration.parse("PT2H"))
+        val endTime = startTime.plus(Duration.parse("PT3H"))
+        val noneTimeSlotAggregate = NoneTimeSlotAggregate(newId())
+        val createTimeSlot = CreateTimeSlot(
+            newId(),
+            startTime,
+            endTime,
+            false
+        )
+
+        val aggregate = noneTimeSlotAggregate.apply(createTimeSlot.toEvent(noneTimeSlotAggregate.aggregateId))
+
+        val bookTimeSlot = BookTimeSlot(
+            aggregate.aggregateId,
+            newId(),
+            true
+        )
+
+        val bookEvents = aggregate.verify(bookTimeSlot)
+        val bookedAggregate = aggregate.apply(bookEvents.first() as TimeSlotBooked)
+
+        assertThat(bookedAggregate.version).isEqualTo(aggregate.version.increment())
+        assertThat(bookedAggregate.booked).isEqualTo(true)
+        assertThat(bookedAggregate.valid).isEqualTo(true)
+        assertThat(bookTimeSlot.reservationId).isEqualTo((bookEvents.first() as TimeSlotBooked).reservationId)
+        assertThat(bookedAggregate.reservationId).isEqualTo(bookTimeSlot.reservationId)
     }
 
 }

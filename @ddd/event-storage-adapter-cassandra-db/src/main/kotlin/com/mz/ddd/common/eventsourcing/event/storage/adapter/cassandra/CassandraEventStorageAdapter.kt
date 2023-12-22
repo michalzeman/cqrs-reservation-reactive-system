@@ -1,9 +1,9 @@
 package com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra
 
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.EventJournalRepository
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.SnapshotRepository
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.map
-import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistance.toEntity
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.EventJournalRepository
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.SnapshotRepository
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.map
+import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.toEntity
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

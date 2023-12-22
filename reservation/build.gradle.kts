@@ -13,6 +13,7 @@ project(":reservation:reservation-application") {
         implementation(project(":@ddd:event-storage-adapter-cassandra-db"))
         implementation(project(":@ddd:event-storage-ser-des-adapter-json"))
         implementation(project(":@ddd:domain-query"))
+        implementation(project(":common-components"))
     }
 }
 

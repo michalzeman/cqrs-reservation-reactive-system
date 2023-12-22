@@ -14,6 +14,17 @@ sealed class TimeSlotEvent : DomainEvent {
 }
 
 @Serializable
+@SerialName("time-slot-booked")
+data class TimeSlotBooked(
+    override val aggregateId: Id,
+    val booked: Boolean,
+    val reservationId: Id,
+    override val correlationId: Id = newId(),
+    override val eventId: Id = newId(),
+    override val createdAt: Instant = instantNow()
+) : TimeSlotEvent()
+
+@Serializable
 @SerialName("time-slot-created")
 data class TimeSlotCreated(
     override val aggregateId: Id,
@@ -25,6 +36,8 @@ data class TimeSlotCreated(
     override val eventId: Id = newId()
 ) : TimeSlotEvent()
 
+@Serializable
+@SerialName("time-slot-updated")
 data class TimeSlotUpdated(
     override val aggregateId: Id,
     val startTime: Instant,
