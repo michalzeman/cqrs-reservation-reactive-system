@@ -1,11 +1,9 @@
-package com.mz.reservationsystem.adapter.rest.timeslot
+package com.mz.reservationsystem.adapter.rest.reservation
 
 import com.mz.common.components.adapter.http.HttpHandler
 import com.mz.ddd.common.api.domain.Id
-import com.mz.reservationsystem.adapter.rest.timeslot.model.TimeSlotCommandRequest
-import com.mz.reservationsystem.domain.api.timeslot.BookTimeSlot
-import com.mz.reservationsystem.domain.api.timeslot.CreateTimeSlot
-import com.mz.reservationsystem.domain.timeslot.TimeSlotApi
+import com.mz.reservationsystem.adapter.rest.reservation.model.ReservationCommandRequest
+import com.mz.reservationsystem.domain.reservation.ReservationApi
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.RequestPredicates
@@ -17,20 +15,20 @@ import reactor.core.publisher.Mono
 import java.util.function.Supplier
 
 @Component
-class TimeSlotHttpHandler(private val timeSlotApi: TimeSlotApi) : HttpHandler {
+class ReservationHttpHandler(private val reservationApi: ReservationApi) : HttpHandler {
     override fun route(): RouterFunction<ServerResponse> {
         val route = RouterFunctions
             .route(
                 RequestPredicates.POST("").and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                this::createTimeSlot
+                this::requestReservation
             )
             .andRoute(
-                RequestPredicates.PUT("").and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                this::updateTimeSlot
+                RequestPredicates.PUT("/decline").and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
+                this::declineReservation
             )
             .andRoute(
-                RequestPredicates.PUT("/book").and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                this::bookTimeSlot
+                RequestPredicates.PUT("/accept").and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
+                this::acceptReservation
             )
             .andRoute(
                 RequestPredicates.GET("/{id}").and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
@@ -38,32 +36,29 @@ class TimeSlotHttpHandler(private val timeSlotApi: TimeSlotApi) : HttpHandler {
             )
 
         return RouterFunctions.route()
-            .nest(RequestPredicates.path("/reservation-system/time-slots"), Supplier { route })
+            .nest(RequestPredicates.path("/reservation-system/reservations"), Supplier { route })
             .build()
     }
 
-    fun createTimeSlot(request: ServerRequest): Mono<ServerResponse> {
-        return request.bodyToMono(TimeSlotCommandRequest::class.java)
-            .map(TimeSlotCommandRequest::toCommand)
-            .cast(CreateTimeSlot::class.java)
-            .flatMap(timeSlotApi::execute)
+    fun requestReservation(request: ServerRequest): Mono<ServerResponse> {
+        return request.bodyToMono(ReservationCommandRequest::class.java)
+            .map(ReservationCommandRequest::toCommand)
+            .flatMap(reservationApi::execute)
             .flatMap { (ServerResponse.accepted().bodyValue(it)) }
     }
 
-    fun updateTimeSlot(request: ServerRequest): Mono<ServerResponse> {
-        return request.bodyToMono(TimeSlotCommandRequest::class.java)
-            .map(TimeSlotCommandRequest::toCommand)
-            .filter { it !is CreateTimeSlot }
-            .flatMap(timeSlotApi::execute)
+    fun declineReservation(request: ServerRequest): Mono<ServerResponse> {
+        return request.bodyToMono(ReservationCommandRequest::class.java)
+            .map(ReservationCommandRequest::toCommand)
+            .flatMap(reservationApi::execute)
             .flatMap { (ServerResponse.accepted().bodyValue(it)) }
             .switchIfEmpty(ServerResponse.badRequest().build())
     }
 
-    fun bookTimeSlot(request: ServerRequest): Mono<ServerResponse> {
-        return request.bodyToMono(TimeSlotCommandRequest::class.java)
-            .map(TimeSlotCommandRequest::toCommand)
-            .filter { it is BookTimeSlot }
-            .flatMap(timeSlotApi::execute)
+    fun acceptReservation(request: ServerRequest): Mono<ServerResponse> {
+        return request.bodyToMono(ReservationCommandRequest::class.java)
+            .map(ReservationCommandRequest::toCommand)
+            .flatMap(reservationApi::execute)
             .flatMap { (ServerResponse.accepted().bodyValue(it)) }
             .switchIfEmpty(ServerResponse.badRequest().build())
     }
@@ -71,7 +66,7 @@ class TimeSlotHttpHandler(private val timeSlotApi: TimeSlotApi) : HttpHandler {
     fun getById(request: ServerRequest): Mono<ServerResponse> {
         return Mono.fromCallable { request.pathVariable("id") }
             .map(::Id)
-            .flatMap(timeSlotApi::findById)
+            .flatMap(reservationApi::findById)
             .flatMap { (ServerResponse.accepted().bodyValue(it)) }
             .switchIfEmpty(ServerResponse.notFound().build())
     }

@@ -8,6 +8,7 @@ import com.mz.reservationsystem.domain.api.reservation.RequestReservation
 import com.mz.reservationsystem.domain.api.reservation.ReservationAccepted
 import com.mz.reservationsystem.domain.api.reservation.ReservationDeclined
 import com.mz.reservationsystem.domain.api.reservation.ReservationRequested
+import com.mz.reservationsystem.domain.api.reservation.ReservationState
 import kotlinx.datetime.Instant
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy

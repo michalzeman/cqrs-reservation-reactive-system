@@ -16,18 +16,23 @@ import com.mz.reservationsystem.domain.api.reservation.ReservationEvent
 import com.mz.reservationsystem.domain.internal.reservation.ReservationAggregate
 import com.mz.reservationsystem.domain.internal.reservation.ReservationCommandHandler
 import com.mz.reservationsystem.domain.internal.reservation.ReservationEventHandler
+import com.mz.reservationsystem.domain.internal.reservation.toAggregate
+import com.mz.reservationsystem.domain.internal.reservation.toDocument
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
 typealias ReservationEventSourcingConfiguration = AbstractEventSourcingConfiguration<ReservationAggregate, ReservationCommand, ReservationEvent, ReservationDocument>
+typealias ReservationAggregateManager = AggregateManager<ReservationAggregate, ReservationCommand, ReservationEvent, ReservationDocument>
 
+@Configuration
 class ReservationAggregateConfiguration : ReservationEventSourcingConfiguration() {
 
 
     @Bean("reservationAggregateRepository")
     override fun aggregateRepository(): AggregateRepository<ReservationAggregate, ReservationCommand, ReservationEvent> {
         return buildAggregateRepository(
-            { TODO() },
+            { id -> id.toAggregate() },
             ReservationCommandHandler(),
             ReservationEventHandler(),
         )
@@ -51,12 +56,12 @@ class ReservationAggregateConfiguration : ReservationEventSourcingConfiguration(
         aggregateRepository: AggregateRepository<ReservationAggregate, ReservationCommand, ReservationEvent>,
         @Qualifier("reservationAggregateMapper")
         aggregateMapper: (CommandEffect<ReservationAggregate, ReservationEvent>) -> ReservationDocument
-    ): AggregateManager<ReservationAggregate, ReservationCommand, ReservationEvent, ReservationDocument> {
+    ): ReservationAggregateManager {
         return buildAggregateManager(aggregateRepository, aggregateMapper)
     }
 
     @Bean("reservationAggregateMapper")
     fun aggregateMapper(): (CommandEffect<ReservationAggregate, ReservationEvent>) -> ReservationDocument {
-        return { TODO() }
+        return { commandEffect -> commandEffect.aggregate.toDocument(commandEffect.events.toSet()) }
     }
 }

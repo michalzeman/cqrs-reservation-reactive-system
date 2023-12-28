@@ -3,34 +3,55 @@ package com.mz.reservationsystem.domain.internal.reservation
 import com.mz.ddd.common.api.domain.Aggregate
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.Version
+import com.mz.ddd.common.api.domain.newId
 import com.mz.reservationsystem.domain.api.reservation.AcceptReservation
 import com.mz.reservationsystem.domain.api.reservation.DeclineReservation
+import com.mz.reservationsystem.domain.api.reservation.NEW_RESERVATION_ID
 import com.mz.reservationsystem.domain.api.reservation.RequestReservation
 import com.mz.reservationsystem.domain.api.reservation.ReservationAccepted
 import com.mz.reservationsystem.domain.api.reservation.ReservationCommand
 import com.mz.reservationsystem.domain.api.reservation.ReservationDeclined
+import com.mz.reservationsystem.domain.api.reservation.ReservationDocument
 import com.mz.reservationsystem.domain.api.reservation.ReservationEvent
 import com.mz.reservationsystem.domain.api.reservation.ReservationRequested
+import com.mz.reservationsystem.domain.api.reservation.ReservationState
+import com.mz.reservationsystem.domain.api.reservation.ReservationState.ACCEPTED
+import com.mz.reservationsystem.domain.api.reservation.ReservationState.DECLINED
+import com.mz.reservationsystem.domain.api.reservation.ReservationState.REQUESTED
 import com.mz.reservationsystem.domain.api.reservation.toDomainEvent
-import com.mz.reservationsystem.domain.internal.reservation.ReservationState.ACCEPTED
-import com.mz.reservationsystem.domain.internal.reservation.ReservationState.DECLINED
-import com.mz.reservationsystem.domain.internal.reservation.ReservationState.REQUESTED
 import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-enum class ReservationState {
-    NONE,
-    REQUESTED,
-    DECLINED,
-    ACCEPTED
-}
 
 @Serializable
 sealed class ReservationAggregate : Aggregate() {
     abstract fun verifyCommand(cmd: ReservationCommand): List<ReservationEvent>
 
     abstract fun applyEvent(event: ReservationEvent): ReservationAggregate
+}
+
+fun Id.toAggregate(): ReservationAggregate {
+    return when (this) {
+        NEW_RESERVATION_ID -> NoneReservationAggregate(newId())
+        else -> NoneReservationAggregate(this)
+    }
+}
+
+fun ReservationAggregate.toDocument(events: Set<ReservationEvent>): ReservationDocument {
+    return when (this) {
+        is NoneReservationAggregate -> error("Reservation is not created yet")
+        is SomeReservationAggregate -> ReservationDocument(
+            aggregateId = aggregateId,
+            reservationState = reservationState,
+            customerId = customerId,
+            requestId = requestId,
+            version = version,
+            startTime = startTime,
+            endTime = endTime,
+            events = events
+        )
+    }
 }
 
 @Serializable

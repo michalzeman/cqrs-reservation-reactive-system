@@ -54,7 +54,7 @@ class TimeSlotWorkFlowTest(@LocalServerPort val port: Int) {
 
         // Create the time slot
         val response = client.post()
-            .uri("/reservation-system/time-slot")
+            .uri("/reservation-system/time-slots")
             .contentType(MediaType.APPLICATION_JSON)
             .body(Mono.just(createTimeSlotRequest), CreateTimeSlotRequest::class.java)
             .exchange()
@@ -76,7 +76,7 @@ class TimeSlotWorkFlowTest(@LocalServerPort val port: Int) {
         )
 
         client.put()
-            .uri("/reservation-system/time-slot")
+            .uri("/reservation-system/time-slots")
             .contentType(MediaType.APPLICATION_JSON)
             .body(Mono.just(updateTimeSlotRequest), UpdateTimeSlotRequest::class.java)
             .exchange()
@@ -86,7 +86,7 @@ class TimeSlotWorkFlowTest(@LocalServerPort val port: Int) {
         val bookTimeSlotRequest = BookTimeSlotRequest(aggregateId, true, uuid())
 
         client.put()
-            .uri("/reservation-system/time-slot/book")
+            .uri("/reservation-system/time-slots/book")
             .contentType(MediaType.APPLICATION_JSON)
             .body(Mono.just(bookTimeSlotRequest), BookTimeSlotRequest::class.java)
             .exchange()
@@ -105,7 +105,7 @@ class TimeSlotWorkFlowTest(@LocalServerPort val port: Int) {
 
         // Create the time slot
         client.post()
-            .uri("/reservation-system/time-slot")
+            .uri("/reservation-system/time-slots")
             .contentType(MediaType.APPLICATION_JSON)
             .body(Mono.just(createTimeSlotRequest), CreateTimeSlotRequest::class.java)
             .exchange()
@@ -113,7 +113,7 @@ class TimeSlotWorkFlowTest(@LocalServerPort val port: Int) {
 
         // Try to create the same time slot again
         client.post()
-            .uri("/reservation-system/time-slot")
+            .uri("/reservation-system/time-slots")
             .contentType(MediaType.APPLICATION_JSON)
             .body(Mono.just(createTimeSlotRequest), CreateTimeSlotRequest::class.java)
             .exchange()
