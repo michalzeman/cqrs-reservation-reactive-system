@@ -1,5 +1,6 @@
 package com.mz.reservationsystem.domain.reservation
 
+import com.mz.common.components.ApplicationChannelStream
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.persistence.eventsourcing.AggregateManager
 import com.mz.reservationsystem.domain.api.reservation.ReservationCommand
@@ -15,8 +16,14 @@ typealias ReservationAggregateManager = AggregateManager<ReservationAggregate, R
 @Component
 class ReservationApi(
     @Qualifier("reservationAggregateManager")
-    private val aggregateManager: ReservationAggregateManager
+    private val aggregateManager: ReservationAggregateManager,
+    private val applicationChannelStream: ApplicationChannelStream
 ) {
+
+    init {
+        applicationChannelStream.subscribeToChannel(ReservationCommand::class.java, ::execute)
+    }
+
     fun execute(cmd: ReservationCommand): Mono<ReservationDocument> {
         return aggregateManager.execute(cmd, cmd.aggregateId)
     }

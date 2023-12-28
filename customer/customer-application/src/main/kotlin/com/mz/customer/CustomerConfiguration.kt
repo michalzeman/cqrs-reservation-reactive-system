@@ -20,8 +20,6 @@ import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.CommandEffect
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.JsonEventSerDesAdapter
-import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.desJson
-import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.serToJsonString
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.redis.wiring.RedisLockStorageAdapterConfiguration
 import com.mz.ddd.common.query.wiring.DomainViewConfiguration
 import org.springframework.beans.factory.annotation.Qualifier
@@ -57,12 +55,7 @@ class CustomerConfiguration(
 
     @Bean("customerEventSerDesAdapter")
     override fun eventSerDesAdapter(): EventSerDesAdapter<CustomerEvent, Customer> {
-        return JsonEventSerDesAdapter(
-            { serToJsonString(it) },
-            { desJson(it) },
-            { serToJsonString(it) },
-            { desJson(it) }
-        )
+        return JsonEventSerDesAdapter.build()
     }
 
     @Bean("customerDomainTag")

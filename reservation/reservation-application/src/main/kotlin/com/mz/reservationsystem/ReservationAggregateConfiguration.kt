@@ -1,5 +1,7 @@
 package com.mz.reservationsystem
 
+import com.mz.common.components.ApplicationChannelStream
+import com.mz.common.components.ChannelMessage
 import com.mz.ddd.common.api.domain.DomainTag
 import com.mz.ddd.common.persistence.eventsourcing.AbstractEventSourcingConfiguration
 import com.mz.ddd.common.persistence.eventsourcing.AggregateManager
@@ -7,8 +9,6 @@ import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateRepository
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.CommandEffect
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.JsonEventSerDesAdapter
-import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.desJson
-import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.serToJsonString
 import com.mz.reservationsystem.domain.api.reservation.RESERVATION_DOMAIN_TAG
 import com.mz.reservationsystem.domain.api.reservation.ReservationCommand
 import com.mz.reservationsystem.domain.api.reservation.ReservationDocument
@@ -21,16 +21,20 @@ import com.mz.reservationsystem.domain.internal.reservation.toDocument
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import reactor.core.publisher.Mono
 
 typealias ReservationEventSourcingConfiguration = AbstractEventSourcingConfiguration<ReservationAggregate, ReservationCommand, ReservationEvent, ReservationDocument>
 typealias ReservationAggregateManager = AggregateManager<ReservationAggregate, ReservationCommand, ReservationEvent, ReservationDocument>
+typealias ReservationAggregateRepository = AggregateRepository<ReservationAggregate, ReservationCommand, ReservationEvent>
 
 @Configuration
-class ReservationAggregateConfiguration : ReservationEventSourcingConfiguration() {
+class ReservationAggregateConfiguration(
+    private val applicationChannelStream: ApplicationChannelStream
+) : ReservationEventSourcingConfiguration() {
 
 
     @Bean("reservationAggregateRepository")
-    override fun aggregateRepository(): AggregateRepository<ReservationAggregate, ReservationCommand, ReservationEvent> {
+    override fun aggregateRepository(): ReservationAggregateRepository {
         return buildAggregateRepository(
             { id -> id.toAggregate() },
             ReservationCommandHandler(),
@@ -40,12 +44,7 @@ class ReservationAggregateConfiguration : ReservationEventSourcingConfiguration(
 
     @Bean("reservationEventSerDesAdapter")
     override fun eventSerDesAdapter(): EventSerDesAdapter<ReservationEvent, ReservationAggregate> {
-        return JsonEventSerDesAdapter(
-            { serToJsonString(it) },
-            { desJson(it) },
-            { serToJsonString(it) },
-            { desJson(it) }
-        )
+        return JsonEventSerDesAdapter.build()
     }
 
     override fun domainTag(): DomainTag = RESERVATION_DOMAIN_TAG
@@ -53,15 +52,23 @@ class ReservationAggregateConfiguration : ReservationEventSourcingConfiguration(
     @Bean("reservationAggregateManager")
     override fun aggregateManager(
         @Qualifier("reservationAggregateRepository")
-        aggregateRepository: AggregateRepository<ReservationAggregate, ReservationCommand, ReservationEvent>,
+        aggregateRepository: ReservationAggregateRepository,
         @Qualifier("reservationAggregateMapper")
         aggregateMapper: (CommandEffect<ReservationAggregate, ReservationEvent>) -> ReservationDocument
     ): ReservationAggregateManager {
-        return buildAggregateManager(aggregateRepository, aggregateMapper)
+        return buildAggregateManager(
+            aggregateRepository,
+            aggregateMapper,
+            publishDocument = this::reservationDocumentPublishing
+        )
     }
 
     @Bean("reservationAggregateMapper")
     fun aggregateMapper(): (CommandEffect<ReservationAggregate, ReservationEvent>) -> ReservationDocument {
         return { commandEffect -> commandEffect.aggregate.toDocument(commandEffect.events.toSet()) }
+    }
+
+    private fun reservationDocumentPublishing(document: ReservationDocument): Mono<Void> {
+        return Mono.fromRunnable { applicationChannelStream.publish(ChannelMessage(document)) }
     }
 }

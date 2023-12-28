@@ -22,6 +22,17 @@ class JsonEventSerDesAdapter<E : DomainEvent, A : Aggregate>(
     val decodeAggregate: Decode<A>
 ) : EventSerDesAdapter<E, A> {
 
+    companion object {
+        inline fun <reified E : DomainEvent, reified A : Aggregate> build(): EventSerDesAdapter<E, A> {
+            return JsonEventSerDesAdapter(
+                { serToJsonString(it) },
+                { desJson(it) },
+                { serToJsonString(it) },
+                { desJson(it) }
+            )
+        }
+    }
+
     override val contentType: String = "application/json"
     override fun serialize(aggregate: A): ByteArray {
         return encodeAggregate(aggregate)

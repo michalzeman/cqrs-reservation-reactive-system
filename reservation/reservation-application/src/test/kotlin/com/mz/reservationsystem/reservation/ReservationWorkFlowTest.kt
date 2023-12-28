@@ -1,18 +1,22 @@
+package com.mz.reservationsystem.reservation
+
 import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.uuid
 import com.mz.reservationsystem.TestReservationSystemConfiguration
-import com.mz.reservationsystem.adapter.rest.timeslot.model.BookTimeSlotRequest
+import com.mz.reservationsystem.adapter.rest.reservation.model.DeclineReservationRequest
+import com.mz.reservationsystem.adapter.rest.reservation.model.RequestReservationRequest
 import com.mz.reservationsystem.adapter.rest.timeslot.model.CreateTimeSlotRequest
-import com.mz.reservationsystem.adapter.rest.timeslot.model.UpdateTimeSlotRequest
+import com.mz.reservationsystem.domain.api.reservation.ReservationDocument
+import com.mz.reservationsystem.domain.api.reservation.ReservationState
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotDocument
 import kotlinx.datetime.toJavaInstant
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.data.cassandra.core.cql.CqlTemplate
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
@@ -22,7 +26,7 @@ import kotlin.time.Duration
     classes = [TestReservationSystemConfiguration::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-class TimeSlotWorkFlowTest(@LocalServerPort val port: Int) {
+class ReservationWorkFlowTest(@LocalServerPort val port: Int) {
 
     private val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
@@ -44,16 +48,17 @@ class TimeSlotWorkFlowTest(@LocalServerPort val port: Int) {
     }
 
     @Test
-    fun `should create, update and book time slot`() {
+    fun `should request, accept, decline and verify reservation`() {
         val startTime = instantNow().plus(Duration.parse("PT2H"))
         val endTime = startTime.plus(Duration.parse("PT3H"))
+
         val createTimeSlotRequest = CreateTimeSlotRequest(
             startTime.toJavaInstant(),
             endTime.toJavaInstant()
         )
 
         // Create the time slot
-        val response = client.post()
+        val responseTimeSlot = client.post()
             .uri("/reservation-system/time-slots")
             .contentType(MediaType.APPLICATION_JSON)
             .body(Mono.just(createTimeSlotRequest), CreateTimeSlotRequest::class.java)
@@ -63,60 +68,57 @@ class TimeSlotWorkFlowTest(@LocalServerPort val port: Int) {
             .returnResult()
             .responseBody
 
-        val aggregateId = response?.aggregateId?.value ?: ""
-
-        val updateStartTime = startTime.plus(Duration.parse("PT4H"))
-        val updateEndTime = updateStartTime.plus(Duration.parse("PT4H"))
-        // Update the time slot
-        val updateTimeSlotRequest = UpdateTimeSlotRequest(
-            aggregateId,
-            updateStartTime.toJavaInstant(),
-            updateEndTime.toJavaInstant(),
-            valid = true,
+        val requestReservationRequest = RequestReservationRequest(
+            customerId = uuid(),
+            requestId = uuid(),
+            startTime = startTime.toJavaInstant(),
+            endTime = endTime.toJavaInstant()
         )
 
-        client.put()
-            .uri("/reservation-system/time-slots")
+        // Request the reservation
+        val response = client.post()
+            .uri("/reservation-system/reservations")
             .contentType(MediaType.APPLICATION_JSON)
-            .body(Mono.just(updateTimeSlotRequest), UpdateTimeSlotRequest::class.java)
+            .body(Mono.just(requestReservationRequest), RequestReservationRequest::class.java)
             .exchange()
             .expectStatus().isAccepted
-            .expectBody(TimeSlotDocument::class.java)
-        // Book the time slot
-        val bookTimeSlotRequest = BookTimeSlotRequest(aggregateId, true, uuid())
+            .expectBody(ReservationDocument::class.java)
+            .returnResult()
+            .responseBody!!
 
-        client.put()
-            .uri("/reservation-system/time-slots/book")
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(Mono.just(bookTimeSlotRequest), BookTimeSlotRequest::class.java)
+        assertThat(response.reservationState).isEqualTo(ReservationState.REQUESTED)
+
+        val aggregateId = response.aggregateId.value
+
+        // wait to accept the reservation
+        Thread.sleep(2000)
+
+        // Verify the reservation by calling it by id
+        val acceptedReservation = client.get()
+            .uri("/reservation-system/reservations/$aggregateId")
             .exchange()
             .expectStatus().isAccepted
-            .expectBody(TimeSlotDocument::class.java)
-    }
+            .expectBody(ReservationDocument::class.java)
+            .returnResult()
+            .responseBody!!
 
-    @Test
-    fun `should not create time slot if already exists`() {
-        val startTime = instantNow().plus(Duration.parse("PT4H"))
-        val endTime = startTime.plus(Duration.parse("PT5H"))
-        val createTimeSlotRequest = CreateTimeSlotRequest(
-            startTime.toJavaInstant(),
-            endTime.toJavaInstant()
+        assertThat(acceptedReservation.reservationState).isEqualTo(ReservationState.ACCEPTED)
+        assertThat(acceptedReservation.version.value).isEqualTo(1)
+
+        // Decline the reservation
+        val declineReservationRequest = DeclineReservationRequest(
+            aggregateId = aggregateId
         )
-
-        // Create the time slot
-        client.post()
-            .uri("/reservation-system/time-slots")
+        var declinedReservation = client.put()
+            .uri("/reservation-system/reservations/decline")
             .contentType(MediaType.APPLICATION_JSON)
-            .body(Mono.just(createTimeSlotRequest), CreateTimeSlotRequest::class.java)
+            .body(Mono.just(declineReservationRequest), DeclineReservationRequest::class.java)
             .exchange()
             .expectStatus().isAccepted
+            .expectBody(ReservationDocument::class.java)
+            .returnResult()
+            .responseBody!!
 
-        // Try to create the same time slot again
-        client.post()
-            .uri("/reservation-system/time-slots")
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(Mono.just(createTimeSlotRequest), CreateTimeSlotRequest::class.java)
-            .exchange()
-            .expectStatus().isEqualTo(HttpStatus.PRECONDITION_FAILED)
+        assertThat(declinedReservation.reservationState).isEqualTo(ReservationState.DECLINED)
     }
 }

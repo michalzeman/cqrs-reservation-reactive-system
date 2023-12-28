@@ -2,6 +2,7 @@ package com.mz.reservationsystem
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.mz.common.components.CommonComponentsConfiguration
 import com.mz.common.components.json.registerRequiredModules
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.EventStorageAdapterCassandraConfiguration
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.redis.wiring.RedisLockStorageAdapterConfiguration
@@ -15,9 +16,10 @@ import org.springframework.context.annotation.Import
 @Import(
     EventStorageAdapterCassandraConfiguration::class,
     RedisLockStorageAdapterConfiguration::class,
-    DomainViewConfiguration::class
+    DomainViewConfiguration::class,
+    CommonComponentsConfiguration::class
 )
-@ComponentScan("com.mz.reservationsystem.domain.**")
+@ComponentScan(value = ["com.mz.reservationsystem.domain.**"])
 class ReservationSystemConfiguration {
     @Bean
     fun objectMapper(): ObjectMapper {

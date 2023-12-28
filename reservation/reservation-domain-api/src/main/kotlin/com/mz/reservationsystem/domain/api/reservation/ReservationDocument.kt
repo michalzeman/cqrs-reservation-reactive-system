@@ -6,6 +6,7 @@ import com.mz.ddd.common.api.domain.Version
 import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.newId
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 
 enum class ReservationState {
     REQUESTED,
@@ -13,6 +14,7 @@ enum class ReservationState {
     ACCEPTED
 }
 
+@Serializable
 data class ReservationDocument(
     val aggregateId: Id,
     val reservationState: ReservationState,

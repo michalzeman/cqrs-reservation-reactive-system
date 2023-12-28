@@ -1,5 +1,7 @@
 package com.mz.reservationsystem.domain.timeslot
 
+import com.mz.common.components.ApplicationChannelStream
+import com.mz.common.components.subscribeToChannel
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.query.BetweenInstantQuery
@@ -33,8 +35,13 @@ data class FindTimeSlotBetweenTimes(
 @Component
 class TimeSlotView(
     private val domainViewRepository: DomainViewRepository,
-    private val domainViewReadOnlyRepository: DomainViewReadOnlyRepository
+    private val domainViewReadOnlyRepository: DomainViewReadOnlyRepository,
+    private val channelStream: ApplicationChannelStream
 ) {
+
+    init {
+        channelStream.subscribeToChannel<TimeSlotDocument>(::process)
+    }
 
     fun process(document: TimeSlotDocument): Mono<Void> {
         val startTime = QueryableInstant(

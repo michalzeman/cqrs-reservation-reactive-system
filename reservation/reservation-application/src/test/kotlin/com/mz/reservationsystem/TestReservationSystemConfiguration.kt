@@ -1,10 +1,7 @@
-package com.mz.reservationsystem.timeslot
+package com.mz.reservationsystem
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.mz.common.components.json.registerRequiredModules
-import com.mz.reservationsystem.ReservationAggregateConfiguration
-import com.mz.reservationsystem.ReservationSystemConfiguration
-import com.mz.reservationsystem.TimeSlotAggregateConfiguration
 import com.mz.reservationsystem.adapter.rest.wiring.ReservationAdapterRestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan

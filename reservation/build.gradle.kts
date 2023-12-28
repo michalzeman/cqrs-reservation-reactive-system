@@ -37,6 +37,7 @@ project(":reservation:reservation-domain") {
 
         implementation(project(":@ddd:domain-persistence"))
         implementation(project(":@ddd:domain-query"))
+        implementation(project(":common-components"))
     }
 }
 
