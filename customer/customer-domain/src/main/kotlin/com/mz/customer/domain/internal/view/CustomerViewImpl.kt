@@ -1,5 +1,7 @@
 package com.mz.customer.domain.internal.view
 
+import com.mz.common.components.ApplicationChannelStream
+import com.mz.common.components.subscribeToChannel
 import com.mz.customer.domain.CustomerProperties
 import com.mz.customer.domain.CustomerQuery
 import com.mz.customer.domain.CustomerView
@@ -20,8 +22,13 @@ import reactor.core.publisher.Mono
 @Component
 class CustomerViewImpl(
     private val domainViewRepository: DomainViewRepository,
-    private val domainViewReadOnlyRepository: DomainViewReadOnlyRepository
+    private val domainViewReadOnlyRepository: DomainViewReadOnlyRepository,
+    applicationChannelStream: ApplicationChannelStream
 ) : CustomerView {
+
+    init {
+        applicationChannelStream.subscribeToChannel<CustomerDocument>(::process)
+    }
 
     override fun process(document: CustomerDocument): Mono<Void> {
         val email = QueryableString(

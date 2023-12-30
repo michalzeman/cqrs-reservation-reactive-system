@@ -2,8 +2,10 @@ package com.mz.customer
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.mz.common.components.ApplicationChannelStream
+import com.mz.common.components.ChannelMessage
+import com.mz.common.components.CommonComponentsConfiguration
 import com.mz.common.components.json.registerRequiredModules
-import com.mz.customer.domain.CustomerView
 import com.mz.customer.domain.api.CustomerCommand
 import com.mz.customer.domain.api.CustomerDocument
 import com.mz.customer.domain.api.CustomerEvent
@@ -22,6 +24,7 @@ import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.Event
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.JsonEventSerDesAdapter
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.redis.wiring.RedisLockStorageAdapterConfiguration
 import com.mz.ddd.common.query.wiring.DomainViewConfiguration
+import kotlinx.coroutines.reactor.mono
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -34,10 +37,11 @@ private const val CUSTOMER_AGGREGATE_MANAGER_BEAN = "customerAggregateManager"
 @Import(
     EventStorageAdapterCassandraConfiguration::class,
     RedisLockStorageAdapterConfiguration::class,
-    DomainViewConfiguration::class
+    DomainViewConfiguration::class,
+    CommonComponentsConfiguration::class
 )
 class CustomerConfiguration(
-    val customerView: CustomerView
+    private val applicationChannelStream: ApplicationChannelStream
 ) : AbstractEventSourcingConfiguration<
         Customer,
         CustomerCommand,
@@ -67,7 +71,11 @@ class CustomerConfiguration(
         aggregateRepository: AggregateRepository<Customer, CustomerCommand, CustomerEvent>,
         aggregateMapper: (CommandEffect<Customer, CustomerEvent>) -> CustomerDocument
     ): AggregateManager<Customer, CustomerCommand, CustomerEvent, CustomerDocument> {
-        return buildAggregateManager(aggregateRepository, aggregateMapper, publishDocument = customerView::process)
+        return buildAggregateManager(aggregateRepository, aggregateMapper, publishDocument = { doc ->
+            mono {
+                applicationChannelStream.publish(ChannelMessage(doc))
+            }.then()
+        })
     }
 
     @Bean

@@ -40,6 +40,7 @@ project(":customer:customer-domain") {
 
         implementation(project(":@ddd:domain-persistence"))
         implementation(project(":@ddd:domain-query"))
+        implementation(project(":common-components"))
     }
 }
 
