@@ -12,100 +12,37 @@ import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn
 import org.springframework.data.cassandra.core.mapping.Table
 import java.time.Instant
 
+abstract class AbstractQueryableViewEntity<T> {
+    @PrimaryKeyColumn(name = "aggregate_id", type = PrimaryKeyType.CLUSTERED)
+    var aggregateId: String? = null
 
-/*
-(property_name, domain_tag, value)
- */
+    @PrimaryKeyColumn(name = "property_name", type = PrimaryKeyType.PARTITIONED)
+    var propertyName: String? = null
+
+    @PrimaryKeyColumn(name = "value", type = PrimaryKeyType.PARTITIONED)
+    var value: T? = null
+
+    @PrimaryKeyColumn(name = "domain_tag", type = PrimaryKeyType.PARTITIONED)
+    var domainTag: String? = null
+
+    @Column("timestamp")
+    var timestamp: Instant? = null
+}
 
 @Table("queryable_text_view")
-internal class QueryableTextViewEntity {
-    @PrimaryKeyColumn(name = "aggregate_id", type = PrimaryKeyType.CLUSTERED)
-    var aggregateId: String? = null
-
-    @PrimaryKeyColumn(name = "property_name", type = PrimaryKeyType.PARTITIONED)
-    var propertyName: String? = null
-
-    @PrimaryKeyColumn(name = "value", type = PrimaryKeyType.PARTITIONED)
-    var value: String? = null
-
-    @PrimaryKeyColumn(name = "domain_tag", type = PrimaryKeyType.PARTITIONED)
-    var domainTag: String? = null
-
-    @Column("timestamp")
-    var timestamp: Instant? = null
-}
+internal class QueryableTextViewEntity : AbstractQueryableViewEntity<String>()
 
 @Table("queryable_boolean_view")
-internal class QueryableBooleanViewEntity {
-    @PrimaryKeyColumn(name = "aggregate_id", type = PrimaryKeyType.CLUSTERED)
-    var aggregateId: String? = null
-
-    @PrimaryKeyColumn(name = "property_name", type = PrimaryKeyType.PARTITIONED)
-    var propertyName: String? = null
-
-    @PrimaryKeyColumn(name = "value", type = PrimaryKeyType.PARTITIONED)
-    var value: Boolean? = null
-
-    @PrimaryKeyColumn(name = "domain_tag", type = PrimaryKeyType.PARTITIONED)
-    var domainTag: String? = null
-
-    @Column("timestamp")
-    var timestamp: Instant? = null
-}
+internal class QueryableBooleanViewEntity : AbstractQueryableViewEntity<Boolean>()
 
 @Table("queryable_timestamp_view")
-internal class QueryableTimestampViewEntity {
-    @PrimaryKeyColumn(name = "aggregate_id", type = PrimaryKeyType.CLUSTERED)
-    var aggregateId: String? = null
-
-    @PrimaryKeyColumn(name = "property_name", type = PrimaryKeyType.PARTITIONED)
-    var propertyName: String? = null
-
-    @PrimaryKeyColumn(name = "value", type = PrimaryKeyType.PARTITIONED)
-    var value: Instant? = null
-
-    @PrimaryKeyColumn(name = "domain_tag", type = PrimaryKeyType.PARTITIONED)
-    var domainTag: String? = null
-
-    @Column("timestamp")
-    var timestamp: Instant? = null
-}
+internal class QueryableTimestampViewEntity : AbstractQueryableViewEntity<Instant>()
 
 @Table("queryable_long_view")
-internal class QueryableLongViewEntity {
-    @PrimaryKeyColumn(name = "aggregate_id", type = PrimaryKeyType.CLUSTERED)
-    var aggregateId: String? = null
-
-    @PrimaryKeyColumn(name = "property_name", type = PrimaryKeyType.PARTITIONED)
-    var propertyName: String? = null
-
-    @PrimaryKeyColumn(name = "value", type = PrimaryKeyType.PARTITIONED)
-    var value: Long? = null
-
-    @PrimaryKeyColumn(name = "domain_tag", type = PrimaryKeyType.PARTITIONED)
-    var domainTag: String? = null
-
-    @Column("timestamp")
-    var timestamp: Instant? = null
-}
+internal class QueryableLongViewEntity : AbstractQueryableViewEntity<Long>()
 
 @Table("queryable_double_view")
-internal class QueryableDoubleViewEntity {
-    @PrimaryKeyColumn(name = "aggregate_id", type = PrimaryKeyType.CLUSTERED)
-    var aggregateId: String? = null
-
-    @PrimaryKeyColumn(name = "property_name", type = PrimaryKeyType.PARTITIONED)
-    var propertyName: String? = null
-
-    @PrimaryKeyColumn(name = "value", type = PrimaryKeyType.PARTITIONED)
-    var value: Double? = null
-
-    @PrimaryKeyColumn(name = "domain_tag", type = PrimaryKeyType.PARTITIONED)
-    var domainTag: String? = null
-
-    @Column("timestamp")
-    var timestamp: Instant? = null
-}
+internal class QueryableDoubleViewEntity : AbstractQueryableViewEntity<Double>()
 
 internal fun QueryableTextViewEntity.toDataClass(): QueryableString {
     return QueryableString(

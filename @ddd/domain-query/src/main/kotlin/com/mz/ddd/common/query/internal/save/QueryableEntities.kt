@@ -26,62 +26,40 @@ internal data class QueryableKey(
     val aggregateId: String
 )
 
-@Table("queryable_text")
-internal class QueryableStringEntity {
+internal abstract class AbstractQueryableEntity {
     @PrimaryKey
     var key: QueryableKey? = null
 
     @Column("timestamp")
     var timestamp: Instant? = null
+}
 
+@Table("queryable_text")
+internal class QueryableStringEntity : AbstractQueryableEntity() {
     @Column("value")
     var value: String? = null
 }
 
 @Table("queryable_boolean")
-internal class QueryableBooleanEntity {
-    @PrimaryKey
-    var key: QueryableKey? = null
-
-    @Column("timestamp")
-    var timestamp: Instant? = null
-
+internal class QueryableBooleanEntity : AbstractQueryableEntity() {
     @Column("value")
     var value: Boolean? = null
 }
 
 @Table("queryable_timestamp")
-internal class QueryableInstantEntity {
-    @PrimaryKey
-    var key: QueryableKey? = null
-
-    @Column("timestamp")
-    var timestamp: Instant? = null
-
+internal class QueryableInstantEntity : AbstractQueryableEntity() {
     @Column("value")
     var value: Instant? = null
 }
 
 @Table("queryable_long")
-internal class QueryableLongEntity {
-    @PrimaryKey
-    var key: QueryableKey? = null
-
-    @Column("timestamp")
-    var timestamp: Instant? = null
-
+internal class QueryableLongEntity : AbstractQueryableEntity() {
     @Column("value")
     var value: Long? = null
 }
 
 @Table("queryable_double")
-internal class QueryableDoubleEntity {
-    @PrimaryKey
-    var key: QueryableKey? = null
-
-    @Column("timestamp")
-    var timestamp: Instant? = null
-
+internal class QueryableDoubleEntity : AbstractQueryableEntity() {
     @Column("value")
     var value: Double? = null
 }

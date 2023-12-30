@@ -58,14 +58,14 @@ class TimeSlotView(
             propertyName = endTime,
             timestamp = instantNow()
         )
-        val boocked = QueryableBoolean(
+        val booked = QueryableBoolean(
             value = document.booked,
             aggregateId = document.aggregateId.value,
             domainTag = TIME_SLOT_DOMAIN_TAG.value,
             propertyName = booked,
             timestamp = instantNow()
         )
-        return domainViewRepository.save(setOf(startTime, endTime, boocked))
+        return domainViewRepository.save(setOf(startTime, endTime, booked))
     }
 
     fun find(query: TimeSlotQuery): Flux<Id> {
