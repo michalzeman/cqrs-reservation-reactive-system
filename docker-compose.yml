@@ -1,9 +1,58 @@
 version: '3.9'
 services:
+  kafka-init:
+    image: confluentinc/cp-kafka:7.5.3
+    volumes:
+      - ./src/main/Docker/kafka/create-kafka-topics.sh:/create-kafka-topics.sh
+    command: /bin/bash -c "chmod +x /create-kafka-topics.sh && /create-kafka-topics.sh"
+    depends_on:
+      - kafka
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.3
+    ports:
+      - "9101:9101"
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
+      KAFKA_LISTENERS: PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+
+  control-center:
+    image: confluentinc/confluent-local:7.5.3
+    ports:
+      - "9021:9021"
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: kafka:29092
+      CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect
+      CONNECT_GROUP_ID: compose-connect-group
+      CONNECT_CONFIG_STORAGE_TOPIC: docker-connect-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: docker-connect-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_REST_PORT: 8083
+      CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    depends_on:
+      - kafka
+
   redis-db:
     image: redis:7.2.1
     ports:
-      - 6379:6379
+      - "6379:6379"
     volumes:
       - redis-db-data:/data
     networks:
@@ -24,7 +73,7 @@ services:
     build:
       context: ./src/main/Docker/Cassandra
     ports:
-      - 9042:9042
+      - "9042:9042"
     volumes:
       - cassandra-db-data:/var/lib/cassandra
     networks:

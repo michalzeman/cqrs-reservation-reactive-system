@@ -1,6 +1,20 @@
 event.sourcing.domain-persistence:
   events-per-snapshot: 3
 
+server:
+  port: 8082
+
+adapter:
+  kafka:
+    bootstrap:
+      servers: ${BROKERS:localhost:9092}
+
+    consumer:
+      group-id: customer-service
+
+    topics:
+      customer-event-customer-document: customer.event.customer-document
+
 spring:
   cassandra:
     local-datacenter: datacenter1

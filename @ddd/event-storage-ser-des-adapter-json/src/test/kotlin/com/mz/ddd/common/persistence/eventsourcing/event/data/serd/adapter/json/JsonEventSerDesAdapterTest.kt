@@ -51,9 +51,9 @@ class JsonEventSerDesAdapterTest {
 
     val subject = JsonEventSerDesAdapter<TestEvent, TestAggregate>(
         encodeEvent = { event -> serToJsonString(event) },
-        decodeEvent = { json -> desJson(json) },
+        decoderEvent = { json -> desJson(json) },
         encodeAggregate = { aggregate -> serToJsonString(aggregate) },
-        decodeAggregate = { json -> desJson(json) }
+        decoderAggregate = { json -> desJson(json) }
     )
 
     @Test

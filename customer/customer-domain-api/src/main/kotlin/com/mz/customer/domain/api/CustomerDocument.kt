@@ -9,7 +9,9 @@ import com.mz.ddd.common.api.domain.Version
 import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.newId
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CustomerDocument(
     val aggregateId: Id,
     val lastName: LastName,

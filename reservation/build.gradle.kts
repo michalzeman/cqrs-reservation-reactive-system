@@ -7,6 +7,24 @@ project(":reservation:reservation-application") {
         implementation(project(":reservation:reservation-domain-api"))
         implementation(project(":reservation:reservation-domain"))
         implementation(project(":reservation:reservation-adapter-rest"))
+        implementation(project(":reservation:reservation-adapter-kafka"))
+
+        implementation(project(":@ddd:domain-persistence"))
+        implementation(project(":@ddd:lock-storage-adapter-redis"))
+        implementation(project(":@ddd:event-storage-adapter-cassandra-db"))
+        implementation(project(":@ddd:event-storage-ser-des-adapter-json"))
+        implementation(project(":@ddd:domain-query"))
+        implementation(project(":common-components"))
+    }
+}
+
+project(":reservation:reservation-adapter-kafka") {
+    dependencies {
+        implementation(project(":reservation:reservation-domain-api"))
+        implementation(project(":reservation:reservation-domain"))
+        implementation(project(":reservation:reservation-adapter-rest"))
+
+        implementation(project(":customer:customer-domain-api"))
 
         implementation(project(":@ddd:domain-persistence"))
         implementation(project(":@ddd:lock-storage-adapter-redis"))
@@ -34,6 +52,8 @@ project(":reservation:reservation-domain-api") {
 project(":reservation:reservation-domain") {
     dependencies {
         implementation(project(":reservation:reservation-domain-api"))
+
+        implementation(project(":customer:customer-domain-api"))
 
         implementation(project(":@ddd:domain-persistence"))
         implementation(project(":@ddd:domain-query"))

@@ -8,6 +8,7 @@ project(":customer:customer-application") {
         implementation(project(":customer:customer-domain-api"))
         implementation(project(":customer:customer-domain"))
         implementation(project(":customer:customer-adapter-rest"))
+        implementation(project(":customer:customer-adapter-kafka"))
         implementation(project(":common-components"))
 
         implementation(project(":@ddd:domain-persistence"))
@@ -15,6 +16,15 @@ project(":customer:customer-application") {
         implementation(project(":@ddd:event-storage-adapter-cassandra-db"))
         implementation(project(":@ddd:event-storage-ser-des-adapter-json"))
         implementation(project(":@ddd:domain-query"))
+    }
+}
+
+project(":customer:customer-adapter-kafka") {
+    dependencies {
+        implementation(project(":customer:customer-api"))
+        implementation(project(":customer:customer-domain-api"))
+        implementation(project(":customer:customer-domain"))
+        implementation(project(":common-components"))
     }
 }
 

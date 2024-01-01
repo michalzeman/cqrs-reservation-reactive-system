@@ -10,16 +10,16 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 typealias Encoder<E> = (value: E) -> ByteArray
-typealias Decode<E> = (value: String) -> E
+typealias Decoder<E> = (value: String) -> E
 
 /**
  * JSON event, snapshot serialization/deserialization adapter.
  */
 class JsonEventSerDesAdapter<E : DomainEvent, A : Aggregate>(
     val encodeEvent: Encoder<E>,
-    val decodeEvent: Decode<E>,
+    val decoderEvent: Decoder<E>,
     val encodeAggregate: Encoder<A>,
-    val decodeAggregate: Decode<A>
+    val decoderAggregate: Decoder<A>
 ) : EventSerDesAdapter<E, A> {
 
     companion object {
@@ -42,12 +42,12 @@ class JsonEventSerDesAdapter<E : DomainEvent, A : Aggregate>(
 
     override fun deserialize(eventJournal: EventJournal): E {
         val rawPayload = eventJournal.payload
-        return decodeEvent(rawPayload.decodeToString())
+        return decoderEvent(rawPayload.decodeToString())
     }
 
     override fun deserialize(snapshot: Snapshot): A {
         val rawPayload = snapshot.payload
-        return decodeAggregate(rawPayload.decodeToString())
+        return decoderAggregate(rawPayload.decodeToString())
     }
 }
 
