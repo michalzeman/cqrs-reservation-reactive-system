@@ -11,10 +11,15 @@ import org.springframework.data.cassandra.repository.config.EnableReactiveCassan
 @ComponentScan("com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra")
 @EnableReactiveCassandraRepositories(basePackageClasses = [EventJournalRepository::class])
 class EventStorageAdapterCassandraConfiguration(
-    @Value("\${spring.cassandra.keyspace-name}") val keySpace: String
+    @Value("\${spring.cassandra.keyspace-name}") val keySpace: String,
+    @Value("\${spring.cassandra.contact-points}") val cassandraHost: String
 ) : AbstractReactiveCassandraConfiguration() {
 
     override fun getKeyspaceName(): String {
         return keySpace
+    }
+
+    override fun getContactPoints(): String {
+        return cassandraHost
     }
 }

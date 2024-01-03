@@ -6,6 +6,7 @@ project(":customer:customer-application") {
     dependencies {
         implementation(project(":customer:customer-api"))
         implementation(project(":customer:customer-domain-api"))
+        implementation(project(":customer:customer-domain-api"))
         implementation(project(":customer:customer-domain"))
         implementation(project(":customer:customer-adapter-rest"))
         implementation(project(":customer:customer-adapter-kafka"))
@@ -25,6 +26,8 @@ project(":customer:customer-adapter-kafka") {
         implementation(project(":customer:customer-domain-api"))
         implementation(project(":customer:customer-domain"))
         implementation(project(":common-components"))
+
+        implementation(project(":reservation:reservation-domain-api"))
     }
 }
 
@@ -47,6 +50,7 @@ project(":customer:customer-domain") {
     dependencies {
         implementation(project(":customer:customer-api"))
         implementation(project(":customer:customer-domain-api"))
+        implementation(project(":reservation:reservation-domain-api"))
 
         implementation(project(":@ddd:domain-persistence"))
         implementation(project(":@ddd:domain-query"))

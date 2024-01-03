@@ -43,7 +43,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "cqrs-reservation-reactive-system"
 include("common-components")
-include("persistence-testing")
 include("@ddd")
 include("@ddd:common-domain-api")
 include("@ddd:domain-persistence")
@@ -68,3 +67,4 @@ include("reservation:reservation-domain-api")
 include("reservation:reservation-domain")
 include("reservation:reservation-adapter-rest")
 include("reservation:reservation-adapter-kafka")
+include("reservation-system-checks-tests")

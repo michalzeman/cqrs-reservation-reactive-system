@@ -1,4 +1,4 @@
-package com.mz.customer.adapter.kafka.wiring
+package com.mz.customer.adapter.kafka.customer
 
 import com.mz.common.components.ApplicationChannelStream
 import com.mz.common.components.adapter.kafka.KafkaPublisher

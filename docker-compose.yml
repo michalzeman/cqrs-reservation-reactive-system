@@ -1,5 +1,39 @@
 version: '3.9'
 services:
+  reservation-service:
+    image: reservation-application:0.0.1-SNAPSHOT
+    ports:
+      - "8081:8081"
+    environment:
+      BROKERS: kafka:29092
+      CASSANDRA_DB: cassandra-db
+      REDIS_DB: redis-db
+    depends_on:
+      - kafka
+      - redis-db
+      - cassandra-liquibase-reservation
+    networks:
+      - reservation-system
+    profiles:
+      - system-checks
+
+  customer-service:
+    image: customer-application:0.0.1-SNAPSHOT
+    ports:
+      - "8082:8082"
+    environment:
+      BROKERS: kafka:29092
+      CASSANDRA_DB: cassandra-db
+      REDIS_DB: redis-db
+    depends_on:
+      - kafka
+      - redis-db
+      - cassandra-liquibase-customer
+    networks:
+      - reservation-system
+    profiles:
+      - system-checks
+
   kafka-init:
     image: confluentinc/cp-kafka:7.5.3
     volumes:
@@ -7,6 +41,8 @@ services:
     command: /bin/bash -c "chmod +x /create-kafka-topics.sh && /create-kafka-topics.sh"
     depends_on:
       - kafka
+    networks:
+      - reservation-system
 
   kafka:
     image: confluentinc/cp-kafka:7.5.3
@@ -27,6 +63,11 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    networks:
+      - reservation-system
+    depends_on:
+      cassandra-db:
+        condition: service_healthy
 
   control-center:
     image: confluentinc/confluent-local:7.5.3
@@ -48,6 +89,8 @@ services:
       CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
     depends_on:
       - kafka
+    networks:
+      - reservation-system
 
   redis-db:
     image: redis:7.2.1
@@ -57,6 +100,10 @@ services:
       - redis-db-data:/data
     networks:
       - reservation-system
+    depends_on:
+      cassandra-db:
+        condition: service_healthy
+
   cassandra-db-init-liquibase-keyspace:
     image: cassandra:4.1.3
     volumes:
@@ -99,9 +146,16 @@ services:
       - DEFAULT_SCHEMA_NAME=ddd_testing_keyspace
     depends_on:
       - cassandra-db-init-liquibase-keyspace
-
+      - kafka
+      - redis-db
+      - control-center
     networks:
       - reservation-system
+    healthcheck:
+      test: [ "CMD-SHELL", "cqlsh cassandra-db 9042 --execute \"DESC KEYSPACE ddd_testing_keyspace;\"" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
   cassandra-liquibase-customer:
     build:
@@ -115,12 +169,19 @@ services:
       - USERNAME=cassandra
       - PASSWORD=cassandra
       - DRIVER=com.simba.cassandra.jdbc42.Driver
-      - DEFAULT_SCHEMA_NAME=ddd_testing_keyspace
+      - DEFAULT_SCHEMA_NAME=customer_keyspace
     depends_on:
       - cassandra-db-init-liquibase-keyspace
-
+      - kafka
+      - control-center
+      - redis-db
     networks:
       - reservation-system
+    healthcheck:
+      test: [ "CMD-SHELL", "cqlsh cassandra-db 9042 --execute \"DESC KEYSPACE customer_keyspace;\"" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
   cassandra-liquibase-reservation:
     build:
@@ -134,12 +195,19 @@ services:
       - USERNAME=cassandra
       - PASSWORD=cassandra
       - DRIVER=com.simba.cassandra.jdbc42.Driver
-      - DEFAULT_SCHEMA_NAME=ddd_testing_keyspace
+      - DEFAULT_SCHEMA_NAME=reservation_keyspace
     depends_on:
       - cassandra-db-init-liquibase-keyspace
-
+      - redis-db
+      - kafka
+      - control-center
     networks:
       - reservation-system
+    healthcheck:
+      test: [ "CMD-SHELL", "cqlsh cassandra-db 9042 --execute \"DESC KEYSPACE reservation_keyspace;\"" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
 
 volumes:
