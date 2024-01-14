@@ -42,7 +42,7 @@ class ReservationToCustomerFlow(
         }
     }
 
-    fun processReservationAccepted(document: ReservationDocument): Mono<Void> {
+    private fun processReservationAccepted(document: ReservationDocument): Mono<Void> {
         return document.toMono()
             .map {
                 UpdateCustomerReservationAsConfirmed(
@@ -51,11 +51,13 @@ class ReservationToCustomerFlow(
                     requestId = it.requestId,
                     correlationId = it.correlationId
                 )
-            }.flatMap { aggregateManager.execute(it, it.customerId) }
+            }.flatMap { cmd ->
+                aggregateManager.execute(cmd, cmd.customerId) { aggregateManager.checkExistence(cmd.customerId) }
+            }
             .then()
     }
 
-    fun processReservationDeclined(document: ReservationDocument): Mono<Void> {
+    private fun processReservationDeclined(document: ReservationDocument): Mono<Void> {
         return document.toMono()
             .map {
                 UpdateCustomerReservationAsDeclined(
@@ -64,7 +66,9 @@ class ReservationToCustomerFlow(
                     requestId = it.requestId,
                     correlationId = it.correlationId
                 )
-            }.flatMap { aggregateManager.execute(it, it.customerId) }
+            }.flatMap { cmd ->
+                aggregateManager.execute(cmd, cmd.customerId) { aggregateManager.checkExistence(cmd.customerId) }
+            }
             .then()
     }
 }

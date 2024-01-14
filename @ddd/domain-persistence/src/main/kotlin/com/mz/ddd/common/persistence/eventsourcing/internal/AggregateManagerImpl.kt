@@ -56,5 +56,11 @@ internal class AggregateManagerImpl<A : Aggregate, C : DomainCommand, E : Domain
 
     override fun findById(id: Id): Mono<S> = aggregateRepository.find(id)
         .map { CommandEffect<A, E>(it) }
-        .map(aggregateMapper)
+        .map { Result.runCatching { aggregateMapper(it) } }
+        .mapNotNull { it.getOrNull() }
+
+    override fun checkExistence(id: Id): Mono<Boolean> = findById(id)
+        .map { true }
+        .switchIfEmpty(false.toMono())
+
 }

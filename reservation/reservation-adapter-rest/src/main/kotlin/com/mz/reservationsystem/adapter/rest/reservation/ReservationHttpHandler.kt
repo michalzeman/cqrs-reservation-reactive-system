@@ -68,7 +68,7 @@ class ReservationHttpHandler(private val reservationApi: ReservationApi) : HttpH
             .map(::Id)
             .flatMap(reservationApi::findById)
             .flatMap { (ServerResponse.accepted().bodyValue(it)) }
-            .switchIfEmpty(ServerResponse.notFound().build())
+            .switchIfEmpty(ServerResponse.noContent().build())
     }
 
 }

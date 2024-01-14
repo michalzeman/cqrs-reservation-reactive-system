@@ -39,7 +39,9 @@ class CustomerToReservationFlow(
                 endTime = customerReservationRequested.reservationPeriod.endTime,
                 correlationId = customerReservationRequested.correlationId
             )
-        }.flatMap { aggregateManager.execute(it, it.aggregateId) }.then()
+        }.flatMap { cmd ->
+            aggregateManager.execute(cmd, cmd.aggregateId)
+        }.then()
     }
 
 }

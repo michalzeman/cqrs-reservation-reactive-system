@@ -54,6 +54,6 @@ class CustomerHttpHandler(private val customerApi: CustomerApi) : HttpHandler {
             .map(::Id)
             .flatMap(customerApi::findById)
             .flatMap { (ServerResponse.accepted().bodyValue(it)) }
-            .switchIfEmpty(ServerResponse.notFound().build())
+            .switchIfEmpty(ServerResponse.noContent().build())
     }
 }

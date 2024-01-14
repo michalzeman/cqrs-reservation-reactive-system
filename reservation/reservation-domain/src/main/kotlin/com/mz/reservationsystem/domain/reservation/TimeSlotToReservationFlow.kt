@@ -36,8 +36,9 @@ class TimeSlotToReservationFlow(
                     correlationId = document.correlationId,
                     timeSlotId = document.aggregateId
                 )
-                aggregateManager.execute(acceptReservation, aggregateId)
+                aggregateManager.execute(acceptReservation, aggregateId) {
+                    aggregateManager.checkExistence(aggregateId)
+                }
             }.then()
     }
-
 }

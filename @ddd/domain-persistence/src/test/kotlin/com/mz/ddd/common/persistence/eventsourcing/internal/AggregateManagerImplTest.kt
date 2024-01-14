@@ -108,6 +108,90 @@ internal class AggregateManagerImplTest {
             .verifyComplete()
     }
 
+    @Test
+    fun `findById, when aggregate doesn't exist, then empty`() {
+        val aggregateId = newId()
+        val id = aggregateId
+        val aggregate = EmptyTestAggregate(aggregateId)
+
+        val aggregateRepository = mock<AggregateRepository<TestAggregate, TestCommand, TestEvent>> {
+            on { find(id) } doReturn Mono.just(aggregate)
+        }
+
+        val aggregateMapper = { agg: CommandEffect<TestAggregate, TestEvent> ->
+            when (val testAggregate = agg.aggregate) {
+                is EmptyTestAggregate -> error("Empty aggregate")
+                is ExistingTestAggregate -> TestDocument(
+                    docId = testAggregate.aggregateId,
+                    value = testAggregate.value.value,
+                    events = agg.events.toSet()
+                )
+            }
+        }
+
+        val subject = subject(aggregateRepository, aggregateMapper)
+        val result = subject.findById(aggregateId)
+        StepVerifier.create(result)
+            .verifyComplete()
+    }
+
+    @Test
+    fun `checkExistence, when aggregate exists, then return true`() {
+        val aggregateId = newId()
+        val id = aggregateId
+        val value = ValueVo("Existing Aggregate")
+        val aggregate = ExistingTestAggregate(aggregateId, value)
+
+        val aggregateRepository = mock<AggregateRepository<TestAggregate, TestCommand, TestEvent>> {
+            on { find(id) } doReturn Mono.just(aggregate)
+        }
+
+        val aggregateMapper = { agg: CommandEffect<TestAggregate, TestEvent> ->
+            when (val testAggregate = agg.aggregate) {
+                is EmptyTestAggregate -> error("Empty aggregate")
+                is ExistingTestAggregate -> TestDocument(
+                    docId = testAggregate.aggregateId,
+                    value = testAggregate.value.value,
+                    events = agg.events.toSet()
+                )
+            }
+        }
+
+        val subject = subject(aggregateRepository, aggregateMapper)
+        val result = subject.checkExistence(aggregateId)
+        StepVerifier.create(result)
+            .assertNext { it }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `checkExistence, when aggregate doesn't exist, then return false`() {
+        val aggregateId = newId()
+        val id = aggregateId
+        val aggregate = EmptyTestAggregate(aggregateId)
+
+        val aggregateRepository = mock<AggregateRepository<TestAggregate, TestCommand, TestEvent>> {
+            on { find(id) } doReturn Mono.just(aggregate)
+        }
+
+        val aggregateMapper = { agg: CommandEffect<TestAggregate, TestEvent> ->
+            when (val testAggregate = agg.aggregate) {
+                is EmptyTestAggregate -> error("Empty aggregate")
+                is ExistingTestAggregate -> TestDocument(
+                    docId = testAggregate.aggregateId,
+                    value = testAggregate.value.value,
+                    events = agg.events.toSet()
+                )
+            }
+        }
+
+        val subject = subject(aggregateRepository, aggregateMapper)
+        val result = subject.checkExistence(aggregateId)
+        StepVerifier.create(result)
+            .assertNext { !it }
+            .verifyComplete()
+    }
+
     private fun subject(
         aggregateRepository: AggregateRepository<TestAggregate, TestCommand, TestEvent>,
         aggregateMapper: (CommandEffect<TestAggregate, TestEvent>) -> TestDocument

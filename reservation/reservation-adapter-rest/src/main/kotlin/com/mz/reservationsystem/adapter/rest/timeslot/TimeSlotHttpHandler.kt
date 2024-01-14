@@ -73,7 +73,7 @@ class TimeSlotHttpHandler(private val timeSlotApi: TimeSlotApi) : HttpHandler {
             .map(::Id)
             .flatMap(timeSlotApi::findById)
             .flatMap { (ServerResponse.accepted().bodyValue(it)) }
-            .switchIfEmpty(ServerResponse.notFound().build())
+            .switchIfEmpty(ServerResponse.noContent().build())
     }
 
 }

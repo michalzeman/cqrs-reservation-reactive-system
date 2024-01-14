@@ -6,6 +6,7 @@ import com.mz.reservationsystem.domain.api.reservation.DeclineReservation
 import com.mz.reservationsystem.domain.api.reservation.ReservationDocument
 import com.mz.reservationsystem.domain.api.reservation.ReservationRequested
 import com.mz.reservationsystem.domain.api.timeslot.BookTimeSlot
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
@@ -14,7 +15,8 @@ import reactor.kotlin.core.publisher.toMono
 @Component
 class ReservationToTimeSlotFlow(
     private val channelStream: ApplicationChannelStream,
-    private val timeSlotApi: TimeSlotApi,
+    @Qualifier("timeSlotAggregateManager")
+    private val aggregateManager: TimeSlotAggregateManager,
     private val timeSlotView: TimeSlotView
 ) {
 
@@ -37,14 +39,15 @@ class ReservationToTimeSlotFlow(
             .switchIfEmpty { false.toMono() }
             .flatMap { exists ->
                 if (exists) timeSlots.flatMap { aggregateId ->
-                    timeSlotApi.execute(
+                    aggregateManager.execute(
                         BookTimeSlot(
                             aggregateId = aggregateId,
                             reservationId = document.aggregateId,
                             booked = true,
                             commandId = document.correlationId
-                        )
-                    ).then()
+                        ),
+                        aggregateId
+                    ) { aggregateManager.checkExistence(aggregateId) }.then()
                 }
                 else declineReservation(document)
             }

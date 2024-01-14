@@ -41,4 +41,9 @@ interface AggregateManager<A, C : DomainCommand, E : DomainEvent, S : Document<E
      * @return A Mono emitting the found aggregate.
      */
     fun findById(id: Id): Mono<S>
+
+    /**
+     * This function checks if an Aggregate root exists by its ID.
+     */
+    fun checkExistence(id: Id): Mono<Boolean>
 }
