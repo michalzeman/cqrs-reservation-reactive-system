@@ -16,7 +16,8 @@ project(":customer:customer-application") {
         implementation(project(":@ddd:lock-storage-adapter-redis"))
         implementation(project(":@ddd:event-storage-adapter-cassandra-db"))
         implementation(project(":@ddd:event-storage-ser-des-adapter-json"))
-        implementation(project(":@ddd:domain-query"))
+        implementation(project(":@ddd:domain-view"))
+        implementation(project(":@ddd:domain-view-adapter-cassandra-db"))
     }
 }
 
@@ -53,14 +54,14 @@ project(":customer:customer-domain") {
         implementation(project(":reservation:reservation-domain-api"))
 
         implementation(project(":@ddd:domain-persistence"))
-        implementation(project(":@ddd:domain-query"))
+        implementation(project(":@ddd:domain-view"))
         implementation(project(":common-components"))
     }
 }
 
 dependencies {
     implementation(project(":@ddd:event-storage-adapter-cassandra-db"))
-    implementation(project(":@ddd:domain-query"))
+    implementation(project(":@ddd:domain-view-adapter-cassandra-db"))
 }
 
 tasks.register<Copy>("processLiquibase") {
@@ -128,11 +129,11 @@ tasks.register<Copy>("extractedEventSourceChangelog") {
 tasks.register<Copy>("extractedDomainQueryChangelog") {
     val destDir = "${layout.buildDirectory.get().asFile}/cassandra-db"
 
-    dependsOn(":@ddd:domain-query:jar")
+    dependsOn(":@ddd:domain-view-adapter-cassandra-db:jar")
 
     configurations["runtimeClasspath"].resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
         val artifactFile = artifact.file
-        if (artifactFile.name.startsWith("domain-query") && artifactFile.extension == "jar") {
+        if (artifactFile.name.startsWith("domain-view-adapter-cassandra-db") && artifactFile.extension == "jar") {
             from(zipTree(artifactFile).matching {
                 include("**/liquibase/**")
             })

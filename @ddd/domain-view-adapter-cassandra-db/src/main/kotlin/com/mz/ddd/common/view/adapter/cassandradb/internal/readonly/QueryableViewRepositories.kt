@@ -1,4 +1,4 @@
-package com.mz.ddd.common.query.internal.readonly
+package com.mz.ddd.common.view.adapter.cassandradb.internal.readonly
 
 import org.springframework.data.cassandra.repository.AllowFiltering
 import org.springframework.data.cassandra.repository.Query

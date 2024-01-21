@@ -106,7 +106,7 @@ project(":reservation-system-checks-tests") {
         implementation(project(":common-components"))
         implementation(project(":@ddd:common-domain-api"))
         implementation(project(":@ddd:domain-persistence"))
-        implementation(project(":@ddd:domain-query"))
+        implementation(project(":@ddd:domain-view"))
         implementation(project(":@ddd:lock-storage-adapter-api"))
         implementation(project(":@ddd:lock-storage-adapter-in-memory"))
         implementation(project(":@ddd:lock-storage-adapter-redis"))

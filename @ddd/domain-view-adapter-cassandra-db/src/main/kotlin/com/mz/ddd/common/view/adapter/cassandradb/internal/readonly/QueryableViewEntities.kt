@@ -1,10 +1,10 @@
-package com.mz.ddd.common.query.internal.readonly
+package com.mz.ddd.common.view.adapter.cassandradb.internal.readonly
 
-import com.mz.ddd.common.query.QueryableBoolean
-import com.mz.ddd.common.query.QueryableDouble
-import com.mz.ddd.common.query.QueryableInstant
-import com.mz.ddd.common.query.QueryableLong
-import com.mz.ddd.common.query.QueryableString
+import com.mz.ddd.common.view.QueryableBoolean
+import com.mz.ddd.common.view.QueryableDouble
+import com.mz.ddd.common.view.QueryableInstant
+import com.mz.ddd.common.view.QueryableLong
+import com.mz.ddd.common.view.QueryableString
 import kotlinx.datetime.toKotlinInstant
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType
 import org.springframework.data.cassandra.core.mapping.Column

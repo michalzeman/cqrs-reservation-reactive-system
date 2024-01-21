@@ -1,4 +1,4 @@
-package com.mz.ddd.common.query.internal.save
+package com.mz.ddd.common.view.adapter.cassandradb.internal.save
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository

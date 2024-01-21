@@ -4,11 +4,11 @@ import com.mz.common.components.ApplicationChannelStream
 import com.mz.common.components.subscribeToChannel
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.instantNow
-import com.mz.ddd.common.query.BetweenInstantQuery
-import com.mz.ddd.common.query.DomainViewReadOnlyRepository
-import com.mz.ddd.common.query.DomainViewRepository
-import com.mz.ddd.common.query.QueryableBoolean
-import com.mz.ddd.common.query.QueryableInstant
+import com.mz.ddd.common.view.BetweenInstantQuery
+import com.mz.ddd.common.view.DomainViewReadOnlyRepository
+import com.mz.ddd.common.view.DomainViewRepository
+import com.mz.ddd.common.view.QueryableBoolean
+import com.mz.ddd.common.view.QueryableInstant
 import com.mz.reservationsystem.domain.api.timeslot.TIME_SLOT_DOMAIN_TAG
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotDocument
 import com.mz.reservationsystem.domain.timeslot.TimeSlotProperties.booked

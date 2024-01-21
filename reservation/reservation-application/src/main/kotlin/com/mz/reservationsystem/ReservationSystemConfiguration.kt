@@ -6,7 +6,7 @@ import com.mz.common.components.CommonComponentsConfiguration
 import com.mz.common.components.json.registerRequiredModules
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.EventStorageAdapterCassandraConfiguration
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.redis.wiring.RedisLockStorageAdapterConfiguration
-import com.mz.ddd.common.query.wiring.DomainViewConfiguration
+import com.mz.ddd.common.view.adapter.cassandradb.wiring.DomainViewConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
