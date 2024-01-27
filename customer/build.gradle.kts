@@ -4,7 +4,6 @@ val keySpace = "customer_keyspace"
 
 project(":customer:customer-application") {
     dependencies {
-        implementation(project(":customer:customer-api"))
         implementation(project(":customer:customer-domain-api"))
         implementation(project(":customer:customer-domain-api"))
         implementation(project(":customer:customer-domain"))
@@ -22,7 +21,6 @@ project(":customer:customer-application") {
 
 project(":customer:customer-adapter-kafka") {
     dependencies {
-        implementation(project(":customer:customer-api"))
         implementation(project(":customer:customer-domain-api"))
         implementation(project(":customer:customer-domain"))
         implementation(project(":common-components"))
@@ -33,7 +31,6 @@ project(":customer:customer-adapter-kafka") {
 
 project(":customer:customer-adapter-rest") {
     dependencies {
-        implementation(project(":customer:customer-api"))
         implementation(project(":customer:customer-domain-api"))
         implementation(project(":customer:customer-domain"))
         implementation(project(":common-components"))
@@ -48,7 +45,6 @@ project(":customer:customer-domain-api") {
 
 project(":customer:customer-domain") {
     dependencies {
-        implementation(project(":customer:customer-api"))
         implementation(project(":customer:customer-domain-api"))
         implementation(project(":reservation:reservation-domain-api"))
 
