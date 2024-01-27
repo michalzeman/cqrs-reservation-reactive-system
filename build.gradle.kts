@@ -116,7 +116,6 @@ project(":reservation-system-checks-tests") {
         implementation(project(":@ddd:event-storage-adapter-cassandra-db"))
         implementation(project(":customer:customer-adapter-rest"))
         implementation(project(":customer:customer-adapter-kafka"))
-        implementation(project(":customer:customer-api"))
         implementation(project(":customer:customer-domain-api"))
         implementation(project(":customer:customer-application"))
         implementation(project(":customer:customer-domain"))
