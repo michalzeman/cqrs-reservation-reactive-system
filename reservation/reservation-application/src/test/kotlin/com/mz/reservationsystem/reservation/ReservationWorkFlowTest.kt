@@ -58,7 +58,7 @@ class ReservationWorkFlowTest(@LocalServerPort val port: Int) {
         )
 
         // Create the time slot
-        val responseTimeSlot = client.post()
+        client.post()
             .uri("/reservation-system/time-slots")
             .contentType(MediaType.APPLICATION_JSON)
             .body(Mono.just(createTimeSlotRequest), CreateTimeSlotRequest::class.java)

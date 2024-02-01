@@ -1,13 +1,13 @@
-package com.mz.ddd.common.query.internal.save
+package com.mz.ddd.common.view.adapter.cassandradb.internal.save
 
-import com.mz.ddd.common.query.DomainViewRepository
-import com.mz.ddd.common.query.QueryableBoolean
-import com.mz.ddd.common.query.QueryableData
-import com.mz.ddd.common.query.QueryableDouble
-import com.mz.ddd.common.query.QueryableInstant
-import com.mz.ddd.common.query.QueryableLong
-import com.mz.ddd.common.query.QueryableString
-import com.mz.ddd.common.query.toEntity
+import com.mz.ddd.common.view.DomainViewRepository
+import com.mz.ddd.common.view.QueryableBoolean
+import com.mz.ddd.common.view.QueryableData
+import com.mz.ddd.common.view.QueryableDouble
+import com.mz.ddd.common.view.QueryableInstant
+import com.mz.ddd.common.view.QueryableLong
+import com.mz.ddd.common.view.QueryableString
+import com.mz.ddd.common.view.adapter.cassandradb.internal.toEntity
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono

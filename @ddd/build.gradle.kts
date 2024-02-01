@@ -15,7 +15,14 @@ project(":@ddd:domain-persistence") {
     }
 }
 
-project(":@ddd:domain-query") {
+project(":@ddd:domain-view-adapter-cassandra-db") {
+    dependencies {
+        api(project(":@ddd:common-domain-api"))
+        api(project(":@ddd:domain-view"))
+    }
+}
+
+project(":@ddd:domain-view") {
     dependencies {
         api(project(":@ddd:common-domain-api"))
     }

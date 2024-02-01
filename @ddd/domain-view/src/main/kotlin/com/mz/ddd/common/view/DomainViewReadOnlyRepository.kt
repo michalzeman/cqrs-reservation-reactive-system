@@ -1,4 +1,4 @@
-package com.mz.ddd.common.query
+package com.mz.ddd.common.view
 
 import com.mz.ddd.common.api.domain.Id
 import reactor.core.publisher.Flux
