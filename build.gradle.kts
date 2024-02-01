@@ -191,7 +191,11 @@ fun waitToDockerInfrastructureIsHealthy() {
     // wait for Docker containers to be healthy
     while (true) {
         val result = exec {
-            commandLine("sh", "-c", "docker inspect --format='{{.Name}}: {{if .State.Health}}{{.State.Health.Status}}{{end}}' $(docker ps -q) | grep 'healthy'")
+            commandLine(
+                "sh",
+                "-c",
+                "docker inspect --format='{{.Name}}: {{if .State.Health}}{{.State.Health.Status}}{{end}}' $(docker ps -q) | grep 'healthy'"
+            )
         }
         if (result.exitValue == 0) {
             break
