@@ -64,7 +64,6 @@ subprojects {
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
         implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:$reactorKotlinExtensionsVersion")
 
-
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("io.projectreactor:reactor-test")
 
@@ -73,8 +72,6 @@ subprojects {
         testImplementation("org.mockito:mockito-junit-jupiter")
         testImplementation("org.mockito:mockito-core:$mockitoCoreVersion")
         testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoCoreVersion")
-
-
     }
 
     tasks.withType<KotlinCompile> {
@@ -92,6 +89,10 @@ subprojects {
                 excludeTags("systemChecks")
             }
         }
+    }
+
+    tasks.named("test") {
+        dependsOn(":runDockerComposeBeforeTests", ":waitForDockerComposeBeforeTests", ":systemChecksTests")
     }
 }
 
@@ -136,7 +137,14 @@ tasks.register("runDockerComposeBeforeTests") {
     }
 }
 
-tasks["test"].dependsOn("runDockerComposeBeforeTests", "systemChecksTests")
+tasks.register("waitForDockerComposeBeforeTests") {
+    mustRunAfter("runDockerComposeBeforeTests")
+    doLast {
+        waitToDockerInfrastructureIsHealthy()
+    }
+}
+
+tasks["test"].mustRunAfter("waitForDockerComposeBeforeTests", "runDockerComposeBeforeTests", "systemChecksTests")
 
 tasks.register("tearDownDockerCompose") {
     val allTestTasks = project.subprojects.flatMap { project -> project.tasks.matching { it.name == "test" } }
@@ -174,14 +182,16 @@ fun dockerInfrastructureUp(profile: String? = null) {
         if (profile != null) commandLine("docker-compose", "--profile", profile, "up", "-d")
         else commandLine("docker-compose", "up", "-d")
     }
+}
 
+fun waitToDockerInfrastructureIsHealthy() {
     val startTime = System.currentTimeMillis()
     val timeout = 60 * 1000 // 60 seconds
 
     // wait for Docker containers to be healthy
     while (true) {
         val result = exec {
-            commandLine("docker-compose", "ps")
+            commandLine("sh", "-c", "docker inspect --format='{{.Name}}: {{if .State.Health}}{{.State.Health.Status}}{{end}}' $(docker ps -q) | grep 'healthy'")
         }
         if (result.exitValue == 0) {
             break
