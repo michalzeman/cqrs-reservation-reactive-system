@@ -19,6 +19,47 @@ The interaction between the Customer MS and the Reservation MS is primarily even
 events being published into Kafka topics. This approach ensures loose coupling between the services and promotes
 scalability and resilience.
 
+## Event-Sourced Persistence Model in CQRS-based Microservices
+
+The data model in the context of Command Query Responsibility Segregation (CQRS) and Event Sourcing in this system is
+designed to be flexible and robust. It is built around the concept of Aggregates, which are clusters of domain objects
+that can be treated as a single unit. These aggregates manage their own states and handle commands that trigger events,
+changing the state of the aggregate.
+
+The system leverages Apache Cassandra for data persistence, providing a flexible DB storage for event sourcing. Each
+event is tagged with a domain tag, which is a unique identifier for the domain entity that the event is related to. This
+allows for efficient querying and retrieval of events related to a specific domain entity.
+
+The view model in this system is also designed to be flexible. It provides a storage mechanism for the current state of
+the aggregates, which is updated as events are processed. This view model can be used as an alternative to querying the
+event store for the current state of an aggregate. However, it is also designed to be customizable per microservice,
+allowing each microservice to implement its own view model based on its specific needs.
+
+In summary, the data model in this system is designed to support the principles of CQRS and Event Sourcing, providing a
+flexible and efficient mechanism for managing the state of aggregates and handling domain events. The use of a domain
+tag and a flexible view model further enhances the robustness and adaptability of the system.
+
+## View Model
+
+The view model in this system, also known as the read model in the context of Command Query Responsibility Segregation (
+CQRS), is designed to be highly flexible and adaptable. It provides a storage mechanism for the current state of the
+aggregates, which is updated as events are processed. This view model can be used as an alternative to querying the
+event store for the current state of an aggregate.
+
+The view model is implemented using a set of queryable data
+classes (`QueryableString`, `QueryableBoolean`, `QueryableInstant`, `QueryableLong`, `QueryableDouble`) that can store
+different types of data. Each piece of data is associated with a domain tag, which is a unique identifier for the domain
+entity that the data is related to. This allows for efficient querying and retrieval of data related to a specific
+domain entity.
+
+The view model is also designed to be customizable per microservice, allowing each microservice to implement its own
+view model based on its specific needs. This is achieved by providing a `DomainViewRepository` interface for saving
+queryable data to the view model.
+
+In summary, the view model in this system provides a flexible and efficient mechanism for querying the current state of
+aggregates. It supports complex queries and is customizable per microservice, enhancing the robustness and adaptability
+of the system.
+
 ## Basic Interaction
 
 1. **Customer Registration**: A `CustomerRegistered` event is published to a Kafka topic when a new customer is
