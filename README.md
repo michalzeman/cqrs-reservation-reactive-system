@@ -1,4 +1,4 @@
-Copyright Michal Zeman, zeman.michal@yahoo.com
+Copyright(2024) Michal Zeman, zeman.michal@yahoo.com
 
 Licensed under the Creative Commons Attribution (CC BY) license. You are free to share, copy, distribute, 
 and adapt this work, provided you give appropriate credit to the original author Michal Zeman, zeman.michal@yahoo.com.
