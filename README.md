@@ -1,11 +1,3 @@
-Copyright (2024) Michal Zeman, zeman.michal@yahoo.com
-
-Licensed under the Creative Commons Attribution (CC BY) license. You are free to share, copy, distribute, 
-and adapt this work, provided you give appropriate credit to the original author Michal Zeman, zeman.michal@yahoo.com.
-
-To view a copy of the license, visit https://creativecommons.org/licenses/by/4.0/
-
-
 # cqrs-reservation-reactive-system
 
 This project is a reactive microservices system built using Kotlin, Spring Boot, and Gradle. It leverages Apache Kafka
@@ -128,3 +120,12 @@ The Reservation Microservice has several basic flows:
 
 3. **ReservationToTimeSlotFlow**: This flow handles the booking of a time slot when a `ReservationRequested` event is
    received. If the time slot is already booked, the reservation is declined.
+
+---
+
+Copyright (2024) Michal Zeman, zeman.michal@yahoo.com
+
+Licensed under the Creative Commons Attribution (CC BY) license. You are free to share, copy, distribute, 
+and adapt this work, provided you give appropriate credit to the original author Michal Zeman, zeman.michal@yahoo.com.
+
+To view a copy of the license, visit https://creativecommons.org/licenses/by/4.0/
