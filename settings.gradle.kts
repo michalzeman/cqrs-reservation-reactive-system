@@ -41,6 +41,10 @@ dependencyResolutionManagement {
             library("assertj-core", "org.assertj:assertj-core:3.14.0")
             library("mockito-core", "org.mockito:mockito-core:$mockitoCoreVersion")
             library("mockito-kotlin", "org.mockito.kotlin:mockito-kotlin:$mockitoCoreVersion")
+            library(
+                "kotlinx-serialization-json",
+                "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion"
+            )
         }
     }
 }
@@ -60,6 +64,10 @@ include("@ddd:event-storage-ser-des-adapter-json")
 include("@ddd:event-storage-adapter-api")
 include("@ddd:event-storage-adapter-cassandra-db")
 include("@ddd:shared-kernel-test-cassandra-db")
+include("ai-agent")
+include("ai-agent:ai-agent-adapter-llm")
+include("ai-agent:ai-agent-application")
+include("ai-agent:ai-agent-domain")
 include("customer")
 include("customer:customer-adapter-rest")
 include("customer:customer-adapter-kafka")
