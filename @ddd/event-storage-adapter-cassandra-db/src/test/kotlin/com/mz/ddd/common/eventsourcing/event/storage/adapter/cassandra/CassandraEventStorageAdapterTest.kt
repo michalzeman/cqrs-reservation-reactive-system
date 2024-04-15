@@ -1,5 +1,6 @@
 package com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra
 
+import com.datastax.oss.driver.api.core.CqlSession
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.EventJournalEntity
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.EventJournalRepository
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.SnapshotEntity
@@ -7,12 +8,14 @@ import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persisten
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.EventStorageAdapterCassandraConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import reactor.test.StepVerifier
+import java.net.InetSocketAddress
 import java.nio.ByteBuffer
 import java.time.Instant
 
@@ -28,6 +31,31 @@ class CassandraEventStorageAdapterTest {
 
     @Autowired
     internal lateinit var snapshotRepository: SnapshotRepository
+
+    companion object {
+        @BeforeAll
+        @JvmStatic
+        fun beforeAll() {
+            waitForDatabase()
+        }
+
+        private fun waitForDatabase() {
+            repeat(10) {
+                try {
+                    CqlSession.builder()
+                        .withKeyspace("ddd_testing_keyspace")
+                        .addContactPoint(InetSocketAddress("localhost", 9042))
+                        .withLocalDatacenter("datacenter1")
+                        .build()
+                        .close()
+                    return
+                } catch (e: Exception) {
+                    Thread.sleep(1000)
+                }
+            }
+            throw RuntimeException("Could not connect to the database")
+        }
+    }
 
     @BeforeEach
     fun setUp() {
