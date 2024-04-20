@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: customer_service_route
+          uri: http://localhost:8082/customers
+          predicates:
+              - Path=/customers/**
+        - id: reservation_service_route
+          uri: http://localhost:8081/reservation-system
+          predicates:
+              - Path=/reservation-system/**
