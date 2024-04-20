@@ -54,6 +54,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "cqrs-reservation-reactive-system"
+include("api-gateway")
 include("common-components")
 include("@ddd")
 include("@ddd:common-domain-api")
@@ -73,6 +74,8 @@ include("ai-agent:ai-agent-adapter-llm")
 include("ai-agent:ai-agent-adapter-rest")
 include("ai-agent:ai-agent-application")
 include("ai-agent:ai-agent-domain")
+include("customer-support")
+include("customer-support:customer-support-app")
 include("customer")
 include("customer:customer-adapter-rest")
 include("customer:customer-adapter-kafka")
