@@ -3,6 +3,7 @@ val kotlinVersion: String by settings
 val springDependencyManagementVersion: String by settings
 val kotlinxSerializationJsonVersion: String by settings
 val mockitoCoreVersion: String by settings
+val langchain4jVersion: String by settings
 
 
 pluginManagement {
@@ -45,6 +46,9 @@ dependencyResolutionManagement {
                 "kotlinx-serialization-json",
                 "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion"
             )
+            library("langchain4j-core", "dev.langchain4j:langchain4j-core:$langchain4jVersion")
+            library("langchain4j-local-ai", "dev.langchain4j:langchain4j-local-ai:$langchain4jVersion")
+            library("langchain4j", "dev.langchain4j:langchain4j:$langchain4jVersion")
         }
     }
 }
@@ -66,6 +70,7 @@ include("@ddd:event-storage-adapter-cassandra-db")
 include("@ddd:shared-kernel-test-cassandra-db")
 include("ai-agent")
 include("ai-agent:ai-agent-adapter-llm")
+include("ai-agent:ai-agent-adapter-rest")
 include("ai-agent:ai-agent-application")
 include("ai-agent:ai-agent-domain")
 include("customer")
