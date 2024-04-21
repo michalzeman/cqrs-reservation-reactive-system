@@ -6,11 +6,11 @@ import org.springframework.web.reactive.HandlerMapping
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping
 
 @Configuration
-class WebConfig {
+class WebSocketsConfiguration {
 
     @Bean
     fun handlerMapping(aiAgentChatHandler: AiAgentChatHandler): HandlerMapping {
-        val map = mapOf("/chat" to aiAgentChatHandler)
+        val map = mapOf("/ai-agent/chat-stream" to aiAgentChatHandler)
         val order = -1 // before annotated controllers
 
         return SimpleUrlHandlerMapping(map, order)

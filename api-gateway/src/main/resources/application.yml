@@ -10,3 +10,7 @@ spring:
           uri: http://localhost:8081/reservation-system
           predicates:
               - Path=/reservation-system/**
+        - id: ai_agent_route
+          uri: http://localhost:8083/ai-agent
+          predicates:
+              - Path=/ai-agent/**
