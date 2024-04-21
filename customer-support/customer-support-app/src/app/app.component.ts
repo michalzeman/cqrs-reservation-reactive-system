@@ -1,10 +1,14 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {Component, ErrorHandler} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
+import {ChatComponent} from "./chat/chat.component";
+import {ErrorComponent} from "./error/error.component";
+import {GlobalErrorHandler} from "./global-error-handler.service";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, ChatComponent, ErrorComponent],
+  providers: [{ provide: ErrorHandler, useClass: GlobalErrorHandler }],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

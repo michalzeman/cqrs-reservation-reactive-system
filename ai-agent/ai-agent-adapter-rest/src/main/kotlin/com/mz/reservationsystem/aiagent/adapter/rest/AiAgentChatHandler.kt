@@ -19,25 +19,23 @@ class AiAgentChatHandler(
     }
 
     fun handleBetter(session: WebSocketSession): Mono<Void> {
-        val source = session.receive()
+        val output = session.receive()
             .map { it.payloadAsText }
             .flatMap {
                 chat(it)
             }
-        return session.send(source.map { session.textMessage(it) })
+            .map { session.textMessage(it) }
+        return session.send(output)
     }
 
     fun chat(message: String): Flux<String> {
         return Mono.defer { assistant.chat(message).toMono() }
             .flatMapMany { tokenStream ->
                 Flux.create { emitter ->
-                    tokenStream.onNext {
-                        emitter.next(it)
-                    }.onComplete {
-                        emitter.complete()
-                    }.onError {
-                        emitter.complete()
-                    }.start()
+                    tokenStream.onNext { emitter.next(it) }
+                        .onComplete { emitter.complete() }
+                        .onError { emitter.complete() }
+                        .start()
                 }.timeout(Duration.ofSeconds(5))
             }
     }

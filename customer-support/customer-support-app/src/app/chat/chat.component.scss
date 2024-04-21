@@ -1,0 +1,88 @@
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.user-message {
+  align-self: flex-end;
+  background-color: #f0f0f0;
+  color: #000;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  width: auto;
+  max-width: 80%;
+  box-sizing: border-box;
+}
+
+.server-message {
+  align-self: flex-start;
+  background-color: #007bff;
+  color: #fff;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  width: auto;
+  max-width: 80%;
+  box-sizing: border-box;
+}
+
+.send-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.send-button:hover {
+  background-color: #f0f0f0;
+  color: #007bff;
+}
+
+.send-button:disabled {
+  background-color: #cccccc; /* change to the color you want */
+  color: #888888; /* change to the color you want */
+  cursor: not-allowed;
+}
+
+.responding-button {
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border-radius: 10px;
+  background-color: #ff7f7f; /* light red */
+  color: #fff;
+  border: none;
+}
+
+.response-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* This will align the items to the start */
+}
+
+textarea {
+  background-color: #f0f0f0; /* same as user-message */
+  color: #000; /* same as user-message */
+  border: none;
+  padding: 10px; /* same as user-message and buttons */
+  border-radius: 10px; /* same as user-message and buttons */
+  font-size: 16px; /* same as buttons */
+  width: 100%; /* to make it full width */
+  box-sizing: border-box; /* to include padding and border in element's total width and height */
+  margin-bottom: 10px; /* to add some space between the textarea and the button */
+}

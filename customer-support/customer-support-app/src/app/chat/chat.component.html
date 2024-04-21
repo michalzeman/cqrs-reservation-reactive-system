@@ -1,0 +1,17 @@
+<div>
+  <div class="chat-container">
+    <ng-container *ngFor="let message of messages">
+      <div *ngIf="message.text.trim().length > 0"
+           [ngClass]="{'user-message': message.sender === 'user', 'server-message': message.sender === 'server'}">
+        {{ message.text }}
+      </div>
+    </ng-container>
+  </div>
+  <div class="response-area">
+    <button class="responding-button" (click)="closeWebSocket()" *ngIf="isConnected">Responding...</button>
+    <form (ngSubmit)="sendMessage()">
+      <textarea [(ngModel)]="newMessage" rows="4" cols="50" name="newMessage" (keydown.enter)="submitForm($event)"></textarea>
+      <button type="submit" class="send-button" [disabled]="buttonDisabled">Send</button>
+    </form>
+  </div>
+</div>
