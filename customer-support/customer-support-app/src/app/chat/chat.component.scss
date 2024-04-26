@@ -1,7 +1,27 @@
 .chat-container {
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  justify-content: space-between;
+  height: 90vh; // Set a defined height
+}
+
+.chat-messages {
+  flex: 0 1 70%; // This will take up to 65% of the chat-container
+  overflow-y: auto; // Make it scrollable
+}
+
+.chat-input {
+  //flex: 0 1 40%; // This will take up to 30% of the chat-container
+  //position: fixed;
+  bottom: 10px;
+  width: 90%; // Adjust this value as needed
+
+  textarea {
+    resize: vertical; // Allow vertical resizing
+    max-height: 30vh; // Ensure textarea does not exceed the height of chat-input
+    min-height: 20vh; // Set a minimum height
+    overflow-y: auto; // Make it scrollable
+  }
 }
 
 .user-message {
@@ -69,20 +89,8 @@
   border: none;
 }
 
-.response-area {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* This will align the items to the start */
-}
-
-textarea {
-  background-color: #f0f0f0; /* same as user-message */
-  color: #000; /* same as user-message */
-  border: none;
-  padding: 10px; /* same as user-message and buttons */
-  border-radius: 10px; /* same as user-message and buttons */
-  font-size: 16px; /* same as buttons */
-  width: 100%; /* to make it full width */
-  box-sizing: border-box; /* to include padding and border in element's total width and height */
-  margin-bottom: 10px; /* to add some space between the textarea and the button */
+.chat-input {
+  position: fixed;
+  bottom: 10px;
+  width: 90%; // Adjust this value as needed
 }

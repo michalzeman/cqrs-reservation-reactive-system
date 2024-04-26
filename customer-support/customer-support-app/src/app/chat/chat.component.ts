@@ -1,8 +1,9 @@
-import {Component} from '@angular/core';
+import { Component, ElementRef, ViewChild} from '@angular/core';
 import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {ChatService, Message} from './chat.service';
 import {map} from "rxjs/operators";
+import {ErrorComponent} from "../error/error.component";
 
 @Component({
   selector: 'app-chat',
@@ -11,7 +12,8 @@ import {map} from "rxjs/operators";
     NgClass,
     NgForOf,
     FormsModule,
-    NgIf
+    NgIf,
+    ErrorComponent
   ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
@@ -25,6 +27,12 @@ export class ChatComponent {
   // private wsUrl = 'ws://localhost:4200/ai-agent/chat-stream'
 
   messages: Message[] = [];
+  // messages: Message[] = Array.from({length: 20}, (_, i) => {
+  //   return {
+  //     text: `Random message ${Math.floor(Math.random() * 1000)}`,
+  //     sender: i % 2 === 0 ? 'user' : 'server'
+  //   };
+  // });
 
   constructor(private chatService: ChatService) {
     chatService.serverAnswer$.pipe(

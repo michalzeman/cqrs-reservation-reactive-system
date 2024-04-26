@@ -1,3 +1,8 @@
-<div *ngIf="errorMessage" class="error-message">
-  {{ errorMessage }}
+<div class="error-message">
+  <div class="row" *ngIf="errorMessage">
+    <div class="col-9 alert alert-danger" role="alert">
+      {{ errorMessage }}
+    </div>
+    <button class="col-3 btn-close" (click)="clearMessages()"></button>
+  </div>
 </div>
