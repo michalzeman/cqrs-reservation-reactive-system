@@ -13,6 +13,7 @@ import {NgIf} from "@angular/common";
 })
 export class ErrorComponent implements OnInit {
 
+
   errorMessage: string | undefined;
 
   constructor(private errorService: ErrorService) { }
@@ -22,5 +23,9 @@ export class ErrorComponent implements OnInit {
       .subscribe(message => {
         this.errorMessage = message
       });
+  }
+
+  clearMessages(): void {
+    this.errorMessage = undefined;
   }
 }
