@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild} from '@angular/core';
+import {Component} from '@angular/core';
 import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {ChatService, Message} from './chat.service';
@@ -20,25 +20,20 @@ import {ErrorComponent} from "../error/error.component";
 })
 export class ChatComponent {
 
-  newMessage: string = '';
+  messageToSend: string = '';
   isConnected: boolean = false;
+  chatId?: string;
 
   private wsUrl = 'ws://localhost:8080/ai-agent/chat-stream'
-  // private wsUrl = 'ws://localhost:4200/ai-agent/chat-stream'
 
   messages: Message[] = [];
-  // messages: Message[] = Array.from({length: 20}, (_, i) => {
-  //   return {
-  //     text: `Random message ${Math.floor(Math.random() * 1000)}`,
-  //     sender: i % 2 === 0 ? 'user' : 'server'
-  //   };
-  // });
 
   constructor(private chatService: ChatService) {
     chatService.serverAnswer$.pipe(
-      map(text => {
+      map(message => {
         let activeMsg = this.messages[this.messages.length - 1];
-        activeMsg.text = activeMsg.text.concat(text.text);
+        activeMsg.text = activeMsg.text.concat(message.text);
+        this.chatId = message.chatId;
         return activeMsg;
       })
     ).subscribe();
@@ -49,11 +44,11 @@ export class ChatComponent {
   sendMessage() {
     this.chatService.connect(this.wsUrl);
     this.isConnected = true;
-    let userMessage: Message = {text: this.newMessage, sender: 'user'};
+    let userMessage: Message = {text: this.messageToSend, sender: 'user', chatId: this.chatId};
     this.messages.push(userMessage);
     this.messages.push(({text: '', sender: 'server'}));
     this.chatService.sendMessage(userMessage);
-    this.newMessage = '';
+    this.messageToSend = '';
   }
 
   get buttonDisabled(): boolean {
