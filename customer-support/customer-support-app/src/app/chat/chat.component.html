@@ -12,7 +12,7 @@
       <app-error/>
       <button class="responding-button btn" (click)="closeWebSocket()" *ngIf="isConnected">Responding...</button>
       <div class="input-group">
-        <textarea [(ngModel)]="newMessage" class="form-control" aria-label="With textarea" name="newMessage"
+        <textarea [(ngModel)]="messageToSend" class="form-control" aria-label="With textarea" name="messageToSend"
                   (keydown.enter)="submitForm($event)"></textarea>
         <button type="submit" class="btn btn-primary" [disabled]="buttonDisabled">Send</button>
       </div>
