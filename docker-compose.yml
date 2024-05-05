@@ -1,4 +1,21 @@
 services:
+  ai-agent-service:
+    image: ai-agent-application:0.0.1-SNAPSHOT
+    ports:
+      - "8083:8083"
+    environment:
+      BROKERS: kafka:29092
+      CASSANDRA_DB: cassandra-db
+      REDIS_DB: redis-db
+    depends_on:
+      - kafka
+      - redis-db
+      - cassandra-liquibase-ai-agent
+    networks:
+      - reservation-system
+    profiles:
+      - system-checks
+
   reservation-service:
     image: reservation-application:0.0.1-SNAPSHOT
     ports:
@@ -126,6 +143,32 @@ services:
       - reservation-system
     healthcheck:
       test: [ "CMD-SHELL", "cqlsh --execute \"DESC KEYSPACES;\"" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  cassandra-liquibase-ai-agent:
+    build:
+      context: ./src/main/Docker/liquibase/Cassandra
+    container_name: reservation-system-liquibase-ai-agent
+    volumes:
+      - ./ai-agent/build/cassandra-db/liquibase/changelog:/liquibase/changelog
+    environment:
+      - URL=jdbc:cassandra://cassandra-db:9042/liquibase_keyspace;DefaultKeyspace=liquibase_keyspace
+      - CHANGELOG_FILE=ai-agent-changelog.xml
+      - USERNAME=cassandra
+      - PASSWORD=cassandra
+      - DRIVER=com.simba.cassandra.jdbc42.Driver
+      - DEFAULT_SCHEMA_NAME=ai_agent_keyspace
+    depends_on:
+      - cassandra-db-init-liquibase-keyspace
+      - redis-db
+      - kafka
+      - control-center
+    networks:
+      - reservation-system
+    healthcheck:
+      test: [ "CMD-SHELL", "cqlsh cassandra-db 9042 --execute \"DESC KEYSPACE ai_agent_keyspace;\"" ]
       interval: 10s
       timeout: 10s
       retries: 10

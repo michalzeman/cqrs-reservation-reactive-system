@@ -1,18 +1,26 @@
 package com.mz.reservationsystem.aiagent.adapter.rest
 
-import com.mz.reservationsystem.aiagent.model.Assistant
+import com.mz.reservationsystem.aiagent.domain.agent.AgentManager
+import com.mz.reservationsystem.aiagent.domain.agent.AgentRequest
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import org.apache.commons.logging.LogFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.socket.WebSocketHandler
 import org.springframework.web.reactive.socket.WebSocketSession
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.toMono
-import java.time.Duration
+import reactor.core.scheduler.Schedulers
+
 
 @Component
 class AiAgentChatHandler(
-    private val assistant: Assistant
+    private val agentManager: AgentManager
 ) : WebSocketHandler {
+
+    companion object {
+        private val logger = LogFactory.getLog(AiAgentChatHandler::class.java)
+    }
 
     override fun handle(session: WebSocketSession): Mono<Void> {
         return handleBetter(session)
@@ -21,22 +29,24 @@ class AiAgentChatHandler(
     fun handleBetter(session: WebSocketSession): Mono<Void> {
         val output = session.receive()
             .map { it.payloadAsText }
+            .map { desJson<AgentRequest>(it) }
             .flatMap {
-                chat(it)
+                agentManager.execute(it) { session.close().subscribe() }
             }
+            .map { serToJsonString(it) }
             .map { session.textMessage(it) }
+            .doOnError { logger.error(it) }
+            .publishOn(Schedulers.boundedElastic())
         return session.send(output)
     }
-
-    fun chat(message: String): Flux<String> {
-        return Mono.defer { assistant.chat(message).toMono() }
-            .flatMapMany { tokenStream ->
-                Flux.create { emitter ->
-                    tokenStream.onNext { emitter.next(it) }
-                        .onComplete { emitter.complete() }
-                        .onError { emitter.complete() }
-                        .start()
-                }.timeout(Duration.ofSeconds(5))
-            }
-    }
 }
+
+/**
+ * Kotlin native supported JSON serialization
+ */
+inline fun <reified T> serToJsonString(value: T) = Json.encodeToString<T>(value)
+
+/**
+ * Kotlin native supported JSON deserialization
+ */
+inline fun <reified T> desJson(value: String): T = Json.decodeFromString<T>(value)
