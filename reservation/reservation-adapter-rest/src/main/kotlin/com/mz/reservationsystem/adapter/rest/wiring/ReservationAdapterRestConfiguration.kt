@@ -32,7 +32,7 @@ class ReservationAdapterRestConfiguration {
             .onError(
                 Throwable::class.java
             ) { throwable: Throwable, _ ->
-                onError(throwable) { logger }
+                onError(throwable) { logger.error(it) }
             }
             .build()
     }
