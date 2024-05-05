@@ -10,6 +10,7 @@ import dev.langchain4j.data.message.ChatMessage
 import dev.langchain4j.data.message.ChatMessageDeserializer.messageFromJson
 import dev.langchain4j.data.message.ChatMessageSerializer.messageToJson
 import dev.langchain4j.store.memory.chat.ChatMemoryStore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.logging.LogFactory
 import org.springframework.stereotype.Component
@@ -22,28 +23,29 @@ class AiChatStorage(private val chatApi: ChatApi) : ChatMemoryStore {
         private val logger = LogFactory.getLog(AiChatStorage::class.java)
     }
 
-    override fun getMessages(memoryId: Any): List<ChatMessage> = runBlocking {
+    override fun getMessages(memoryId: Any): List<ChatMessage> = runBlocking(Dispatchers.IO) {
         Result.runCatching {
-            val id = memoryId.let { it as? String }?.let { Id(it) }
-            if (id != null) chatApi.findById(id)?.chatAiMessages?.map { it.toMessage() }
-                ?: createNewChat(id)
-            else emptyList()
+            memoryId.let { it as? String }
+                ?.let { Id(it) }
+                ?.let { id ->
+                    chatApi.findById(id)?.chatAiMessages?.map { it.toMessage() }
+                        ?: createNewChat(id)
+                } ?: emptyList()
         }
             .onFailure { logger.error(it) }
             .getOrElse { emptyList() }
     }
 
-    override fun updateMessages(memoryId: Any, messages: List<ChatMessage>) {
-        runBlocking {
-            Result.runCatching {
-                val jsonMessages = messages.map { messageToJson(it) }
-                val chatAiMessages = jsonMessages.map { ChatAiMessage(Content(it)) }
-                val id = memoryId.let { it as? String }?.let { Id(it) }
-                id?.let {
+    override fun updateMessages(memoryId: Any, messages: List<ChatMessage>): Unit = runBlocking(Dispatchers.IO) {
+        Result.runCatching {
+            val jsonMessages = messages.map { messageToJson(it) }
+            val chatAiMessages = jsonMessages.map { ChatAiMessage(Content(it)) }
+            memoryId.let { it as? String }
+                ?.let { Id(it) }
+                ?.let {
                     chatApi.execute(AddChatMessage(it, chatAiMessages.toSet()))
                 }
-            }.onFailure { logger.error(it) }
-        }
+        }.onFailure { logger.error(it) }
     }
 
     override fun deleteMessages(memoryId: Any) {
