@@ -31,8 +31,7 @@ class AiChatStorage(private val chatApi: ChatApi) : ChatMemoryStore {
                     chatApi.findById(id)?.chatAiMessages?.map { it.toMessage() }
                         ?: createNewChat(id)
                 } ?: emptyList()
-        }
-            .onFailure { logger.error(it) }
+        }.onFailure { logger.error(it) }
             .getOrElse { emptyList() }
     }
 

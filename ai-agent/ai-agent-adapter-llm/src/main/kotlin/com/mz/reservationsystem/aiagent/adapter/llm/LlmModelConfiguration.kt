@@ -1,6 +1,7 @@
 package com.mz.reservationsystem.aiagent.adapter.llm
 
 import com.mz.reservationsystem.aiagent.domain.Assistant
+import com.mz.reservationsystem.aiagent.domain.agent.ChatClassification
 import dev.langchain4j.memory.chat.ChatMemoryProvider
 import dev.langchain4j.memory.chat.MessageWindowChatMemory
 import dev.langchain4j.model.chat.ChatLanguageModel
@@ -18,12 +19,12 @@ import org.springframework.context.annotation.Configuration
 class LlmModelConfiguration(@Value("\${adapter.llm.local.base-url}") private val llmBaseUrl: String) {
 
     @Bean
-    fun localLlmModel(): ChatLanguageModel {
+    fun localClassificationLlmModel(): ChatLanguageModel {
         return LocalAiChatModel.builder()
             .modelName("local-mistral")
-            .baseUrl(llmBaseUrl)
+            .baseUrl(llmBaseUrl).logRequests(true)
             .maxTokens(100)
-            .temperature(0.2)
+            .temperature(0.1)
             .build()
     }
 
@@ -50,6 +51,13 @@ class LlmModelConfiguration(@Value("\${adapter.llm.local.base-url}") private val
         return AiServices.builder(Assistant::class.java)
             .streamingChatLanguageModel(localStreamingLlmModel)
             .chatMemoryProvider(chatMemoryProvider)
+            .build()
+    }
+
+    @Bean
+    fun chatClassification(localClassificationLlmModel: ChatLanguageModel): ChatClassification {
+        return AiServices.builder(ChatClassification::class.java)
+            .chatLanguageModel(localClassificationLlmModel)
             .build()
     }
 

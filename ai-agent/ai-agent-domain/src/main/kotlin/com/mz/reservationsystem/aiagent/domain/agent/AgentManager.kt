@@ -32,7 +32,7 @@ data class NewChatRequest(override val message: Content) : AgentRequest()
 data class ChatRequest(
     val chatId: Id,
     override val message: Content
-): AgentRequest()
+) : AgentRequest()
 
 @Serializable
 @SerialName("chat-response")
@@ -43,26 +43,33 @@ data class ChatResponse(
 
 @Component
 class AgentManager(
-    private val assistant: Assistant
+    private val assistant: Assistant,
+    private val chatClassification: ChatClassification
 ) {
 
-    fun execute(request: AgentRequest, finished: () -> Unit): Flux<AgentResponse> = when(request) {
+    fun execute(request: AgentRequest, finished: () -> Unit): Flux<AgentResponse> = when (request) {
         is NewChatRequest -> handleUnknownUserRequest(request)
         is ChatRequest -> handleChatRequest(request)
     }.doFinally { finished() }
 
     private fun handleUnknownUserRequest(request: NewChatRequest): Flux<AgentResponse> {
         val id = newId()
-        return chat(id, request.message.value)
+        return checkChat(id, request.message.value, this::chat)
+    }
+
+    private fun handleChatRequest(request: ChatRequest): Flux<AgentResponse> =
+        checkChat(request.chatId, request.message.value, this::chat)
+
+    private fun checkChat(id: Id, message: String, chat: (Id, String) -> Flux<AgentResponse>): Flux<AgentResponse> {
+        val classification = chatClassification.relatedToReservationSystem(message)
+        return if (!classification.result) Flux.fromIterable(classification.reason.split("\\s"))
             .map { ChatResponse(id, Content(it)) }
+            .cast(AgentResponse::class.java)
+            .delayElements(Duration.ofMillis(100))
+        else chat(id, message)
     }
 
-    private fun handleChatRequest(request: ChatRequest): Flux<AgentResponse> {
-        return chat(request.chatId, request.message.value)
-            .map { ChatResponse(request.chatId, Content(it)) }
-    }
-
-    private fun chat(id: Id, message: String): Flux<String> {
+    private fun chat(id: Id, message: String): Flux<AgentResponse> {
         return Mono.defer { assistant.chat(id, message).toMono() }
             .flatMapMany { tokenStream ->
                 Flux.create { emitter ->
@@ -75,7 +82,7 @@ class AgentManager(
                         }
                         .start()
                 }.timeout(Duration.ofSeconds(5))
-            }
+            }.map { ChatResponse(id, Content(it)) }
     }
 
 }
