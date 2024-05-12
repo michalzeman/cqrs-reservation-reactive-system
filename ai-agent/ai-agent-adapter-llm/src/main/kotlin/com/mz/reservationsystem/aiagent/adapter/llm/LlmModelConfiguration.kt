@@ -13,26 +13,55 @@ import dev.langchain4j.store.memory.chat.ChatMemoryStore
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 
 
 @Configuration
-class LlmModelConfiguration(@Value("\${adapter.llm.local.base-url}") private val llmBaseUrl: String) {
+class LlmModelConfiguration(
+    @Value("\${adapter.llm.chat.base-url}") private val llmChatBaseUrl: String,
+    @Value("\${adapter.llm.chat.model}") private val chatModel: String,
+) {
 
+    @Profile("local")
     @Bean
     fun localClassificationLlmModel(): ChatLanguageModel {
         return LocalAiChatModel.builder()
-            .modelName("local-mistral")
-            .baseUrl(llmBaseUrl).logRequests(true)
+            .modelName(chatModel)
+            .baseUrl(llmChatBaseUrl).logRequests(true)
             .maxTokens(100)
             .temperature(0.1)
             .build()
     }
 
+    @Profile("local")
     @Bean
     fun localStreamingLlmModel(): StreamingChatLanguageModel {
         return LocalAiStreamingChatModel.builder()
-            .modelName("local-mistral")
-            .baseUrl(llmBaseUrl)
+            .modelName(chatModel)
+            .baseUrl(llmChatBaseUrl)
+            .maxTokens(2000)
+            .temperature(0.2)
+            .logResponses(true)
+            .build()
+    }
+
+    @Profile("ollama")
+    @Bean
+    fun ollamaClassificationLlmModel(): ChatLanguageModel {
+        return LocalAiChatModel.builder()
+            .modelName(chatModel)
+            .baseUrl(llmChatBaseUrl).logRequests(true)
+            .maxTokens(100)
+            .temperature(0.1)
+            .build()
+    }
+
+    @Profile("ollama")
+    @Bean
+    fun ollamaStreamingLlmModel(): StreamingChatLanguageModel {
+        return LocalAiStreamingChatModel.builder()
+            .modelName(chatModel)
+            .baseUrl(llmChatBaseUrl)
             .maxTokens(2000)
             .temperature(0.2)
             .logResponses(true)
@@ -40,7 +69,7 @@ class LlmModelConfiguration(@Value("\${adapter.llm.local.base-url}") private val
     }
 
     @Bean
-    fun assistant(localStreamingLlmModel: StreamingChatLanguageModel, store: ChatMemoryStore): Assistant {
+    fun assistant(streamingLlmModel: StreamingChatLanguageModel, store: ChatMemoryStore): Assistant {
         val chatMemoryProvider = ChatMemoryProvider { memoryId: Any? ->
             MessageWindowChatMemory.builder()
                 .id(memoryId)
@@ -49,15 +78,15 @@ class LlmModelConfiguration(@Value("\${adapter.llm.local.base-url}") private val
                 .build()
         }
         return AiServices.builder(Assistant::class.java)
-            .streamingChatLanguageModel(localStreamingLlmModel)
+            .streamingChatLanguageModel(streamingLlmModel)
             .chatMemoryProvider(chatMemoryProvider)
             .build()
     }
 
     @Bean
-    fun chatClassification(localClassificationLlmModel: ChatLanguageModel): ChatClassification {
+    fun chatClassification(chatLanguageModel: ChatLanguageModel, store: ChatMemoryStore): ChatClassification {
         return AiServices.builder(ChatClassification::class.java)
-            .chatLanguageModel(localClassificationLlmModel)
+            .chatLanguageModel(chatLanguageModel)
             .build()
     }
 
