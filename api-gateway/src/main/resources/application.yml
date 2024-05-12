@@ -14,3 +14,9 @@ spring:
           uri: http://localhost:8083/ai-agent
           predicates:
               - Path=/ai-agent/**
+        - id: ollama_chat_route
+          uri: http://localhost:11434/api/chat
+          predicates:
+            - Path=/api/chat/completions
+          filters:
+            - RewritePath=/api/chat/completions, /api/chat

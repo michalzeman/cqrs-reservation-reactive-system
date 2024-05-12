@@ -1,0 +1,5 @@
+adapter:
+  llm:
+    chat:
+      base-url: http://localhost:1234/v1
+      model: local

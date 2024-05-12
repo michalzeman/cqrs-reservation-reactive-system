@@ -6,11 +6,18 @@ import com.mz.reservationsystem.aiagent.domain.Assistant
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.apache.commons.logging.LogFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import java.time.Duration
+
+enum class RedirectAction {
+    USER_REGISTRATION,
+    RESERVATION,
+    RESERVATION_VIEW,
+}
 
 @Serializable
 sealed class AgentRequest {
@@ -38,7 +45,15 @@ data class ChatRequest(
 @SerialName("chat-response")
 data class ChatResponse(
     override val chatId: Id,
-    override val message: Content
+    override val message: Content,
+) : AgentResponse()
+
+@Serializable
+@SerialName("redirect-response")
+data class RedirectResponse(
+    override val chatId: Id,
+    override val message: Content,
+    val action: RedirectAction,
 ) : AgentResponse()
 
 @Component
@@ -46,6 +61,10 @@ class AgentManager(
     private val assistant: Assistant,
     private val chatClassification: ChatClassification
 ) {
+
+    companion object {
+        private val logger = LogFactory.getLog(AgentManager::class.java)
+    }
 
     fun execute(request: AgentRequest, finished: () -> Unit): Flux<AgentResponse> = when (request) {
         is NewChatRequest -> handleUnknownUserRequest(request)
@@ -73,11 +92,16 @@ class AgentManager(
         return Mono.defer { assistant.chat(id, message).toMono() }
             .flatMapMany { tokenStream ->
                 Flux.create { emitter ->
-                    tokenStream.onNext { emitter.next(it) }
-                        .onComplete {
+                    tokenStream
+                        .onNext {
+                            emitter.next(it)
+                        }
+                        .onComplete { message ->
+                            logger.trace("Chat completed, message: $message")
                             emitter.complete()
                         }
                         .onError {
+                            logger.error(it)
                             emitter.complete()
                         }
                         .start()

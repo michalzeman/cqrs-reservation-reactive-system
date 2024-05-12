@@ -1,5 +1,7 @@
 package com.mz.reservationsystem.aiagent.domain.agent
 
+import com.mz.ddd.common.api.domain.Id
+import dev.langchain4j.service.MemoryId
 import dev.langchain4j.service.UserMessage
 
 data class ClassificationResult(val result: Boolean, val reason: String)
