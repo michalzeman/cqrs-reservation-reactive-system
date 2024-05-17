@@ -58,6 +58,8 @@ subprojects {
         implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
         implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+        implementation("org.jetbrains.kotlin:kotlin-serialization")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion")
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
         implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:$reactorKotlinExtensionsVersion")
