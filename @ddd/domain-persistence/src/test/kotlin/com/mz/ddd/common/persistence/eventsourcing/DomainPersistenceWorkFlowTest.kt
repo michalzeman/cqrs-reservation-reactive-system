@@ -12,7 +12,9 @@ import com.mz.ddd.common.persistence.eventsourcing.internal.util.TestDocument
 import com.mz.ddd.common.persistence.eventsourcing.internal.util.TestEvent
 import com.mz.ddd.common.persistence.eventsourcing.internal.util.UpdateTestValue
 import com.mz.ddd.common.persistence.eventsourcing.wiring.TestDomainPersistenceConfiguration
+import com.mz.ddd.common.shared.test.cassandra.waitForDatabase
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -31,6 +33,14 @@ class DomainPersistenceWorkFlowTest {
 
     @Autowired
     lateinit var eventStorageAdapter: EventStorageAdapter
+
+    companion object {
+        @BeforeAll
+        @JvmStatic
+        fun beforeAll() {
+            waitForDatabase("ddd_testing_keyspace", "localhost", 9042, "datacenter1")
+        }
+    }
 
     @Test
     fun `should execute command for creation of aggregate, aggregate is created`() {

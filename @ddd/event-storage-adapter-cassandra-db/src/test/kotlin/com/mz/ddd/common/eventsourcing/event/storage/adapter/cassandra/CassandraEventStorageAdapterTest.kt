@@ -6,6 +6,7 @@ import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persisten
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.SnapshotEntity
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.SnapshotRepository
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.EventStorageAdapterCassandraConfiguration
+import com.mz.ddd.common.shared.test.cassandra.waitForDatabase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -36,24 +37,7 @@ class CassandraEventStorageAdapterTest {
         @BeforeAll
         @JvmStatic
         fun beforeAll() {
-            waitForDatabase()
-        }
-
-        private fun waitForDatabase() {
-            repeat(10) {
-                try {
-                    CqlSession.builder()
-                        .withKeyspace("ddd_testing_keyspace")
-                        .addContactPoint(InetSocketAddress("localhost", 9042))
-                        .withLocalDatacenter("datacenter1")
-                        .build()
-                        .close()
-                    return
-                } catch (e: Exception) {
-                    Thread.sleep(1000)
-                }
-            }
-            throw RuntimeException("Could not connect to the database")
+            waitForDatabase("ddd_testing_keyspace", "localhost", 9042, "datacenter1")
         }
     }
 

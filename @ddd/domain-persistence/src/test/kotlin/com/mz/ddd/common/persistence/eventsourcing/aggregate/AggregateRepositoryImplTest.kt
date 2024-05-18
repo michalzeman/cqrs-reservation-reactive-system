@@ -1,7 +1,5 @@
 package com.mz.ddd.common.persistence.eventsourcing.aggregate
 
-import com.mz.ddd.common.api.domain.command.AggregateCommandHandler
-import com.mz.ddd.common.api.domain.event.AggregateEventHandler
 import com.mz.ddd.common.api.domain.newId
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.Snapshot
 import com.mz.ddd.common.persistence.eventsourcing.event.EventRepository
@@ -13,8 +11,10 @@ import com.mz.ddd.common.persistence.eventsourcing.internal.util.TestAggregateCr
 import com.mz.ddd.common.persistence.eventsourcing.internal.util.TestCommand
 import com.mz.ddd.common.persistence.eventsourcing.internal.util.TestEvent
 import com.mz.ddd.common.persistence.eventsourcing.locking.LockManager
+import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.AcquireLock
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.LockAcquired
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.LockReleased
+import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.ReleaseLock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -34,18 +34,12 @@ import reactor.test.StepVerifier
 class AggregateRepositoryImplTest {
 
     @Mock
-    lateinit var commandHandler: AggregateCommandHandler<TestAggregate, TestCommand, TestEvent>
-
-    @Mock
-    lateinit var eventHandler: AggregateEventHandler<TestAggregate, TestEvent>
-
-    @Mock
     lateinit var aggregateProcessor: AggregateProcessor<TestAggregate, TestCommand, TestEvent>
 
     @Mock
     lateinit var lockManager: LockManager
 
-    lateinit var aggregate: ExistingTestAggregate
+    private lateinit var aggregate: ExistingTestAggregate
 
     @Mock
     lateinit var eventRepository: EventRepository<TestEvent, TestAggregate>
@@ -83,13 +77,13 @@ class AggregateRepositoryImplTest {
         whenever(serDesAdapter.deserialize(snapshot)).doReturn(aggregate)
         whenever(snapshot.eventJournals).doReturn(emptyList())
 
-        whenever(lockManager.acquireLock(any())).thenReturn(lockAcquired.toMono())
-        whenever(lockManager.releaseLock(any())).thenReturn(lockReleased.toMono())
+        whenever(lockManager.acquireLock(any<AcquireLock>())).thenReturn(lockAcquired.toMono())
+        whenever(lockManager.releaseLock(any<ReleaseLock>())).thenReturn(lockReleased.toMono())
 
         whenever(aggregateProcessor.execute(aggregate as TestAggregate, command)).thenReturn(
             Result.success(commandEffect)
         )
-        whenever(aggregateProcessor.applyEvents(any(), any())).thenReturn(aggregate)
+        whenever(aggregateProcessor.applyEvents(any<TestAggregate>(), any<List<TestEvent>>())).thenReturn(aggregate)
 
         whenever(eventRepository.persistAll(commandEffect)).thenReturn(Mono.empty())
         whenever(eventRepository.readSnapshot(id)).thenReturn(snapshot.toMono())
@@ -98,7 +92,7 @@ class AggregateRepositoryImplTest {
             .expectNextCount(1)
             .verifyComplete()
 
-        verify(lockManager).releaseLock(any())
+        verify(lockManager).releaseLock(any<ReleaseLock>())
     }
 
     @Test
@@ -117,13 +111,13 @@ class AggregateRepositoryImplTest {
         whenever(serDesAdapter.deserialize(snapshot)).doReturn(aggregate)
         whenever(snapshot.eventJournals).doReturn(emptyList())
 
-        whenever(lockManager.acquireLock(any())).thenReturn(lockAcquired.toMono())
-        whenever(lockManager.releaseLock(any())).thenReturn(lockReleased.toMono())
+        whenever(lockManager.acquireLock(any<AcquireLock>())).thenReturn(lockAcquired.toMono())
+        whenever(lockManager.releaseLock(any<ReleaseLock>())).thenReturn(lockReleased.toMono())
 
         whenever(aggregateProcessor.execute(aggregate as TestAggregate, command)).thenReturn(
             Result.success(commandEffect)
         )
-        whenever(aggregateProcessor.applyEvents(any(), any())).thenReturn(aggregate)
+        whenever(aggregateProcessor.applyEvents(any<TestAggregate>(), any<List<TestEvent>>())).thenReturn(aggregate)
 
         whenever(eventRepository.persistAll(commandEffect)).thenReturn(Mono.empty())
         whenever(eventRepository.readSnapshot(id)).thenReturn(snapshot.toMono())
@@ -132,7 +126,7 @@ class AggregateRepositoryImplTest {
             .expectNextCount(1)
             .verifyComplete()
 
-        verify(lockManager).releaseLock(any())
+        verify(lockManager).releaseLock(any<ReleaseLock>())
     }
 
     @Test
@@ -142,15 +136,15 @@ class AggregateRepositoryImplTest {
         val lockAcquired = mock<LockAcquired>()
         val lockReleased = mock<LockReleased>()
 
-        whenever(lockManager.acquireLock(any())).thenReturn(lockAcquired.toMono())
-        whenever(lockManager.releaseLock(any())).thenReturn(lockReleased.toMono())
+        whenever(lockManager.acquireLock(any<AcquireLock>())).thenReturn(lockAcquired.toMono())
+        whenever(lockManager.releaseLock(any<ReleaseLock>())).thenReturn(lockReleased.toMono())
 
         StepVerifier.create(subject.execute(id, command, { false.toMono() }))
             .expectError(IllegalStateException::class.java)
             .verify()
 
-        verify(lockManager).releaseLock(any())
-        verify(aggregateProcessor, never()).execute(any(), any())
+        verify(lockManager).releaseLock(any<ReleaseLock>())
+        verify(aggregateProcessor, never()).execute(any<TestAggregate>(), any<TestCommand>())
     }
 
     @Test
@@ -160,15 +154,15 @@ class AggregateRepositoryImplTest {
         val lockAcquired = mock<LockAcquired>()
         val lockReleased = mock<LockReleased>()
 
-        whenever(lockManager.acquireLock(any())).thenReturn(lockAcquired.toMono())
-        whenever(lockManager.releaseLock(any())).thenReturn(lockReleased.toMono())
+        whenever(lockManager.acquireLock(any<AcquireLock>())).thenReturn(lockAcquired.toMono())
+        whenever(lockManager.releaseLock(any<ReleaseLock>())).thenReturn(lockReleased.toMono())
 
         StepVerifier.create(subject.execute(id, command, { Mono.error(IllegalStateException()) }))
             .expectError(IllegalStateException::class.java)
             .verify()
 
-        verify(lockManager).releaseLock(any())
-        verify(aggregateProcessor, never()).execute(any(), any())
+        verify(lockManager).releaseLock(any<ReleaseLock>())
+        verify(aggregateProcessor, never()).execute(any<TestAggregate>(), any<TestCommand>())
     }
 
     @Test
@@ -182,13 +176,13 @@ class AggregateRepositoryImplTest {
         whenever(serDesAdapter.deserialize(snapshot)).doReturn(aggregate)
         whenever(snapshot.eventJournals).doReturn(emptyList())
 
-        whenever(lockManager.acquireLock(any())).thenReturn(lockAcquired.toMono())
-        whenever(lockManager.releaseLock(any())).thenReturn(lockReleased.toMono())
+        whenever(lockManager.acquireLock(any<AcquireLock>())).thenReturn(lockAcquired.toMono())
+        whenever(lockManager.releaseLock(any<ReleaseLock>())).thenReturn(lockReleased.toMono())
 
         whenever(aggregateProcessor.execute(aggregate as TestAggregate, command)).thenReturn(
             Result.failure(RuntimeException("Test exception"))
         )
-        whenever(aggregateProcessor.applyEvents(any(), any())).thenReturn(aggregate)
+        whenever(aggregateProcessor.applyEvents(any<TestAggregate>(), any<List<TestEvent>>())).thenReturn(aggregate)
 
         whenever(eventRepository.readSnapshot(id)).thenReturn(snapshot.toMono())
 
@@ -196,7 +190,7 @@ class AggregateRepositoryImplTest {
             .expectError(RuntimeException::class.java)
             .verify()
 
-        verify(lockManager).releaseLock(any())
+        verify(lockManager).releaseLock(any<ReleaseLock>())
     }
 
 }
