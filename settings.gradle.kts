@@ -27,16 +27,18 @@ dependencyResolutionManagement {
                 springDependencyManagementVersion
             )
             plugin("springframework-boot", "org.springframework.boot").version(springframeworkBootVersion)
+            // libraries ----------------------------->
+            library(
+                "kotlinx-serialization-json",
+                "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion"
+            )
+            library("kotlin-stdlib", "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
             library("guava", "com.google.guava:guava:28.1-jre")
             library("projectreactor-blockhound", "io.projectreactor.tools:blockhound:1.0.4.RELEASE")
             library("apache-commons-lang3", "org.apache.commons:commons-lang3:3.9")
             library("assertj-core", "org.assertj:assertj-core:3.14.0")
             library("mockito-core", "org.mockito:mockito-core:$mockitoCoreVersion")
             library("mockito-kotlin", "org.mockito.kotlin:mockito-kotlin:$mockitoCoreVersion")
-            library(
-                "kotlinx-serialization-json",
-                "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion"
-            )
         }
     }
 }

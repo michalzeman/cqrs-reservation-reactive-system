@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   reservation-service:
     image: reservation-application:0.0.1-SNAPSHOT

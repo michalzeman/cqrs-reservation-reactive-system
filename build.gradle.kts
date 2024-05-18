@@ -6,6 +6,7 @@ val springCloudVersion: String by project
 val mockitoCoreVersion: String by project
 val kotlinxDatetimeVersion: String by project
 val reactorKotlinExtensionsVersion: String by project
+val kotlinVersion: String by project
 
 val systemChecksProfile = "system-checks"
 
@@ -40,9 +41,7 @@ subprojects {
     }
 
     java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(jvmTargetVersion))
-        }
+        sourceCompatibility = JavaVersion.VERSION_17
     }
 
     group = "com.mz"
@@ -57,9 +56,9 @@ subprojects {
 
     dependencies {
         implementation("org.jetbrains.kotlin:kotlin-reflect")
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+        implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
         implementation("org.jetbrains.kotlin:kotlin-serialization")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion")
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
         implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:$reactorKotlinExtensionsVersion")
