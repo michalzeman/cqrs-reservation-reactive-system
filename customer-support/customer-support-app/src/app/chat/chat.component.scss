@@ -2,25 +2,23 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 90vh; // Set a defined height
+  height: 90vh;
 }
 
 .chat-messages {
-  flex: 0 1 70%; // This will take up to 65% of the chat-container
-  overflow-y: auto; // Make it scrollable
+  flex: 0 1 70%;
+  overflow-y: auto;
 }
 
 .chat-input {
-  //flex: 0 1 40%; // This will take up to 30% of the chat-container
-  //position: fixed;
   bottom: 10px;
-  width: 90%; // Adjust this value as needed
+  width: 90%;
 
   textarea {
-    resize: vertical; // Allow vertical resizing
-    max-height: 30vh; // Ensure textarea does not exceed the height of chat-input
-    min-height: 20vh; // Set a minimum height
-    overflow-y: auto; // Make it scrollable
+    resize: vertical;
+    max-height: 30vh;
+    min-height: 20vh;
+    overflow-y: auto;
   }
 }
 
@@ -38,8 +36,8 @@
 
 .server-message {
   align-self: flex-start;
-  background-color: #007bff;
-  color: #fff;
+  background-color: rgba(30, 181, 246, 0.32);
+  color: #040303;
   margin: 10px;
   padding: 10px;
   border-radius: 10px;

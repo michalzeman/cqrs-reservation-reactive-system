@@ -4,8 +4,10 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {environment} from '../../environments/environment';
 import {FormsModule} from "@angular/forms";
 import {ChatService, Message} from './chat.service';
-import {map} from "rxjs/operators";
+import {map, tap} from "rxjs/operators";
 import {ErrorComponent} from "../error/error.component";
+import {CustomerDocument, CustomerService} from "../customer/customer.service";
+import {MarkdownComponent} from "ngx-markdown";
 
 @Component({
   selector: 'app-chat',
@@ -15,7 +17,8 @@ import {ErrorComponent} from "../error/error.component";
     NgForOf,
     FormsModule,
     NgIf,
-    ErrorComponent
+    ErrorComponent,
+    MarkdownComponent
   ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
@@ -26,6 +29,7 @@ export class ChatComponent implements OnInit {
   isConnected: boolean = false;
   chatId?: string;
   customerId?: string;
+  customer?: CustomerDocument;
 
   private wsUrl = environment.wsApiUrl + '/ai-agent/chat-stream'
 
@@ -34,7 +38,8 @@ export class ChatComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private customerService: CustomerService
   ) {
     chatService.serverAnswer$.pipe(
       map(message => this.handleChatMessage(message))
@@ -52,14 +57,26 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.customerId = this.route.snapshot.paramMap.get('id') ?? undefined;
-    console.log(`customer id:${this.customerId}`);
+    if (this.customerId) {
+      this.customerService.getById(this.customerId)
+        .pipe(
+          tap(customerDoc => this.customer = customerDoc),
+          tap(doc => this.sendMessage("Hi"))
+        )
+        .subscribe()
+    }
   }
 
-  sendMessage() {
+  sendMessage(message?: string) {
     this.chatService.connect(this.wsUrl);
     this.isConnected = true;
-    let userMessage: Message = {text: this.messageToSend, sender: 'user', chatId: this.chatId};
-    this.messages.push(userMessage);
+    let userMessage: Message;
+    if (message && this.customer) {
+      userMessage = {text: message, sender: 'user', chatId: this.chatId, customerData: this.customer}
+    } else {
+      userMessage = {text: this.messageToSend, sender: 'user', chatId: this.chatId, customerData: this.customer};
+      this.messages.push(userMessage);
+    }
     this.messages.push(({text: '', sender: 'server'}));
     this.chatService.sendMessage(userMessage);
     this.messageToSend = '';

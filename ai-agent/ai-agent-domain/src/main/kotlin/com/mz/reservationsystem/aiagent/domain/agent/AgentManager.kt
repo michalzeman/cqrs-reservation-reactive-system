@@ -35,10 +35,27 @@ sealed class AgentResponse {
 data class NewChatRequest(override val message: Content) : AgentRequest()
 
 @Serializable
+@SerialName("new-chat-customer-request")
+data class NewChatCustomerRequest(
+    override val message: Content,
+    val customerId: Id,
+    val customerData: Content
+) : AgentRequest()
+
+@Serializable
 @SerialName("chat-request")
 data class ChatRequest(
     val chatId: Id,
     override val message: Content
+) : AgentRequest()
+
+@Serializable
+@SerialName("chat-customer-request")
+data class ChatCustomerRequest(
+    override val message: Content,
+    val chatId: Id,
+    val customerId: Id,
+    val customerData: Content
 ) : AgentRequest()
 
 @Serializable
@@ -56,6 +73,18 @@ data class RedirectResponse(
     val action: RedirectAction,
 ) : AgentResponse()
 
+internal val customerPrompt: (message: Content, customerData: Content) -> String = { message, customerData ->
+    """
+    `customer-message`: <message>${message.value}</message>
+    `customer-data`: 
+    ```json
+    ${customerData.value}
+    ```
+    `instruction for response`:
+    - write all important information as in the markdown format
+    """.trimIndent()
+}
+
 @Component
 class AgentManager(
     private val assistant: Assistant,
@@ -69,6 +98,17 @@ class AgentManager(
     fun execute(request: AgentRequest, finished: () -> Unit): Flux<AgentResponse> = when (request) {
         is NewChatRequest -> handleUnknownUserRequest(request)
         is ChatRequest -> handleChatRequest(request)
+        is ChatCustomerRequest -> {
+            val message = customerPrompt(request.message, request.customerData)
+            val chatId = request.chatId
+            chat(chatId, message)
+        }
+
+        is NewChatCustomerRequest -> {
+            val message = customerPrompt(request.message, request.customerData)
+            val chatId = newId()
+            chat(chatId, message)
+        }
     }.doFinally { finished() }
 
     private fun handleUnknownUserRequest(request: NewChatRequest): Flux<AgentResponse> {

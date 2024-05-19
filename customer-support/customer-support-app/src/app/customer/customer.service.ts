@@ -66,6 +66,18 @@ export class CustomerService {
             this.errorService.throwError(err);
             throw err;
           }
-        ))
+        )
+      );
+  }
+
+  getById(id: string): Observable<CustomerDocument> {
+    return this.httpClient.get<CustomerDocument>(`${url}/${id}`)
+      .pipe(
+        catchError(err => {
+            this.errorService.throwError(err);
+            throw err;
+          }
+        )
+      );
   }
 }
