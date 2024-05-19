@@ -75,8 +75,8 @@ data class RedirectResponse(
 
 internal val customerPrompt: (message: Content, customerData: Content) -> String = { message, customerData ->
     """
-    `customer-message`: <message>${message.value}</message>
-    `customer-data`: 
+    `customer message`: <message>${message.value}</message>
+    `customer data`: 
     ```json
     ${customerData.value}
     ```

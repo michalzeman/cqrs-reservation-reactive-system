@@ -1,13 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {NgClass, NgForOf, NgIf} from "@angular/common";
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {environment} from '../../environments/environment';
 import {FormsModule} from "@angular/forms";
 import {ChatService, Message} from './chat.service';
-import {map, tap} from "rxjs/operators";
+import {map, switchMap} from "rxjs/operators";
 import {ErrorComponent} from "../error/error.component";
 import {CustomerDocument, CustomerService} from "../customer/customer.service";
 import {MarkdownComponent} from "ngx-markdown";
+
+const idPathParam = 'id';
 
 @Component({
   selector: 'app-chat',
@@ -28,7 +30,6 @@ export class ChatComponent implements OnInit {
   messageToSend: string = '';
   isConnected: boolean = false;
   chatId?: string;
-  customerId?: string;
   customer?: CustomerDocument;
 
   private wsUrl = environment.wsApiUrl + '/ai-agent/chat-stream'
@@ -37,7 +38,6 @@ export class ChatComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private chatService: ChatService,
     private customerService: CustomerService
   ) {
@@ -56,22 +56,20 @@ export class ChatComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.customerId = this.route.snapshot.paramMap.get('id') ?? undefined;
-    if (this.customerId) {
-      this.customerService.getById(this.customerId)
-        .pipe(
-          tap(customerDoc => this.customer = customerDoc),
-          tap(doc => this.sendMessage("Hi"))
-        )
-        .subscribe()
-    }
+    this.route.params.pipe(
+     map(param => param[idPathParam]),
+     switchMap(id => this.customerService.getById(id))
+    ).subscribe(doc => {
+      this.customer = doc;
+      this.sendMessage('Hi');
+    })
   }
 
   sendMessage(message?: string) {
     this.chatService.connect(this.wsUrl);
     this.isConnected = true;
     let userMessage: Message;
-    if (message && this.customer) {
+    if (message) {
       userMessage = {text: message, sender: 'user', chatId: this.chatId, customerData: this.customer}
     } else {
       userMessage = {text: this.messageToSend, sender: 'user', chatId: this.chatId, customerData: this.customer};

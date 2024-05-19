@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ErrorService} from "./error.service";
 import {NgIf} from "@angular/common";
+import {tap} from "rxjs/operators";
 
 @Component({
   selector: 'app-error',
@@ -21,9 +22,13 @@ export class ErrorComponent implements OnInit {
 
   ngOnInit(): void {
     this.errorService.error$
-      .subscribe(message => {
-        this.errorMessage = message
-      });
+      .pipe(
+        tap(message => {
+          this.errorMessage = message;
+          setTimeout(() => this.clearMessages(), 5000);
+        })
+      )
+      .subscribe();
   }
 
   clearMessages(): void {
