@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
-import {HttpClient} from '@angular/common/http';
 import {catchError, filter, finalize} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {ErrorService} from "../error/error.service";

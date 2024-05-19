@@ -10,7 +10,7 @@ export class ErrorService {
   constructor() {
   }
 
-  public throwError(message: string): void {
-    this.error$.next(message);
+  public throwError(message: any): void {
+    this.error$.next(JSON.stringify(message));
   }
 }
