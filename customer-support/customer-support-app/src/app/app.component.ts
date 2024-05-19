@@ -8,7 +8,7 @@ import {GlobalErrorHandler} from "./global-error-handler.service";
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, ChatComponent, ErrorComponent],
-  providers: [{ provide: ErrorHandler, useClass: GlobalErrorHandler }],
+  providers: [{provide: ErrorHandler, useClass: GlobalErrorHandler}],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

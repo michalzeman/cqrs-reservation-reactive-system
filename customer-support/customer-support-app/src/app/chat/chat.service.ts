@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
+import {HttpClient} from '@angular/common/http';
 import {catchError, filter, finalize} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {ErrorService} from "../error/error.service";
@@ -34,6 +35,10 @@ export type ChatResponse = {
   chatId: string;
   message: string;
 }
+
+const url = "/api/ai-agent/stream-chats";
+
+// const url = "http://localhost:8080/ai-agent/stream-chats";
 
 @Injectable({
   providedIn: 'any'
@@ -80,10 +85,10 @@ export class ChatService {
 
   public sendMessage(msg: Message): void {
     if (msg.chatId) {
-      let request = { message: msg.text, chatId: msg.chatId, type: "chat-request" } as ChatRequest
+      let request = {message: msg.text, chatId: msg.chatId, type: "chat-request"} as ChatRequest
       this.socket$?.next(request);
     } else {
-      let request = { message: msg.text, type: "new-chat-request" } as NewChatRequest
+      let request = {message: msg.text, type: "new-chat-request"} as NewChatRequest
       this.socket$?.next(request);
     }
   }
