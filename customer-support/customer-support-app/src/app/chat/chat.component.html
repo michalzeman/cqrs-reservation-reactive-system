@@ -3,7 +3,12 @@
     <ng-container *ngFor="let message of messages">
       <div *ngIf="message.text.trim().length > 0"
            [ngClass]="{'user-message': message.sender === 'user', 'server-message': message.sender === 'server'}">
-        {{ message.text }}
+        <markdown *ngIf="!isConnected">
+          {{ message.text }}
+        </markdown>
+        <div *ngIf="isConnected">
+          {{ message.text }}
+        </div>
       </div>
     </ng-container>
   </div>
