@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {NgClass, NgForOf, NgIf} from "@angular/common";
+import { environment } from './../../environments/environment';
 import {FormsModule} from "@angular/forms";
 import {ChatService, Message} from './chat.service';
 import {map} from "rxjs/operators";
@@ -24,7 +25,7 @@ export class ChatComponent {
   isConnected: boolean = false;
   chatId?: string;
 
-  private wsUrl = 'ws://localhost:8080/ai-agent/chat-stream'
+  private wsUrl = environment.wsApiUrl+'/ai-agent/chat-stream'
 
   messages: Message[] = [];
 
