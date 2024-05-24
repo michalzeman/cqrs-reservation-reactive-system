@@ -81,7 +81,13 @@ internal val customerPrompt: (message: Content, customerData: Content) -> String
     ${customerData.value}
     ```
     `instruction for response`:
-    - write all important information as in the markdown format
+    * write all important information as in the markdown format
+    * don't display those fields:
+    ** correlationId
+    ** docId
+    ** createdAt
+    ** events
+    ** version
     """.trimIndent()
 }
 
