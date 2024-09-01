@@ -50,9 +50,9 @@ data class TestValueUpdated(
 class JsonEventSerDesAdapterTest {
 
     val subject = JsonEventSerDesAdapter<TestEvent, TestAggregate>(
-        encodeEvent = { event -> serToJsonString(event) },
+        encodeEvent = { event -> serToJsonEncodedBytes(event) },
         decoderEvent = { json -> desJson(json) },
-        encodeAggregate = { aggregate -> serToJsonString(aggregate) },
+        encodeAggregate = { aggregate -> serToJsonEncodedBytes(aggregate) },
         decoderAggregate = { json -> desJson(json) }
     )
 

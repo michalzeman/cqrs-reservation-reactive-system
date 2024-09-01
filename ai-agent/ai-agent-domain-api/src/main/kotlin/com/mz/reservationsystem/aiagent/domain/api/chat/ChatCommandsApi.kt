@@ -26,6 +26,22 @@ fun CreateChat.toEvent(): ChatCreated {
     )
 }
 
+data class UpdateChatAgent(
+    override val aggregateId: Id,
+    val chatAgentType: ChatAgentType,
+    override val commandId: Id = newId(),
+    override val correlationId: Id = newId(),
+    override val createdAt: Instant = instantNow()
+) : ChatCommand()
+
+fun UpdateChatAgent.toEvent(): ChatAgentChanged {
+    return ChatAgentChanged(
+        aggregateId = this.aggregateId,
+        correlationId = this.correlationId,
+        chatAgentType = this.chatAgentType
+    )
+}
+
 data class AddChatMessage(
     override val aggregateId: Id,
     val chatAiMessages: Set<ChatAiMessage>,

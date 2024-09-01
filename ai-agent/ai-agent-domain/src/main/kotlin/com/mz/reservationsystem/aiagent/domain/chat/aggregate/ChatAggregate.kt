@@ -10,6 +10,13 @@ val CHAT_DOMAIN_TAG = DomainTag("chat")
 @Serializable
 sealed class Chat : Aggregate() {
     abstract val version: Version
+    abstract val chatAgentType: ChatAgentType
+}
+
+fun Chat.apply(event: ChatAgentChanged): Chat = when (this) {
+    is EmptyChat -> copy(version = version.increment(), chatAgentType = event.chatAgentType)
+    is UnknownCustomerChat -> copy(version = version.increment(), chatAgentType = event.chatAgentType)
+    is CustomerChat -> copy(version = version.increment(), chatAgentType = event.chatAgentType)
 }
 
 fun Id.getAggregate(): Chat {
@@ -26,12 +33,15 @@ fun Chat.toDocument(events: Set<ChatEvent> = emptySet()): ChatDocument {
             chatAiMessages = chatAiMessages,
             version = version,
             aggregateId = aggregateId,
+            chatAgentType = chatAgentType,
             events = events
         )
+
         is CustomerChat -> ChatDocument(
             customerId = customerId,
             version = version,
             aggregateId = aggregateId,
+            chatAgentType = chatAgentType,
             events = events
         )
     }
@@ -41,7 +51,8 @@ fun Chat.toDocument(events: Set<ChatEvent> = emptySet()): ChatDocument {
 @SerialName("empty-chat")
 data class EmptyChat(
     override val aggregateId: Id = NEW_CHAT_ID,
-    override val version: Version = Version(0)
+    override val version: Version = Version(0),
+    override val chatAgentType: ChatAgentType = ChatAgentType.NONE
 ) : Chat()
 
 fun EmptyChat.apply(event: ChatCreated): UnknownCustomerChat = UnknownCustomerChat(
@@ -55,7 +66,8 @@ fun EmptyChat.apply(event: ChatCreated): UnknownCustomerChat = UnknownCustomerCh
 data class UnknownCustomerChat(
     override val aggregateId: Id,
     override val version: Version,
-    val chatAiMessages: Set<ChatAiMessage>
+    val chatAiMessages: Set<ChatAiMessage>,
+    override val chatAgentType: ChatAgentType = ChatAgentType.NONE
 ) : Chat()
 
 fun UnknownCustomerChat.apply(event: ChatMessageAdded): UnknownCustomerChat = this.copy(
@@ -76,7 +88,8 @@ data class CustomerChat(
     override val aggregateId: Id,
     override val version: Version,
     val customerId: Id,
-    val chatAiMessages: Set<ChatAiMessage>
+    val chatAiMessages: Set<ChatAiMessage>,
+    override val chatAgentType: ChatAgentType = ChatAgentType.NONE
 ) : Chat()
 
 fun CustomerChat.apply(event: ChatMessageAdded): CustomerChat = this.copy(

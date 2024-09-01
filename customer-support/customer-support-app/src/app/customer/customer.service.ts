@@ -15,19 +15,12 @@ export abstract class CustomerCommandRequest {
 }
 
 export class RegisterCustomerRequest extends CustomerCommandRequest {
-  lastName: string;
-  firstName: string;
-  email: string;
-
   constructor(
-    lastName: string,
-    firstName: string,
-    email: string
+    public lastName: string,
+    public firstName: string,
+    public email: string
   ) {
     super('register-customer');
-    this.lastName = lastName;
-    this.firstName = firstName;
-    this.email = email;
   }
 }
 

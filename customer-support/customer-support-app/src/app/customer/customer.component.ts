@@ -17,8 +17,8 @@ import {CustomerService, RegisterCustomerRequest} from "./customer.service";
     ErrorComponent,
     ReactiveFormsModule
   ],
-  templateUrl: './customer-component.html',
-  styleUrl: './customer-component.scss'
+  templateUrl: './customer.component.html',
+  styleUrl: './customer.component.scss'
 })
 export class CustomerComponent implements OnInit {
 

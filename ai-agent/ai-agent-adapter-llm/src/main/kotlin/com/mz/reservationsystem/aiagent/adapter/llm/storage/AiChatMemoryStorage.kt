@@ -1,4 +1,4 @@
-package com.mz.reservationsystem.aiagent.adapter.llm
+package com.mz.reservationsystem.aiagent.adapter.llm.storage
 
 import com.mz.ddd.common.api.domain.Id
 import com.mz.reservationsystem.aiagent.domain.api.chat.AddChatMessage
@@ -16,11 +16,10 @@ import org.apache.commons.logging.LogFactory
 import org.springframework.stereotype.Component
 
 
-@Component
-class AiChatStorage(private val chatApi: ChatApi) : ChatMemoryStore {
+class AiChatMemoryStorage(private val chatApi: ChatApi) : ChatMemoryStore {
 
     companion object {
-        private val logger = LogFactory.getLog(AiChatStorage::class.java)
+        private val logger = LogFactory.getLog(AiChatMemoryStorage::class.java)
     }
 
     override fun getMessages(memoryId: Any): List<ChatMessage> = runBlocking(Dispatchers.IO) {

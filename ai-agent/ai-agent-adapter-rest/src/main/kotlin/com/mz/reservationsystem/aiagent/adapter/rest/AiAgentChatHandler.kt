@@ -1,10 +1,11 @@
 package com.mz.reservationsystem.aiagent.adapter.rest
 
-import com.mz.reservationsystem.aiagent.domain.agent.AgentManager
-import com.mz.reservationsystem.aiagent.domain.agent.AgentRequest
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import com.mz.common.components.json.desJson
+import com.mz.common.components.json.serToJsonString
+import com.mz.reservationsystem.aiagent.domain.ai.AgentManager
+import com.mz.reservationsystem.aiagent.domain.ai.model.AgentRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.reactor.asFlux
 import org.apache.commons.logging.LogFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.socket.WebSocketHandler
@@ -23,30 +24,18 @@ class AiAgentChatHandler(
     }
 
     override fun handle(session: WebSocketSession): Mono<Void> {
-        return handleBetter(session)
-    }
-
-    fun handleBetter(session: WebSocketSession): Mono<Void> {
         val output = session.receive()
             .map { it.payloadAsText }
             .map { desJson<AgentRequest>(it) }
             .flatMap {
                 agentManager.execute(it) { session.close().subscribe() }
+                    .asFlux(Dispatchers.IO)
             }
             .map { serToJsonString(it) }
             .map { session.textMessage(it) }
             .doOnError { logger.error(it) }
             .publishOn(Schedulers.boundedElastic())
+
         return session.send(output)
     }
 }
-
-/**
- * Kotlin native supported JSON serialization
- */
-inline fun <reified T> serToJsonString(value: T) = Json.encodeToString<T>(value)
-
-/**
- * Kotlin native supported JSON deserialization
- */
-inline fun <reified T> desJson(value: String): T = Json.decodeFromString<T>(value)

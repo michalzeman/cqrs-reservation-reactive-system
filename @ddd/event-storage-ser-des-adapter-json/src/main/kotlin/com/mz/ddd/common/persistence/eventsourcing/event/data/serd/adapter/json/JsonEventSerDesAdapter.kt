@@ -5,7 +5,6 @@ import com.mz.ddd.common.api.domain.DomainEvent
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.EventJournal
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.Snapshot
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -25,9 +24,9 @@ class JsonEventSerDesAdapter<E : DomainEvent, A : Aggregate>(
     companion object {
         inline fun <reified E : DomainEvent, reified A : Aggregate> build(): EventSerDesAdapter<E, A> {
             return JsonEventSerDesAdapter(
-                { serToJsonString(it) },
+                { serToJsonEncodedBytes(it) },
                 { desJson(it) },
-                { serToJsonString(it) },
+                { serToJsonEncodedBytes(it) },
                 { desJson(it) }
             )
         }
@@ -54,7 +53,7 @@ class JsonEventSerDesAdapter<E : DomainEvent, A : Aggregate>(
 /**
  * Kotlin native supported JSON serialization
  */
-inline fun <reified T> serToJsonString(value: T) = Json.encodeToString<T>(value).encodeToByteArray()
+inline fun <reified T> serToJsonEncodedBytes(value: T): ByteArray = Json.encodeToString<T>(value).encodeToByteArray()
 
 /**
  * Kotlin native supported JSON deserialization

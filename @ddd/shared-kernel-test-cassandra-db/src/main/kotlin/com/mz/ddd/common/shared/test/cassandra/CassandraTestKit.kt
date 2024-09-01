@@ -1,6 +1,8 @@
 package com.mz.ddd.common.shared.test.cassandra
 
 import com.datastax.oss.driver.api.core.CqlSession
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import java.net.InetSocketAddress
 
 /**
