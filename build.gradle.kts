@@ -150,8 +150,8 @@ tasks.register("tearDownDockerCompose") {
     mustRunAfter(allTestTasks)
     doLast {
         exec {
-            if (isSystemCheckProfile) commandLine("docker-compose", "--profile", "system-checks", "down", "-v")
-            else commandLine("docker-compose", "down", "-v")
+            if (isSystemCheckProfile) commandLine("docker", "compose", "--profile", "system-checks", "down", "-v")
+            else commandLine("docker", "compose", "down", "-v")
         }
     }
 }
@@ -178,8 +178,8 @@ tasks.register("systemChecksTests") {
 
 fun dockerInfrastructureUp(profile: String? = null) {
     exec {
-        if (profile != null) commandLine("docker-compose", "--profile", profile, "up", "-d")
-        else commandLine("docker-compose", "up", "-d")
+        if (profile != null) commandLine("docker", "compose", "--profile", profile, "up", "-d")
+        else commandLine("docker", "compose", "up", "-d")
     }
 }
 
