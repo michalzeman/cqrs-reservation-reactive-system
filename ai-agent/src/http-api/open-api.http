@@ -1,0 +1,9 @@
+POST https://api.openai.com/v1/chat/completions
+Content-Type: application/json
+Authorization: Bearer {{api-key}}
+
+{
+  "model": "gpt-3.5-turbo-0125",
+  "messages": [{"role": "user", "content": "Say this is a test!"}],
+  "temperature": 0.1
+}

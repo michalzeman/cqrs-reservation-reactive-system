@@ -18,6 +18,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.plugin.spring)
+    id("com.avast.gradle.docker-compose") version "0.14.9"
 }
 
 allprojects {
@@ -142,6 +143,14 @@ tasks.register("waitForDockerComposeBeforeTests") {
     mustRunAfter("runDockerComposeBeforeTests")
     doLast {
         waitToDockerInfrastructureIsHealthy()
+    }
+}
+
+tasks.register("testDocker") {
+    doLast {
+        exec {
+            commandLine("docker", "ps")
+        }
     }
 }
 

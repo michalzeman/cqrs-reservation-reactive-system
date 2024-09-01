@@ -2,6 +2,7 @@ package com.mz.reservationsystem.aiagent.domain.chat.aggregate
 
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.Version
+import com.mz.ddd.common.api.domain.newId
 import com.mz.reservationsystem.aiagent.domain.api.chat.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -28,7 +29,7 @@ class ChatAggregateTest {
         // Given
         val chatId = Id("1")
         val chat = UnknownCustomerChat(chatId, Version(0), emptySet())
-        val chatMessage = ChatAiMessage(Content("Hello" ))
+        val chatMessage = ChatAiMessage(Content("Hello"))
         val chatMessageAdded = ChatMessageAdded(chatId, setOf(chatMessage))
 
         // When
@@ -77,5 +78,45 @@ class ChatAggregateTest {
         assertThat(result).isInstanceOf(EmptyChat::class.java)
         assertThat(result.aggregateId).isEqualTo(id)
         assertThat(result.version).isEqualTo(Version(0))
+    }
+
+    @Test
+    fun `apply ChatAgentChanged event to EmptyChat updates version and chatAgentType`() {
+        val chat = EmptyChat()
+        val event = ChatAgentChanged(newId(), ChatAgentType.RESERVATION_VIEW)
+
+        val updatedChat = chat.apply(event)
+
+        assertThat(updatedChat.version).isEqualTo(Version(1))
+        assertThat(updatedChat.chatAgentType).isEqualTo(ChatAgentType.RESERVATION_VIEW)
+    }
+
+    @Test
+    fun `apply ChatAgentChanged event to UnknownCustomerChat updates version and chatAgentType`() {
+        val aggregateId = Id("test")
+        val chat = UnknownCustomerChat(aggregateId = aggregateId, version = Version(1), chatAiMessages = emptySet())
+        val event = ChatAgentChanged(aggregateId, ChatAgentType.RESERVATION)
+
+        val updatedChat = chat.apply(event)
+
+        assertThat(updatedChat.version).isEqualTo(Version(2))
+        assertThat(updatedChat.chatAgentType).isEqualTo(ChatAgentType.RESERVATION)
+    }
+
+    @Test
+    fun `apply ChatAgentChanged event to CustomerChat updates version and chatAgentType`() {
+        val aggregateId = Id("test")
+        val chat = CustomerChat(
+            aggregateId = aggregateId,
+            version = Version(1),
+            customerId = Id("customer"),
+            chatAiMessages = emptySet()
+        )
+        val event = ChatAgentChanged(aggregateId, ChatAgentType.USER_REGISTRATION)
+
+        val updatedChat = chat.apply(event)
+
+        assertThat(updatedChat.version).isEqualTo(Version(2))
+        assertThat(updatedChat.chatAgentType).isEqualTo(ChatAgentType.USER_REGISTRATION)
     }
 }

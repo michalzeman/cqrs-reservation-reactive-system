@@ -1,0 +1,5 @@
+adapter:
+  llm:
+    open-ai:
+      api-key: ${OPENAI_API_KEY}
+      model: gpt-3.5-turbo-0125

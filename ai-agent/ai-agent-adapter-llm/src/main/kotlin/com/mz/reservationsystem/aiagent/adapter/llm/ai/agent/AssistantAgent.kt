@@ -1,4 +1,4 @@
-package com.mz.reservationsystem.aiagent.domain
+package com.mz.reservationsystem.aiagent.adapter.llm.ai.agent
 
 import com.mz.ddd.common.api.domain.Id
 import dev.langchain4j.service.MemoryId
@@ -6,7 +6,7 @@ import dev.langchain4j.service.SystemMessage
 import dev.langchain4j.service.TokenStream
 import dev.langchain4j.service.UserMessage
 
-interface Assistant {
+interface AssistantAgent {
 
     @SystemMessage(
         """
@@ -15,10 +15,11 @@ interface Assistant {
          - be polite event you can't fulfill customer request
          - you have to be loyal to the company providing services
          - you have to respect others also third parties mentioned in the discussion
-         - write all important information as bold in the markdown format 
+         - write all important information as bold in the markdown format
+         - use provided functions to fulfill user requirements
       """
     )
-    fun chat(@MemoryId memoryId: Id, @UserMessage message: String): TokenStream
+    fun chatStream(@MemoryId memoryId: Id, @UserMessage message: String): TokenStream
 
     @SystemMessage(
         """

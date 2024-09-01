@@ -8,7 +8,7 @@ import com.mz.ddd.common.persistence.eventsourcing.aggregate.CommandEffect
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.EventSerDesAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.JsonEventSerDesAdapter
 import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.desJson
-import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.serToJsonString
+import com.mz.ddd.common.persistence.eventsourcing.event.data.serd.adapter.json.serToJsonEncodedBytes
 import com.mz.ddd.common.persistence.eventsourcing.internal.util.EmptyTestAggregate
 import com.mz.ddd.common.persistence.eventsourcing.internal.util.ExistingTestAggregate
 import com.mz.ddd.common.persistence.eventsourcing.internal.util.TestAggregate
@@ -66,9 +66,9 @@ class TestDomainPersistenceConfiguration :
     @Bean
     override fun eventSerDesAdapter(): EventSerDesAdapter<TestEvent, TestAggregate> {
         return JsonEventSerDesAdapter(
-            { serToJsonString(it) },
+            { serToJsonEncodedBytes(it) },
             { desJson(it) },
-            { serToJsonString(it) },
+            { serToJsonEncodedBytes(it) },
             { desJson(it) })
     }
 

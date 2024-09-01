@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 data class ChatDocument(
     val aggregateId: Id,
     val customerId: Id? = null,
+    val chatAgentType: ChatAgentType = ChatAgentType.NONE,
     val chatAiMessages: Set<ChatAiMessage> = setOf(),
     override val events: Set<ChatEvent> = setOf(),
     override val correlationId: Id = newId(),

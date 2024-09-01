@@ -2,5 +2,7 @@ adapter:
   llm:
     chat:
 #    base-url: http://localhost:8080/api
-      base-url: http://localhost:11434/v1
-      model: llama3
+      base-url: http://localhost:11434/v1/
+#      model: llama3.1
+      model: llama3-groq-tool-use
+#      model: mistral

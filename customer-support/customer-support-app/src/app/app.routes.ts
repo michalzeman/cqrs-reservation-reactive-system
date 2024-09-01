@@ -1,6 +1,6 @@
 import {Routes} from '@angular/router';
 import {ChatComponent} from "./chat/chat.component";
-import {CustomerComponent} from "./customer/customer-component";
+import {CustomerComponent} from "./customer/customer.component";
 
 export const routes: Routes = [
   { path: '', component: ChatComponent },
