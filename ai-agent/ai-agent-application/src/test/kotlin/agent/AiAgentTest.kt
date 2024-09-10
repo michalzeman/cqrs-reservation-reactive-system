@@ -4,11 +4,14 @@ import com.mz.ddd.common.api.domain.newId
 import com.mz.reservationsystem.aiagent.adapter.llm.AgentAiServicesConfiguration
 import com.mz.reservationsystem.aiagent.adapter.llm.OllamaLlmModelConfiguration
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.agent.AssistantAgent
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.agent.RegistrationAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.agent.toFlow
+import com.mz.reservationsystem.aiagent.adapter.llm.storage.AiChatMemoryStorageConfiguration
 import com.mz.reservationsystem.aiagent.domain.ai.AgentManager
 import com.mz.reservationsystem.aiagent.domain.ai.ChatAgentTypeClassification
+import com.mz.reservationsystem.aiagent.domain.ai.agent.ChatAgent
+import com.mz.reservationsystem.aiagent.domain.ai.agent.asFlow
 import com.mz.reservationsystem.aiagent.domain.ai.model.ChatRequest
+import com.mz.reservationsystem.aiagent.domain.ai.model.NewChatRequest
 import com.mz.reservationsystem.aiagent.domain.api.chat.ChatAgentType
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 
 @Disabled
-@SpringBootTest(classes = [TestAiAgentConfiguration::class, OllamaLlmModelConfiguration::class, AgentAiServicesConfiguration::class])
+@SpringBootTest(classes = [TestAiAgentConfiguration::class, OllamaLlmModelConfiguration::class, AgentAiServicesConfiguration::class, AiChatMemoryStorageConfiguration::class])
 @ActiveProfiles("ollama", "test")
 //@ActiveProfiles("open-ai", "test")
 class AiAgentTest {
@@ -37,13 +40,13 @@ class AiAgentTest {
 //    private lateinit var chatClassification: ChatClassification
 
     @Autowired
-    private lateinit var registrationAgent: RegistrationAgent
+    private lateinit var chatAgent: ChatAgent
 
     @Autowired
     private lateinit var assisten: AssistantAgent
 
     @Test
-    fun `test for register customer tool chain`() {
+    fun `test for register customer tool chain`() = runBlocking {
 //        val message = """
 //            Register new customer
 //            - first name: Michal
@@ -58,7 +61,7 @@ class AiAgentTest {
         """.trimIndent()
 
         println("User: $message1")
-        val result1 = registrationAgent.chat(chatId, message1)
+        val result1 = chatAgent.userRegistrationChat(chatId, Content(message1))
 
         println("Agent: $result1")
 
@@ -70,7 +73,7 @@ class AiAgentTest {
 //        """.trimIndent()
 
         println("User: $message2")
-        val result2 = registrationAgent.chat(chatId, message2)
+        val result2 = chatAgent.userRegistrationChat(chatId, Content(message2))
 
         println("Agent: $result2")
 
@@ -79,13 +82,13 @@ class AiAgentTest {
         """.trimIndent()
 
         println("User: $message3")
-        val result3 = registrationAgent.chat(chatId, message3)
+        val result3 = chatAgent.userRegistrationChat(chatId, Content(message3))
 
         println("Agent: $result3")
     }
 
     @Test
-    fun `test for register customer, using complex object tool chain`() {
+    fun `test for register customer, using complex object tool chain`() = runBlocking {
         val message = """
             Register new customer
             - first name: Michal
@@ -95,11 +98,12 @@ class AiAgentTest {
 
 
         val chatId = newId()
-//        Assertions.assertThat(chatClassification.relatedToReservationSystem(message).result).isTrue()
 
-        val result = registrationAgent.chat(chatId, message)
+        val result = chatAgent.userRegistrationChat(chatId, Content(message)).asFlow()
 
-        println(result)
+        result.collect {
+            print("$it ")
+        }
     }
 
     @Test
@@ -155,5 +159,21 @@ class AiAgentTest {
 
         val resultNon = chatAgentTypeClassification.classify(Content(messageNon))
         Assertions.assertThat(resultNon).isEqualTo(ChatAgentType.NONE)
+    }
+
+    @Test
+    fun `AgentManager, register new user`() = runBlocking {
+        val agentRequest = NewChatRequest(
+            Content("""
+            Register new customer 
+            - first name: Michal
+            - last name: Zeman
+            - email: test@test.com
+        """.trimIndent())
+        )
+
+        agentManager.execute(agentRequest).collect {
+            print("${it.message.value} ")
+        }
     }
 }

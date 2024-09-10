@@ -1,9 +1,12 @@
 package agent
 
 import com.mz.ddd.common.api.domain.Id
+import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateProcessor
 import com.mz.reservationsystem.aiagent.domain.api.chat.ChatCommand
 import com.mz.reservationsystem.aiagent.domain.api.chat.ChatDocument
+import com.mz.reservationsystem.aiagent.domain.api.chat.CreateChat
 import com.mz.reservationsystem.aiagent.domain.chat.ChatApi
+import com.mz.reservationsystem.aiagent.domain.chat.aggregate.*
 import dev.langchain4j.data.message.ChatMessage
 import dev.langchain4j.store.memory.chat.ChatMemoryStore
 import org.springframework.boot.test.context.TestConfiguration
@@ -16,11 +19,11 @@ import org.springframework.context.annotation.Primary
 @ComponentScan("com.mz.reservationsystem.aiagent.adapter.llm.**")
 class TestAiAgentConfiguration {
 
-    @Primary
-    @Bean
-    fun chatMemoryStore(): ChatMemoryStore {
-        return TestChatMemoryStore()
-    }
+//    @Primary
+//    @Bean
+//    fun chatMemoryStore(): ChatMemoryStore {
+//        return TestChatMemoryStore()
+//    }
 
     @Primary
     @Bean
@@ -30,54 +33,22 @@ class TestAiAgentConfiguration {
 
 }
 
-data class ChatData(val index: Int, val message: ChatMessage)
-
-class TestChatMemoryStore : ChatMemoryStore {
-
-    private val storage: MutableMap<Id, Set<ChatData>> = mutableMapOf()
-
-    override fun getMessages(memoryId: Any): MutableList<ChatMessage> {
-        val chatId = getChatId(memoryId)
-
-        val messages = chatId
-            ?.let { storage[it] }
-            ?.toMutableList()
-            ?.apply { sortBy { it.index } }
-
-        return messages
-            ?.map { it.message }
-            ?.toMutableList()
-            ?: emptyList<ChatMessage>().toMutableList()
-    }
-
-    override fun updateMessages(memoryId: Any, messages: List<ChatMessage>) {
-        val chatId = getChatId(memoryId)!!
-
-        val messagesToStore = chatId
-            .let { storage[it] }
-        val count = messagesToStore?.size ?: 0
-        val messagesData = messages.mapIndexed { index, chatMessage -> ChatData(index + count, chatMessage) }
-            .toSet()
-
-        storage[chatId] = messagesToStore?.plus(messagesData) ?: messagesData
-    }
-
-    override fun deleteMessages(memoryId: Any) {
-        TODO("Not yet implemented")
-    }
-
-    private fun getChatId(memoryId: Any): Id? = memoryId
-        .let { it as? Id }
-        ?: memoryId.let { it as? String }?.let { Id(it) }
-}
-
 class TestChatApi : ChatApi {
+
+    private val aggregateProcessor = AggregateProcessor(ChatCommandHandler(), ChatEventHandler())
+
+    private val storage: MutableMap<Id, Chat> = mutableMapOf()
+
     override suspend fun execute(cmd: ChatCommand): ChatDocument {
-        TODO("Not yet implemented")
+        return (storage[cmd.aggregateId] ?: cmd.aggregateId.getAggregate())
+            .let { aggregateProcessor.execute(it, cmd) }
+            .mapCatching {
+                storage[cmd.aggregateId] = it.aggregate
+                it.aggregate.toDocument(it.events.toSet())
+            }.getOrThrow()
     }
 
     override suspend fun findById(id: Id): ChatDocument? {
-        return null
+        return storage[id]?.toDocument()
     }
-
 }

@@ -4,7 +4,8 @@ import com.mz.ddd.common.api.domain.Id
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.onEach
 import java.time.Duration
 
 interface ChatAgent {
@@ -21,9 +22,6 @@ interface ChatAgent {
 
 }
 
-fun String.asFlow(): Flow<String> = flow {
-    for (word in split("\\s")) {
-        delay(Duration.ofMillis(100).toMillis())
-        emit(word)
-    }
-}
+fun String.asFlow(): Flow<String> = split(Regex("\\s"))
+    .asFlow()
+    .onEach { delay(Duration.ofMillis(100).toMillis()) }

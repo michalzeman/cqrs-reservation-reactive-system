@@ -18,7 +18,6 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.plugin.spring)
-    id("com.avast.gradle.docker-compose") version "0.14.9"
 }
 
 allprojects {
@@ -118,6 +117,7 @@ project(":reservation-system-checks-tests") {
         implementation(project(":@ddd:event-storage-adapter-api"))
         implementation(project(":@ddd:event-storage-adapter-cassandra-db"))
         implementation(project(":customer:customer-adapter-rest"))
+        implementation(project(":customer:customer-adapter-rest-api"))
         implementation(project(":customer:customer-adapter-kafka"))
         implementation(project(":customer:customer-domain-api"))
         implementation(project(":customer:customer-application"))
@@ -143,14 +143,6 @@ tasks.register("waitForDockerComposeBeforeTests") {
     mustRunAfter("runDockerComposeBeforeTests")
     doLast {
         waitToDockerInfrastructureIsHealthy()
-    }
-}
-
-tasks.register("testDocker") {
-    doLast {
-        exec {
-            commandLine("docker", "ps")
-        }
     }
 }
 

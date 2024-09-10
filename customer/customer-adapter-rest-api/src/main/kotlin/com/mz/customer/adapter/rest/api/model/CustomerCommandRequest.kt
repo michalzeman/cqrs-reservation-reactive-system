@@ -1,4 +1,4 @@
-package com.mz.customer.adapter.rest.model
+package com.mz.customer.adapter.rest.api.model
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo

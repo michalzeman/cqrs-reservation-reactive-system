@@ -1,5 +1,6 @@
 package com.mz.reservationsystem.aiagent.adapter.llm.ai.agent
 
+import com.mz.ddd.common.api.domain.Id
 import dev.langchain4j.service.MemoryId
 import dev.langchain4j.service.SystemMessage
 import dev.langchain4j.service.UserMessage
@@ -21,6 +22,6 @@ interface RegistrationAgent {
          When registration is done you must provide id to customer.
         """
     )
-    fun chat(@MemoryId memoryId: Any, @UserMessage message: String): String
+    fun chat(@MemoryId memoryId: Id, @UserMessage message: String): String
 
 }
