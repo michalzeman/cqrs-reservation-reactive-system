@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 
 @Component
-class CustomerToReservationFlow(
+class CustomerToReservationUseCase(
     @Qualifier("reservationAggregateManager")
     private val aggregateManager: ReservationAggregateManager,
     channelStream: ApplicationChannelStream,

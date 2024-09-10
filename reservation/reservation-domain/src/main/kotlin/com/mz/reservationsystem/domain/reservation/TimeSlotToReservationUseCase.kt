@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 
 @Component
-class TimeSlotToReservationFlow(
+class TimeSlotToReservationUseCase(
     @Qualifier("reservationAggregateManager")
     private val aggregateManager: ReservationAggregateManager,
     private val channelStream: ApplicationChannelStream,

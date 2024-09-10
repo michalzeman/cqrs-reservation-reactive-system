@@ -14,11 +14,11 @@ import reactor.core.publisher.Mono
 @Component
 class CustomerApi(
     private val aggregateManager: AggregateManager<Customer, CustomerCommand, CustomerEvent, CustomerDocument>,
-    private val registerCustomerFlow: RegisterCustomerFlow
+    private val registerCustomerUseCase: RegisterCustomerUseCase
 ) {
     fun execute(cmd: CustomerCommand): Mono<CustomerDocument> {
         return when (cmd) {
-            is RegisterCustomer -> registerCustomerFlow(cmd)
+            is RegisterCustomer -> registerCustomerUseCase(cmd)
 
             else -> aggregateManager.execute(cmd, cmd.customerId)
         }

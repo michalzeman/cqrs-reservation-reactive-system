@@ -68,16 +68,16 @@ The `CustomerEvent` API defines the events that can occur in the lifecycle of a 
 include `CustomerRegistered`, `CustomerReservationRequested`, `CustomerReservationConfirmed`,
 and `CustomerReservationDeclined`.
 
-### Basic Flows
+### Basic UseCases
 
-The basic flows in the Customer Microservice are represented by the `RegisterCustomerFlow`
-and `ReservationToCustomerFlow` classes.
+The basic use cases in the Customer Microservice are represented by the `RegisterCustomerUseCase`
+and `ReservationToCustomerUseCase` classes.
 
-- `RegisterCustomerFlow` is responsible for the registration flow of a customer. It uses the `AggregateManager` to
+- `RegisterCustomerUseCase` is responsible for the registration use case of a customer. It uses the `AggregateManager` to
   handle the customer's commands and events. It also uses the `CustomerView` to check if a customer already exists
   before registration.
 
-- `ReservationToCustomerFlow` is responsible for handling reservation events. It listens to reservation events and
+- `ReservationToCustomerUseCase` is responsible for handling reservation use cases. It listens to reservation events and
   updates the `Customer` aggregate accordingly. It handles events such as `ReservationAccepted`
   and `ReservationDeclined`.
 
@@ -108,19 +108,18 @@ The Reservation Microservice exposes APIs for managing reservations and time slo
 2. **TimeSlotApi**: This API allows executing commands on the `TimeSlotAggregate`, retrieving time slot documents by
    their ID, and finding time slots between specific times.
 
-### Basic Flows
+### Basic UseCases
 
-The Reservation Microservice has several basic flows:
+The Reservation Microservice has several basic UseCases:
 
-1. **CustomerToReservationFlow**: This flow handles the creation of a reservation when a `CustomerReservationRequested`
+1. **CustomerToReservationUseCase**: This UseCase handles the creation of a reservation when a `CustomerReservationRequested`
    event is received from the Customer Microservice.
 
-2. **TimeSlotToReservationFlow**: This flow handles the booking of a time slot when a `ReservationRequested` event is
+2. **TimeSlotToReservationUseCase**: This UseCase handles the booking of a time slot when a `ReservationRequested` event is
    received from the Reservation Microservice. If no time slot is available, the reservation is declined.
 
-3. **ReservationToTimeSlotFlow**: This flow handles the booking of a time slot when a `ReservationRequested` event is
+3. **ReservationToTimeSlotUseCase**: This UseCase handles the booking of a time slot when a `ReservationRequested` event is
    received. If the time slot is already booked, the reservation is declined.
-
 ---
 
 Copyright (2024) Michal Zeman, zeman.michal@yahoo.com

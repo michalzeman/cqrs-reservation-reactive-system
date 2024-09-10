@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 
 /**
- * This class is responsible for the registration flow of a customer.
+ * This class is responsible for the registration use-case of a customer.
  * It uses the AggregateManager to handle the customer's commands and events.
  * It also uses the CustomerView to check if a customer already exists before registration.
  *
@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono
  * @property customerView Used to check if a customer already exists before registration.
  */
 @Component
-class RegisterCustomerFlow(
+class RegisterCustomerUseCase(
     private val aggregateManager: AggregateManager<Customer, CustomerCommand, CustomerEvent, CustomerDocument>,
     private val customerView: CustomerView
 ) {

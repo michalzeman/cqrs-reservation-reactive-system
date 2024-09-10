@@ -1,3 +1,5 @@
+package com.mz.reservationsystem.timeslot
+
 import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.uuid
 import com.mz.reservationsystem.TestReservationSystemConfiguration
