@@ -73,16 +73,7 @@ class AgentAiServicesConfiguration(
 
     @Bean
     fun chatClassification(chatLanguageModel: ChatLanguageModel): ChatClassification {
-        val chatMemoryProvider = ChatMemoryProvider { memoryId: Any? ->
-            MessageWindowChatMemory.builder()
-                .id(memoryId)
-                .maxMessages(50)
-                .chatMemoryStore(store)
-                .build()
-        }
-
         return AiServices.builder(ChatClassification::class.java)
-            .chatMemoryProvider(chatMemoryProvider)
             .chatLanguageModel(chatLanguageModel)
             .build()
     }

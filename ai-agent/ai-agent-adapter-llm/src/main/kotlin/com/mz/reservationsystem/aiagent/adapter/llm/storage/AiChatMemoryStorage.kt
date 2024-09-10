@@ -13,7 +13,6 @@ import dev.langchain4j.store.memory.chat.ChatMemoryStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.logging.LogFactory
-import org.springframework.stereotype.Component
 
 
 class AiChatMemoryStorage(private val chatApi: ChatApi) : ChatMemoryStore {
@@ -24,25 +23,24 @@ class AiChatMemoryStorage(private val chatApi: ChatApi) : ChatMemoryStore {
 
     override fun getMessages(memoryId: Any): List<ChatMessage> = runBlocking(Dispatchers.IO) {
         Result.runCatching {
-            memoryId.let { it as? String }
-                ?.let { Id(it) }
-                ?.let { id ->
-                    chatApi.findById(id)?.chatAiMessages?.map { it.toMessage() }
-                        ?: createNewChat(id)
-                } ?: emptyList()
-        }.onFailure { logger.error(it) }
-            .getOrElse { emptyList() }
+            mapMemoryId(memoryId).let { id ->
+                chatApi.findById(id)?.chatAiMessages?.map { it.toMessage() }
+                    ?: createNewChat(id)
+            }
+        }.onFailure {
+            logger.error(it)
+        }.getOrElse {
+            emptyList()
+        }
     }
 
     override fun updateMessages(memoryId: Any, messages: List<ChatMessage>): Unit = runBlocking(Dispatchers.IO) {
         Result.runCatching {
             val jsonMessages = messages.map { messageToJson(it) }
             val chatAiMessages = jsonMessages.map { ChatAiMessage(Content(it)) }
-            memoryId.let { it as? String }
-                ?.let { Id(it) }
-                ?.let {
-                    chatApi.execute(AddChatMessage(it, chatAiMessages.toSet()))
-                }
+            mapMemoryId(memoryId).let {
+                chatApi.execute(AddChatMessage(it, chatAiMessages.toSet()))
+            }
         }.onFailure { logger.error(it) }
     }
 
@@ -53,6 +51,11 @@ class AiChatMemoryStorage(private val chatApi: ChatApi) : ChatMemoryStore {
     private suspend fun createNewChat(id: Id): List<ChatMessage> {
         chatApi.execute(CreateChat(aggregateId = id))
         return emptyList()
+    }
+
+    private fun mapMemoryId(memoryId: Any): Id = when (memoryId) {
+        is String -> Id(memoryId)
+        else -> Id(memoryId.toString())
     }
 }
 

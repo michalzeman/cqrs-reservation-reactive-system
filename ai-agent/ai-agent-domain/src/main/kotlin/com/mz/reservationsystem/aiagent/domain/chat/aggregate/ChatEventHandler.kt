@@ -13,7 +13,8 @@ class ChatEventHandler : AggregateEventHandler<Chat, ChatEvent> {
 
     private fun newChat(aggregate: EmptyChat, event: ChatEvent): Chat = when (event) {
         is ChatCreated -> aggregate.apply(event)
-        else -> throw RuntimeException("Wrong event type $event for the empty chat aggregate")
+        is ChatAgentChanged -> aggregate.apply(event)
+        is ChatMessageAdded, is CustomerIdAdded -> throw RuntimeException("Wrong event type $event for the empty chat aggregate")
     }
 
     private fun existingChat(aggregate: UnknownCustomerChat, event: ChatEvent): Chat = when (event) {

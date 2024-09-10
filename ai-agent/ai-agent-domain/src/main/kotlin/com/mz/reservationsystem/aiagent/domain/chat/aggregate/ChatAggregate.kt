@@ -14,7 +14,12 @@ sealed class Chat : Aggregate() {
 }
 
 fun Chat.apply(event: ChatAgentChanged): Chat = when (this) {
-    is EmptyChat -> copy(version = version.increment(), chatAgentType = event.chatAgentType)
+    is EmptyChat -> UnknownCustomerChat(
+        aggregateId = event.aggregateId,
+        version = this.version.increment(),
+        chatAgentType = event.chatAgentType,
+        chatAiMessages = emptySet()
+    )
     is UnknownCustomerChat -> copy(version = version.increment(), chatAgentType = event.chatAgentType)
     is CustomerChat -> copy(version = version.increment(), chatAgentType = event.chatAgentType)
 }

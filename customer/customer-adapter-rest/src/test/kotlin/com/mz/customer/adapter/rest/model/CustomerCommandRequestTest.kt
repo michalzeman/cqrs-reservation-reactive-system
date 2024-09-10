@@ -3,6 +3,7 @@ package com.mz.customer.adapter.rest.model
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.mz.common.components.json.registerRequiredModules
+import com.mz.customer.adapter.rest.api.model.CustomerCommandRequest
 import com.mz.customer.domain.api.RegisterCustomer
 import com.mz.customer.domain.api.RequestNewCustomerReservation
 import com.mz.customer.domain.api.UpdateCustomerReservationAsConfirmed

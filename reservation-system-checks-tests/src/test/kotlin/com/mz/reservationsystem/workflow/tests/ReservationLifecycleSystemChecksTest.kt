@@ -3,8 +3,8 @@ package com.mz.reservationsystem.workflow.tests
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.mz.common.components.json.registerRequiredModules
-import com.mz.customer.adapter.rest.model.NewCustomerReservationRequest
-import com.mz.customer.adapter.rest.model.RegisterCustomerRequest
+import com.mz.customer.adapter.rest.api.model.NewCustomerReservationRequest
+import com.mz.customer.adapter.rest.api.model.RegisterCustomerRequest
 import com.mz.customer.domain.api.CustomerDocument
 import com.mz.customer.domain.api.ReservationStatus
 import com.mz.ddd.common.api.domain.instantNow

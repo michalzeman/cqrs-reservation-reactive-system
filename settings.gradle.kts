@@ -31,10 +31,6 @@ dependencyResolutionManagement {
             )
             plugin("springframework-boot", "org.springframework.boot").version(springframeworkBootVersion)
             // libraries ----------------------------->
-            library(
-                "kotlinx-serialization-json",
-                "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion"
-            )
             library("kotlin-stdlib", "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
             library("guava", "com.google.guava:guava:28.1-jre")
             library("projectreactor-blockhound", "io.projectreactor.tools:blockhound:1.0.4.RELEASE")
@@ -81,6 +77,7 @@ include("customer-support")
 include("customer-support:customer-support-app")
 include("customer")
 include("customer:customer-adapter-rest")
+include("customer:customer-adapter-rest-api")
 include("customer:customer-adapter-kafka")
 include("customer:customer-domain-api")
 include("customer:customer-application")

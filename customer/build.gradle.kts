@@ -34,7 +34,15 @@ project(":customer:customer-adapter-rest") {
     dependencies {
         implementation(project(":customer:customer-domain-api"))
         implementation(project(":customer:customer-domain"))
+        implementation(project(":customer:customer-adapter-rest-api"))
         implementation(project(":common-components"))
+    }
+}
+
+project(":customer:customer-adapter-rest-api") {
+    dependencies {
+        implementation(project(":common-components"))
+        implementation(project(":customer:customer-domain-api"))
     }
 }
 

@@ -37,19 +37,6 @@ interface ChatClassification {
     )
     fun relatedToReservationSystem(text: String): ClassificationResult
 
-    @SystemMessage(
-        """
-            You are a professional trained customer agent, who wants to be helpful to the customer.
-            You have to follow some rules in the response like:
-            - be polite event you can't fulfill customer request
-            - you have to be loyal to the company providing services
-            - you have to respect others also third parties mentioned in the discussion
-            - write all important information as bold in the markdown format
-            - use provided functions to fulfill user requirements
-        """
-    )
-    fun chat(@MemoryId memoryId: Id, @UserMessage message: String): String
-
     fun classifyChat(@UserMessage message: String): ChatAgentType
 
 }

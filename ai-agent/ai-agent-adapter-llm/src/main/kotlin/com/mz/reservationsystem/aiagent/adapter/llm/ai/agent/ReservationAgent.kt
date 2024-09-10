@@ -1,5 +1,6 @@
 package com.mz.reservationsystem.aiagent.adapter.llm.ai.agent
 
+import com.mz.ddd.common.api.domain.Id
 import dev.langchain4j.service.MemoryId
 import dev.langchain4j.service.SystemMessage
 import dev.langchain4j.service.UserMessage
@@ -17,6 +18,6 @@ interface ReservationAgent {
             Do not hallucinate!
         """
     )
-    fun createReservation(@MemoryId id: Any, @UserMessage message: String): String
+    fun createReservation(@MemoryId id: Id, @UserMessage message: String): String
 
 }
