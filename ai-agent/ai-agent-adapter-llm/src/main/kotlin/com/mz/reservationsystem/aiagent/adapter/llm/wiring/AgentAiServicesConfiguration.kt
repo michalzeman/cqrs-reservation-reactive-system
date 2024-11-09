@@ -1,11 +1,11 @@
-package com.mz.reservationsystem.aiagent.adapter.llm
+package com.mz.reservationsystem.aiagent.adapter.llm.wiring
 
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.AssistantAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.ChatClassification
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationAgent
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationStreamingAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerTool
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.RegistrationAgent
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationAgent
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationStreamingAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationTool
 import dev.langchain4j.memory.chat.ChatMemoryProvider
 import dev.langchain4j.memory.chat.MessageWindowChatMemory

@@ -23,4 +23,11 @@ interface RegistrationAgent {
     )
     fun chat(@MemoryId memoryId: Id, @UserMessage message: String): String
 
+    @UserMessage(
+        """
+            Classify if conversion history contains Customer/User information loaded from the system. 
+        """
+    )
+    fun isCustomerIdentified(@MemoryId memoryId: Id): Boolean
+
 }

@@ -17,10 +17,8 @@ class ChatCommandHandler : AggregateCommandHandler<Chat, ChatCommand, ChatEvent>
         when (cmd) {
             is CreateChat -> listOf(cmd.toEvent())
             is UpdateChatAgent -> handler(cmd)
-
-//            else -> throw RuntimeException("Cannot apply command: ${cmd::class} on non existing aggregate")
-            is AddChatMessage -> TODO()
-            is AddCustomerId -> TODO()
+            is AddChatMessage -> listOf(cmd.toEvent())
+            is AddCustomerId -> listOf(cmd.toEvent())
         }
     }
 

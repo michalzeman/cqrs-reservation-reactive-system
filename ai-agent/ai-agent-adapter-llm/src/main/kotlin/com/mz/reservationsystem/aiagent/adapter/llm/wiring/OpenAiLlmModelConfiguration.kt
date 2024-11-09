@@ -1,10 +1,7 @@
-package com.mz.reservationsystem.aiagent.adapter.llm
+package com.mz.reservationsystem.aiagent.adapter.llm.wiring
 
 import dev.langchain4j.model.chat.ChatLanguageModel
 import dev.langchain4j.model.chat.StreamingChatLanguageModel
-import dev.langchain4j.model.localai.LocalAiChatModel
-import dev.langchain4j.model.localai.LocalAiStreamingChatModel
-import dev.langchain4j.model.ollama.OllamaChatModel
 import dev.langchain4j.model.openai.OpenAiChatModel
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel
 import org.springframework.beans.factory.annotation.Value

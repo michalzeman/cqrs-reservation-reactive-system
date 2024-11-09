@@ -1,11 +1,11 @@
 package agent
 
 import com.mz.ddd.common.api.domain.newId
-import com.mz.reservationsystem.aiagent.adapter.llm.AgentAiServicesConfiguration
-import com.mz.reservationsystem.aiagent.adapter.llm.OllamaLlmModelConfiguration
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.AssistantAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationStreamingAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.storage.AiChatMemoryStorageConfiguration
+import com.mz.reservationsystem.aiagent.adapter.llm.wiring.AgentAiServicesConfiguration
+import com.mz.reservationsystem.aiagent.adapter.llm.wiring.OllamaLlmModelConfiguration
 import com.mz.reservationsystem.aiagent.domain.ai.AgentManager
 import com.mz.reservationsystem.aiagent.domain.ai.ChatAgentTypeClassification
 import com.mz.reservationsystem.aiagent.domain.ai.agent.ChatAgent
@@ -48,6 +48,7 @@ class AiAgentTest {
 
     @Autowired
     lateinit var reservationStreamingAgent: ReservationStreamingAgent
+
 
     @Test
     fun `test for register customer tool chain`() = runBlocking {
@@ -156,39 +157,6 @@ class AiAgentTest {
     }
 
     @Test
-    fun `AgentManager, register new user`() = runBlocking {
-        val agentRequest = NewChatRequest(
-            Content(
-                """
-            Register new customer 
-            - first name: Michal
-            - last name: Zeman
-            - email: test@test.com
-        """.trimIndent()
-            )
-        )
-
-        agentManager.execute(agentRequest).collect {
-            print("${it.message.value} ")
-        }
-    }
-
-    @Test
-    fun `AgentManager, load existing customer`() = runBlocking {
-        val agentRequest = NewChatRequest(
-            Content(
-                """
-            My user id is 9cafa14d-7a24-4b02-ac98-015b665b4007
-        """.trimIndent()
-            )
-        )
-
-        agentManager.execute(agentRequest).collect {
-            print("${it.message.value} ")
-        }
-    }
-
-    @Test
     fun `create a reservation chat`() = runBlocking {
         val message1 = """
             I would like to create an reservation from 2024-10-12 12:00 to 2024-10-12 14:00
@@ -261,9 +229,4 @@ class AiAgentTest {
         val agentAnswer3 = reservationStreamingAgent.createReservation(chatId, message3).asFlow()
         agentAnswer3.collect { print(it) }
     }
-
-    private fun aggregateAgentResponseFlow(): suspend (accumulator: ChatResponse, value: ChatResponse) -> ChatResponse =
-        { accumulator, value ->
-            accumulator.copy(message = Content("${accumulator.message.value} ${value.message.value}"))
-        }
 }

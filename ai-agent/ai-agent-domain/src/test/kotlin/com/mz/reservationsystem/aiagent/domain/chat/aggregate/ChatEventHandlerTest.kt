@@ -30,17 +30,29 @@ class ChatEventHandlerTest {
     }
 
     @Test
-    fun `apply, empty chat, wrong event type`() {
+    fun `apply, empty chat, chat message added event`() {
         val emptyChat = EmptyChat()
         val chatId = Id("1")
         val chatMessage = ChatAiMessage(Content("Hello"))
         val wrongEvent = ChatMessageAdded(chatId, setOf(chatMessage))
 
-        val exception = assertThrows<RuntimeException> {
-            chatEventHandler.apply(emptyChat, wrongEvent)
-        }
+        val result = chatEventHandler.apply(emptyChat, wrongEvent)
 
-        assertThat(exception.message).isEqualTo("Wrong event type $wrongEvent for the empty chat aggregate")
+        assertThat(result).isInstanceOf(UnknownCustomerChat::class.java)
+        assertThat((result as UnknownCustomerChat).chatAiMessages).containsExactly(chatMessage)
+    }
+
+    @Test
+    fun `apply, empty chat, customer id added event`() {
+        val emptyChat = EmptyChat()
+        val chatId = Id("1")
+        val customerId = Id("123")
+        val customerIdAdded = CustomerIdAdded(chatId, customerId)
+
+        val result = chatEventHandler.apply(emptyChat, customerIdAdded)
+
+        assertThat(result).isInstanceOf(CustomerChat::class.java)
+        assertThat((result as CustomerChat).customerId).isEqualTo(customerId)
     }
 
     @Test

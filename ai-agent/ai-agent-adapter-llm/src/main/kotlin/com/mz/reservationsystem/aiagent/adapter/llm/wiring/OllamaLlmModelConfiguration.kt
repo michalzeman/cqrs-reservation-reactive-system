@@ -1,4 +1,4 @@
-package com.mz.reservationsystem.aiagent.adapter.llm
+package com.mz.reservationsystem.aiagent.adapter.llm.wiring
 
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.AiChatModelListener
 import dev.langchain4j.model.chat.ChatLanguageModel

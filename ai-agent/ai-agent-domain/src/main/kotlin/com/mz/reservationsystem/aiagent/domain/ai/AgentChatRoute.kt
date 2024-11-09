@@ -32,7 +32,7 @@ class AgentChatRoute(
      * @param defaultChat A lambda function that returns a Flow of AgentResponse, used as the default chat handler.
      * @return A Flow of AgentResponse representing the routed chat responses.
      */
-    fun routeChat(id: Id, message: Content, defaultChat: () -> Flow<AgentResponse>): Flow<AgentResponse> = flow {
+    fun routeChat(id: Id, message: Content): Flow<AgentResponse> = flow {
         val toChatResponse = { text: String -> ChatResponse(id, Content(text)) }
 
         val chatAgentType = chatApi.findById(id)
@@ -53,7 +53,8 @@ class AgentChatRoute(
                 .asFlow()
                 .map { toChatResponse(it) }
 
-            ChatAgentType.NONE -> defaultChat()
+            ChatAgentType.NONE -> chatAgent.chatWithAssistant(id, message)
+                .map { toChatResponse(it) }
         })
     }
 

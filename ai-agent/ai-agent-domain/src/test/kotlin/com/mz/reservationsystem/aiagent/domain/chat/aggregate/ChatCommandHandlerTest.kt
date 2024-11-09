@@ -50,9 +50,32 @@ class ChatCommandHandlerTest {
     }
 
     @Test
+    fun `should handle add chat message command for empty chat`() {
+        val command = AddChatMessage(Id("chatId"), setOf(ChatAiMessage(Content("message"))))
+        val result = chatCommandHandler.execute(EmptyChat(Id("chatId"), Version(0)), command)
+
+        val event = result.getOrThrow()[0]
+
+        assertThat(event).isInstanceOf(ChatMessageAdded::class.java)
+        assertThat(event.aggregateId).isEqualTo(Id("chatId"))
+        assertThat((event as ChatMessageAdded).chatAiMessages.first()).isEqualTo(ChatAiMessage(Content("message")))
+    }
+
+    @Test
     fun `should handle add customer id command for existing chat`() {
         val command = AddCustomerId(Id("chatId"), Id("customerId"))
         val result = chatCommandHandler.execute(UnknownCustomerChat(Id("chatId"), Version(0), emptySet()), command)
+
+        val event = result.getOrThrow()[0]
+        assertThat(event).isInstanceOf(CustomerIdAdded::class.java)
+        assertThat(event.aggregateId).isEqualTo(Id("chatId"))
+        assertThat((event as CustomerIdAdded).customerId).isEqualTo(Id("customerId"))
+    }
+
+    @Test
+    fun `should handle add customer id command for empty chat`() {
+        val command = AddCustomerId(Id("chatId"), Id("customerId"))
+        val result = chatCommandHandler.execute(EmptyChat(Id("chatId"), Version(0)), command)
 
         val event = result.getOrThrow()[0]
         assertThat(event).isInstanceOf(CustomerIdAdded::class.java)
