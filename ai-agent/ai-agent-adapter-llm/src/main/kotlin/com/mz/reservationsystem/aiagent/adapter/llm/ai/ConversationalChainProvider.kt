@@ -1,4 +1,4 @@
-package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat
+package com.mz.reservationsystem.aiagent.adapter.llm.ai
 
 import com.mz.ddd.common.api.domain.Id
 import dev.langchain4j.chain.ConversationalChain

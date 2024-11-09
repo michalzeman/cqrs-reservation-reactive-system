@@ -1,0 +1,79 @@
+syntax = "proto3";
+package com.mz.customer.adapter.rest.api;
+
+import "google/api/annotations.proto";
+
+
+message RegisterCustomerRequest {
+    string lastName = 1;
+    string firstName = 2;
+    string email = 3;
+    string correlationId = 4;
+    string createdAt = 5;
+    string commandId = 6;
+    string customerId = 7;
+}
+
+message NewCustomerReservationRequest {
+    string customerId = 1;
+    string reservationId = 2;
+    string startTime = 3;
+    string endTime = 4;
+    string correlationId = 5;
+    string createdAt = 6;
+    string commandId = 7;
+}
+
+message UpdateCustomerReservationAsConfirmedRequest {
+    string customerId = 1;
+    string reservationId = 2;
+    string requestId = 3;
+    string correlationId = 4;
+    string createdAt = 5;
+    string commandId = 6;
+}
+
+message UpdateCustomerReservationAsDeclinedRequest {
+    string customerId = 1;
+    string reservationId = 2;
+    string requestId = 3;
+    string correlationId = 4;
+    string createdAt = 5;
+    string commandId = 6;
+}
+
+message CustomerResponse {
+    string status = 1;
+    string message = 2;
+}
+
+message GetCustomerByIdRequest {
+    string id = 1;
+}
+
+message GetCustomerByIdResponse {
+    string id = 1;
+    string lastName = 2;
+    string firstName = 3;
+    string email = 4;
+    string createdAt = 5;
+}
+
+message UpdateCustomerRequest {
+    oneof request {
+        NewCustomerReservationRequest new_customer_reservation = 1;
+        UpdateCustomerReservationAsConfirmedRequest update_customer_reservation_as_confirmed = 2;
+        UpdateCustomerReservationAsDeclinedRequest update_customer_reservation_as_declined = 3;
+    }
+}
+
+service CustomerService {
+    rpc RegisterCustomer (RegisterCustomerRequest) returns (CustomerResponse) {
+        option (google.api.http) = {
+            post: "/customers"
+            body: "*"
+        };
+    }
+    rpc UpdateCustomer (UpdateCustomerRequest) returns (CustomerResponse);
+    rpc GetCustomerById (GetCustomerByIdRequest) returns (GetCustomerByIdResponse);
+}

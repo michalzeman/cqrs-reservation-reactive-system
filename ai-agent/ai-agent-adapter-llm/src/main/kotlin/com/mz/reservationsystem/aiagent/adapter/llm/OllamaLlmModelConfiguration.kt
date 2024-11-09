@@ -22,7 +22,7 @@ class OllamaLlmModelConfiguration(
         return OpenAiChatModel.builder()
             .apiKey("***")
             .modelName(chatModel)
-            .maxRetries(3)
+            .maxRetries(5)
             .logRequests(true)
             .logResponses(true)
             .baseUrl(llmChatBaseUrl)
@@ -36,6 +36,9 @@ class OllamaLlmModelConfiguration(
             .apiKey("***")
             .modelName(chatModel)
             .baseUrl(llmChatBaseUrl)
+            .logRequests(true)
+            .logResponses(true)
+            .parallelToolCalls(true)
             .temperature(0.1)
             .build()
     }

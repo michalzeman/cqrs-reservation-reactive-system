@@ -1,11 +1,14 @@
-package com.mz.reservationsystem.aiagent.adapter.llm.ai.agent
+package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat
 
 import com.mz.ddd.common.api.domain.Id
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.RegistrationAgent
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationAgent
 import com.mz.reservationsystem.aiagent.domain.ai.agent.ChatAgent
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.withContext
 import org.springframework.stereotype.Component
 
@@ -28,8 +31,8 @@ class LangChainChatAgent(
     }
 
     override fun chatWithAssistant(chatId: Id, message: Content): Flow<String> =
-        assistantAgent.chatStream(chatId, message.value).toFlow()
+        assistantAgent.chatStream(chatId, message.value).asFlow()
 
     override fun chatWithCustomer(chatId: Id, message: Content): Flow<String> =
-        assistantAgent.chatWithCustomer(chatId, message.value).toFlow()
+        assistantAgent.chatWithCustomer(chatId, message.value).asFlow()
 }

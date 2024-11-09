@@ -1,4 +1,4 @@
-package com.mz.reservationsystem.aiagent.adapter.llm.ai.agent
+package com.mz.reservationsystem.aiagent.adapter.llm.ai
 
 import dev.langchain4j.service.TokenStream
 import kotlinx.coroutines.CoroutineScope

@@ -36,7 +36,7 @@ private const val RESERVATION_SERVICE_URL = "http://localhost:8081"
 
 private const val CUSTOMER_SERVICE_URL = "http://localhost:8082"
 
-@Tag("systemChecks")
+//@Tag("systemChecks")
 class ReservationLifecycleSystemChecksTest {
 
     companion object {

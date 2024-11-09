@@ -16,6 +16,8 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-stream")
     implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka-streams")
 
+    implementation(project(":customer:customer-domain-api"))
+
 
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockito.core)
