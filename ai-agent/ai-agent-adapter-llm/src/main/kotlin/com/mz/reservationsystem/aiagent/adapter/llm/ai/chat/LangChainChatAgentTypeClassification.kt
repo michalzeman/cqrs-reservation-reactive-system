@@ -1,9 +1,7 @@
-package com.mz.reservationsystem.aiagent.adapter.llm.ai
+package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat
 
 import com.mz.ddd.common.api.domain.Id
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.agent.ChatClassification
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.ConversationalChainProvider
-import com.mz.reservationsystem.aiagent.adapter.llm.promptChatType
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.ConversationalChainProvider
 import com.mz.reservationsystem.aiagent.domain.ai.ChatAgentTypeClassification
 import com.mz.reservationsystem.aiagent.domain.api.chat.ChatAgentType
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content

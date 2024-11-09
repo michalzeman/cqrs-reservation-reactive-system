@@ -6,6 +6,7 @@ dependencies {
     api(libs.langchain4j.ollama)
     api(libs.langchain4j.open.ai)
     api(libs.langchain4j)
+    api(libs.langchain4j.reactor)
 
     implementation(group = "io.projectreactor", name = "reactor-core")
     implementation(group = "org.springframework", name = "spring-context")

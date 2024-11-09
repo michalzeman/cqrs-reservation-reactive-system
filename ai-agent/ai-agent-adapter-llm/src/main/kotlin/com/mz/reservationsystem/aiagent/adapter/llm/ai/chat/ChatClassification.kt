@@ -1,9 +1,6 @@
-package com.mz.reservationsystem.aiagent.adapter.llm.ai.agent
+package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat
 
-import com.mz.ddd.common.api.domain.Id
 import com.mz.reservationsystem.aiagent.domain.api.chat.ChatAgentType
-import dev.langchain4j.service.MemoryId
-import dev.langchain4j.service.SystemMessage
 import dev.langchain4j.service.UserMessage
 import kotlinx.serialization.Serializable
 

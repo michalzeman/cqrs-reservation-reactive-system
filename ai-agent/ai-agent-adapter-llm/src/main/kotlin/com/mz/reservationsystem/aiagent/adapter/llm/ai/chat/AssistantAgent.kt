@@ -1,10 +1,10 @@
-package com.mz.reservationsystem.aiagent.adapter.llm.ai.agent
+package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat
 
 import com.mz.ddd.common.api.domain.Id
 import dev.langchain4j.service.MemoryId
 import dev.langchain4j.service.SystemMessage
-import dev.langchain4j.service.TokenStream
 import dev.langchain4j.service.UserMessage
+import reactor.core.publisher.Flux
 
 interface AssistantAgent {
 
@@ -19,7 +19,7 @@ interface AssistantAgent {
          - use provided functions to fulfill user requirements
       """
     )
-    fun chatStream(@MemoryId memoryId: Id, @UserMessage message: String): TokenStream
+    fun chatStream(@MemoryId memoryId: Id, @UserMessage message: String): Flux<String>
 
     @SystemMessage(
         """
@@ -32,5 +32,5 @@ interface AssistantAgent {
          - write all important information as bold in the markdown format
       """
     )
-    fun chatWithCustomer(@MemoryId memoryId: Id, @UserMessage message: String): TokenStream
+    fun chatWithCustomer(@MemoryId memoryId: Id, @UserMessage message: String): Flux<String>
 }

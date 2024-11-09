@@ -1,4 +1,4 @@
-package com.mz.reservationsystem.aiagent.adapter.llm
+package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat
 
 import dev.langchain4j.model.input.PromptTemplate
 
@@ -98,7 +98,11 @@ val promptChatTypeJson: PromptTemplate = PromptTemplate.from(
          - INPUT: create new reservation 
          - RESPONSE: RESERVATION         
          - INPUT: Request related to the new Customer or new User or creation of the Account 
-         - RESPONSE: RESERVATION
+         - RESPONSE: USER_REGISTRATION
+         - INPUT: Here is my User id
+         - RESPONSE: USER_REGISTRATION
+         - INPUT: My customer or user id is
+         - RESPONSE: USER_REGISTRATION
          - INPUT: asking on an existing reservation or providing reservation details
          - RESPONSE: RESERVATION_VIEW
          - INPUT: modification of reservations

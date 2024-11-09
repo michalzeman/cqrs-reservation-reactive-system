@@ -1,11 +1,12 @@
 package com.mz.reservationsystem.aiagent.adapter.llm
 
-import com.mz.reservationsystem.aiagent.adapter.llm.tools.Calculator
-import com.mz.reservationsystem.aiagent.adapter.llm.tools.CustomerService
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.agent.AssistantAgent
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.agent.ChatClassification
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.agent.RegistrationAgent
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.agent.ReservationAgent
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.AssistantAgent
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.ChatClassification
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationAgent
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationStreamingAgent
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerTool
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.RegistrationAgent
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationTool
 import dev.langchain4j.memory.chat.ChatMemoryProvider
 import dev.langchain4j.memory.chat.MessageWindowChatMemory
 import dev.langchain4j.model.chat.ChatLanguageModel
@@ -17,8 +18,8 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class AgentAiServicesConfiguration(
-    val calculator: Calculator,
-    val customerService: CustomerService,
+    val customerTool: CustomerTool,
+    val reservationTool: ReservationTool,
     val store: ChatMemoryStore
 ) {
     @Bean
@@ -50,7 +51,7 @@ class AgentAiServicesConfiguration(
         return AiServices.builder(RegistrationAgent::class.java)
             .chatLanguageModel(chatLanguageModel)
             .chatMemoryProvider(chatMemoryProvider)
-            .tools(customerService)
+            .tools(customerTool)
             .build()
     }
 
@@ -67,7 +68,24 @@ class AgentAiServicesConfiguration(
         return AiServices.builder(ReservationAgent::class.java)
             .chatMemoryProvider(chatMemoryProvider)
             .chatLanguageModel(chatLanguageModel)
-            .tools(calculator)
+            .tools(reservationTool, customerTool)
+            .build()
+    }
+
+    @Bean
+    fun reservationStreamingAgent(chatLanguageModel: StreamingChatLanguageModel): ReservationStreamingAgent {
+        val chatMemoryProvider = ChatMemoryProvider { memoryId: Any? ->
+            MessageWindowChatMemory.builder()
+                .id(memoryId)
+                .maxMessages(50)
+                .chatMemoryStore(store)
+                .build()
+        }
+
+        return AiServices.builder(ReservationStreamingAgent::class.java)
+            .chatMemoryProvider(chatMemoryProvider)
+            .streamingChatLanguageModel(chatLanguageModel)
+            .tools(reservationTool, customerTool)
             .build()
     }
 

@@ -46,6 +46,7 @@ dependencyResolutionManagement {
             library("langchain4j-local-ai", "dev.langchain4j:langchain4j-local-ai:$langchain4jVersion")
             library("langchain4j-ollama", "dev.langchain4j:langchain4j-ollama:$langchain4jVersion")
             library("langchain4j-open-ai", "dev.langchain4j:langchain4j-open-ai:$langchain4jVersion")
+            library("langchain4j-reactor", "dev.langchain4j:langchain4j-reactor:$langchain4jVersion")
             library("langchain4j", "dev.langchain4j:langchain4j:$langchain4jVersion")
         }
     }
@@ -68,6 +69,7 @@ include("@ddd:event-storage-adapter-api")
 include("@ddd:event-storage-adapter-cassandra-db")
 include("@ddd:shared-kernel-test-cassandra-db")
 include("ai-agent")
+include("ai-agent:ai-agent-adapter-customer")
 include("ai-agent:ai-agent-adapter-llm")
 include("ai-agent:ai-agent-adapter-rest")
 include("ai-agent:ai-agent-application")

@@ -8,6 +8,7 @@ project(":ai-agent:ai-agent-application") {
         implementation(project(":ai-agent:ai-agent-domain"))
         implementation(project(":ai-agent:ai-agent-adapter-llm"))
         implementation(project(":ai-agent:ai-agent-adapter-rest"))
+        implementation(project(":ai-agent:ai-agent-adapter-customer"))
 
         implementation(project(":@ddd:domain-persistence"))
         implementation(project(":@ddd:lock-storage-adapter-redis"))
@@ -41,6 +42,13 @@ project(":ai-agent:ai-agent-adapter-llm") {
 }
 
 project(":ai-agent:ai-agent-adapter-rest") {
+    dependencies {
+        implementation(project(":ai-agent:ai-agent-domain"))
+        implementation(project(":common-components"))
+    }
+}
+
+project(":ai-agent:ai-agent-adapter-customer") {
     dependencies {
         implementation(project(":ai-agent:ai-agent-domain"))
         implementation(project(":common-components"))
