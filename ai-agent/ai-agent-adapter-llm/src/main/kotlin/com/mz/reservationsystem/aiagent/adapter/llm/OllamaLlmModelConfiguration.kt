@@ -1,5 +1,6 @@
 package com.mz.reservationsystem.aiagent.adapter.llm
 
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.AiChatModelListener
 import dev.langchain4j.model.chat.ChatLanguageModel
 import dev.langchain4j.model.chat.StreamingChatLanguageModel
 import dev.langchain4j.model.openai.OpenAiChatModel
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Profile
 class OllamaLlmModelConfiguration(
     @Value("\${adapter.llm.chat.base-url}") private val llmChatBaseUrl: String,
     @Value("\${adapter.llm.chat.model}") private val chatModel: String,
+    val aiChatModelListener: AiChatModelListener,
 ) {
 
     @Bean
@@ -23,10 +25,11 @@ class OllamaLlmModelConfiguration(
             .apiKey("***")
             .modelName(chatModel)
             .maxRetries(5)
-            .logRequests(true)
-            .logResponses(true)
+//            .logRequests(true)
+//            .logResponses(true)
             .baseUrl(llmChatBaseUrl)
             .temperature(0.1)
+            .listeners(listOf(aiChatModelListener))
             .build()
     }
 
@@ -36,10 +39,10 @@ class OllamaLlmModelConfiguration(
             .apiKey("***")
             .modelName(chatModel)
             .baseUrl(llmChatBaseUrl)
-            .logRequests(true)
-            .logResponses(true)
-            .parallelToolCalls(true)
+//            .logRequests(true)
+//            .logResponses(true)
             .temperature(0.1)
+            .listeners(listOf(aiChatModelListener))
             .build()
     }
 
