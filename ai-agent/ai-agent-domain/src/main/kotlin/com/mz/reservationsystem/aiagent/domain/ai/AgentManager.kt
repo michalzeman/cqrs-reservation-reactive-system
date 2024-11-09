@@ -5,7 +5,6 @@ import com.mz.reservationsystem.aiagent.domain.ai.agent.ChatAgent
 import com.mz.reservationsystem.aiagent.domain.ai.model.*
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import org.springframework.stereotype.Component
 
@@ -46,38 +45,24 @@ class AgentManager(
     private fun handleChatCustomerRequest(request: ChatCustomerRequest): Flow<AgentResponse> {
         val message = customerPrompt(request.message, request.customerData)
         val chatId = request.chatId
-        return agentChatRoute.routeChat(chatId, request.message) {
-            chatAgent.chatWithAssistant(
-                chatId,
-                Content(message)
-            ).map { ChatResponse(chatId, Content(it)) }
-        }
+        return agentChatRoute.routeChat(chatId, request.message)
     }
 
     private fun handleNewChatCustomerRequest(request: NewChatCustomerRequest): Flow<AgentResponse> {
         val message = customerPrompt(request.message, request.customerData)
         val chatId = newId()
-        return agentChatRoute.routeChat(chatId, request.message) {
-            chatAgent.chatWithAssistant(
-                chatId,
-                Content(message)
-            ).map { ChatResponse(chatId, Content(it)) }
-        }
+        return agentChatRoute.routeChat(chatId, request.message)
     }
 
     private fun handleUnknownUserRequest(request: NewChatRequest): Flow<AgentResponse> {
         val id = newId()
         val message = request.message.value
-        return agentChatRoute.routeChat(id, request.message) {
-            chatAgent.chatWithAssistant(id, Content(message)).map { ChatResponse(id, Content(it)) }
-        }
+        return agentChatRoute.routeChat(id, request.message)
     }
 
     private fun handleChatRequest(request: ChatRequest): Flow<AgentResponse> {
         val id = request.chatId
         val message = request.message.value
-        return agentChatRoute.routeChat(id, request.message) {
-            chatAgent.chatWithAssistant(id, Content(message)).map { ChatResponse(id, Content(it)) }
-        }
+        return agentChatRoute.routeChat(id, request.message)
     }
 }

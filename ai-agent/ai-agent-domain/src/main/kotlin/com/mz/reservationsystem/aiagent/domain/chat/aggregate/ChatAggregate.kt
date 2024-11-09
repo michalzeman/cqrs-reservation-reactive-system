@@ -33,7 +33,13 @@ fun Id.getAggregate(): Chat {
 
 fun Chat.toDocument(events: Set<ChatEvent> = emptySet()): ChatDocument {
     return when (this) {
-        is EmptyChat -> error("Chat is not created yet")
+        is EmptyChat -> ChatDocument(
+            version = version,
+            aggregateId = aggregateId,
+            chatAgentType = chatAgentType,
+            events = events
+        )
+
         is UnknownCustomerChat -> ChatDocument(
             chatAiMessages = chatAiMessages,
             version = version,
@@ -63,6 +69,19 @@ data class EmptyChat(
 fun EmptyChat.apply(event: ChatCreated): UnknownCustomerChat = UnknownCustomerChat(
     aggregateId = event.aggregateId,
     version = this.version,
+    chatAiMessages = emptySet()
+)
+
+fun EmptyChat.apply(event: ChatMessageAdded): UnknownCustomerChat = UnknownCustomerChat(
+    aggregateId = event.aggregateId,
+    version = this.version,
+    chatAiMessages = event.chatAiMessages,
+)
+
+fun EmptyChat.apply(event: CustomerIdAdded): CustomerChat = CustomerChat(
+    aggregateId = event.aggregateId,
+    version = this.version,
+    customerId = event.customerId,
     chatAiMessages = emptySet()
 )
 

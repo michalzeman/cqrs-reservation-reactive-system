@@ -1,6 +1,5 @@
 package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat
 
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerTool
 import dev.langchain4j.model.chat.listener.ChatModelErrorContext
 import dev.langchain4j.model.chat.listener.ChatModelListener
 import dev.langchain4j.model.chat.listener.ChatModelRequestContext
