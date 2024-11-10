@@ -37,6 +37,7 @@ project(":ai-agent:ai-agent-domain-api") {
 project(":ai-agent:ai-agent-adapter-llm") {
     dependencies {
         implementation(project(":ai-agent:ai-agent-domain"))
+        implementation(project(":customer:customer-adapter-rest-api"))
         implementation(project(":common-components"))
     }
 }
@@ -52,6 +53,8 @@ project(":ai-agent:ai-agent-adapter-customer") {
     dependencies {
         implementation(project(":ai-agent:ai-agent-domain"))
         implementation(project(":common-components"))
+        implementation(project(":customer:customer-adapter-rest-api"))
+        implementation(project(":customer:customer-domain-api"))
     }
 }
 

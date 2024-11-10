@@ -1,7 +1,6 @@
 package com.mz.reservationsystem.aiagent.domain.ai
 
 import com.mz.ddd.common.api.domain.newId
-import com.mz.reservationsystem.aiagent.domain.ai.agent.ChatAgent
 import com.mz.reservationsystem.aiagent.domain.ai.model.*
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content
 import kotlinx.coroutines.flow.Flow
@@ -32,7 +31,6 @@ internal val customerPrompt: (message: Content, customerData: Content) -> String
 @Component
 class AgentManager(
     private val agentChatRoute: AgentChatRoute,
-    private val chatAgent: ChatAgent
 ) {
 
     fun execute(request: AgentRequest, finished: () -> Unit = {}): Flow<AgentResponse> = when (request) {
@@ -43,26 +41,24 @@ class AgentManager(
     }.onCompletion { finished() }
 
     private fun handleChatCustomerRequest(request: ChatCustomerRequest): Flow<AgentResponse> {
-        val message = customerPrompt(request.message, request.customerData)
+        val message = Content(customerPrompt(request.message, request.customerData))
         val chatId = request.chatId
-        return agentChatRoute.routeChat(chatId, request.message)
+        return agentChatRoute.routeChat(chatId, message)
     }
 
     private fun handleNewChatCustomerRequest(request: NewChatCustomerRequest): Flow<AgentResponse> {
-        val message = customerPrompt(request.message, request.customerData)
+        val message = Content(customerPrompt(request.message, request.customerData))
         val chatId = newId()
-        return agentChatRoute.routeChat(chatId, request.message)
+        return agentChatRoute.routeChat(chatId, message)
     }
 
     private fun handleUnknownUserRequest(request: NewChatRequest): Flow<AgentResponse> {
         val id = newId()
-        val message = request.message.value
         return agentChatRoute.routeChat(id, request.message)
     }
 
     private fun handleChatRequest(request: ChatRequest): Flow<AgentResponse> {
         val id = request.chatId
-        val message = request.message.value
         return agentChatRoute.routeChat(id, request.message)
     }
 }

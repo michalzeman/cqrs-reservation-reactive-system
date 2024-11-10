@@ -27,7 +27,7 @@ class LangChainChatAgent(
     }
 
     override suspend fun reservationViewChat(chatId: Id, message: Content): String = coroutineScope {
-        TODO("Not yet implemented")
+        "You don't have any reservation"
     }
 
     override fun chatWithAssistant(chatId: Id, message: Content): Flow<String> =

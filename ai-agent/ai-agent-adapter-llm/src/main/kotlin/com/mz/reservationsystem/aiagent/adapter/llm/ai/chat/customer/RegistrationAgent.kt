@@ -4,6 +4,7 @@ import com.mz.ddd.common.api.domain.Id
 import dev.langchain4j.service.MemoryId
 import dev.langchain4j.service.SystemMessage
 import dev.langchain4j.service.UserMessage
+import dev.langchain4j.service.V
 
 interface RegistrationAgent {
 
@@ -25,9 +26,17 @@ interface RegistrationAgent {
 
     @UserMessage(
         """
-            Classify if conversion history contains Customer/User information loaded from the system. 
+            Does chat history contains any data related to the Custom data, is customer know?
         """
     )
     fun isCustomerIdentified(@MemoryId memoryId: Id): Boolean
+
+    @UserMessage(
+        """
+            Does chat history or message contains any data related to the Custom data, is customer know? 
+            Message: {{message}} 
+        """
+    )
+    fun isCustomerIdentified(@MemoryId memoryId: Id, @V("message") text: String): Boolean
 
 }
