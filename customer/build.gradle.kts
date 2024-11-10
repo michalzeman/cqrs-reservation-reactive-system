@@ -42,7 +42,7 @@ project(":customer:customer-adapter-rest") {
 project(":customer:customer-adapter-rest-api") {
     dependencies {
         implementation(project(":common-components"))
-        implementation(project(":customer:customer-domain-api"))
+        api(project(":customer:customer-domain-api"))
     }
 }
 

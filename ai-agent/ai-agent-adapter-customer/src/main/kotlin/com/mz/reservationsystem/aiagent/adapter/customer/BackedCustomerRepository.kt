@@ -16,12 +16,11 @@ import org.springframework.web.reactive.function.client.bodyToMono
 class BackedCustomerRepository(
     private val customerWebClient: WebClient
 ) : CustomerRepository {
-    override suspend fun registerCustomer(registerCustomer: RegisterCustomer): Id {
+    override suspend fun registerCustomer(registerCustomer: RegisterCustomer): CustomerDocument {
         return customerWebClient.post()
             .bodyValue(registerCustomer.map())
             .retrieve()
             .bodyToMono(CustomerDocument::class.java)
-            .map(CustomerDocument::aggregateId)
             .awaitSingle()
     }
 

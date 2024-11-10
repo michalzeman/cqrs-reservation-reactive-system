@@ -40,23 +40,15 @@ class CustomerTool(
         @P("Customer object supports firstName, lastName, email as mandatory fields") customer: CustomerParam
     ): String = runBlocking {
         logger.info("registerCustomer -> $customer")
-        val id = customerRepository.registerCustomer(customer.toRegisterCustomer())
-        CustomerAccount(customer, id.value).toString()
+        val createdCustomer = customerRepository.registerCustomer(customer.toRegisterCustomer())
+        CustomerAccount(customer, createdCustomer.aggregateId.value).toString()
     }
 
     @Tool("Find customer")
-    fun findCustomer(@P("customer id") customerId: Id): String = runBlocking {
+    fun findCustomer(@P("customer id") customerId: String): String = runBlocking {
         logger.info("findCustomer -> $customerId")
-        customerRepository.findCustomer(customerId)?.toString()
+        customerRepository.findCustomer(Id(customerId))?.toString()
             ?: "User or customer for given ID doesn't exists!"
-    }
-
-    @Tool("Validate if the customer/user for the given id exists")
-    fun validateCustomer(@P("customer id") customerId: Id): String = findCustomer(customerId)
-
-    @Tool("List if the reservations identified by url")
-    fun getWebPageContent(@P("URL of the reservation") url: String): String {
-        return "Test zemo, nothing there"
     }
 }
 
