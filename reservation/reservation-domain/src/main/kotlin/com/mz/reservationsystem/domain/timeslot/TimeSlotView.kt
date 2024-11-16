@@ -43,7 +43,7 @@ class TimeSlotView(
         channelStream.subscribeToChannel<TimeSlotDocument>(::process)
     }
 
-    fun process(document: TimeSlotDocument): Mono<Void> {
+    internal fun process(document: TimeSlotDocument): Mono<Void> {
         val startTime = QueryableInstant(
             value = document.startTime,
             aggregateId = document.aggregateId.value,

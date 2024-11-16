@@ -1,4 +1,4 @@
-package com.mz.reservationsystem.adapter.rest.reservation.model
+package com.mz.reservationsystem.adapter.model.reservation
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo

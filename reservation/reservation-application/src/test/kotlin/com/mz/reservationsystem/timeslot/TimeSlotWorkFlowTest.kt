@@ -3,10 +3,10 @@ package com.mz.reservationsystem.timeslot
 import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.uuid
 import com.mz.reservationsystem.TestReservationSystemConfiguration
-import com.mz.reservationsystem.adapter.rest.timeslot.model.BookTimeSlotRequest
-import com.mz.reservationsystem.adapter.rest.timeslot.model.CreateTimeSlotRequest
-import com.mz.reservationsystem.adapter.rest.timeslot.model.UpdateTimeSlotRequest
+import com.mz.reservationsystem.adapter.model.timeslot.BookTimeSlotRequest
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotDocument
+import com.mz.reservationsystem.adapter.model.timeslot.CreateTimeSlotRequest
+import com.mz.reservationsystem.adapter.model.timeslot.UpdateTimeSlotRequest
 import kotlinx.datetime.toJavaInstant
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

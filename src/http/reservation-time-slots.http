@@ -1,0 +1,32 @@
+### Create TimeSlopt 1
+POST localhost:8080/reservation-system/time-slots
+Content-Type: application/json
+
+{
+  "type": "create-time-slot",
+  "startTime": "2025-07-01T08:00:00Z",
+  "endTime": "2025-07-01T09:00:00Z"
+}
+
+### Create TimeSlopt 2
+POST localhost:8080/reservation-system/time-slots
+Content-Type: application/json
+
+{
+  "type": "create-time-slot",
+  "startTime": "2025-07-01T09:01:00Z",
+  "endTime": "2025-07-01T10:01:00Z"
+}
+
+### Create TimeSlopt 3
+POST localhost:8080/reservation-system/time-slots
+Content-Type: application/json
+
+{
+  "type": "create-time-slot",
+  "startTime": "2025-07-01T11:00:00Z",
+  "endTime": "2025-07-01T12:00:00Z"
+}
+
+### GET findByTime
+GET localhost:8080/reservation-system/time-slots?startTime=2025-07-01T08:00:00Z&endTime=2025-07-01T12:00:00Z

@@ -7,6 +7,7 @@ project(":reservation:reservation-application") {
         implementation(project(":reservation:reservation-domain-api"))
         implementation(project(":reservation:reservation-domain"))
         implementation(project(":reservation:reservation-adapter-rest"))
+        implementation(project(":reservation:reservation-adapter-rest-api"))
         implementation(project(":reservation:reservation-adapter-kafka"))
 
         implementation(project(":@ddd:domain-persistence"))
@@ -39,8 +40,16 @@ project(":reservation:reservation-adapter-kafka") {
 project(":reservation:reservation-adapter-rest") {
     dependencies {
         implementation(project(":reservation:reservation-domain-api"))
+        implementation(project(":reservation:reservation-adapter-rest-api"))
         implementation(project(":reservation:reservation-domain"))
         implementation(project(":common-components"))
+    }
+}
+
+project(":reservation:reservation-adapter-rest-api") {
+    dependencies {
+        api(project(":@ddd:common-domain-api"))
+        api(project(":reservation:reservation-domain-api"))
     }
 }
 

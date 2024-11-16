@@ -125,6 +125,7 @@ project(":reservation-system-checks-tests") {
         implementation(project(":reservation:reservation-domain-api"))
         implementation(project(":reservation:reservation-domain"))
         implementation(project(":reservation:reservation-adapter-rest"))
+        implementation(project(":reservation:reservation-adapter-rest-api"))
         implementation(project(":reservation:reservation-adapter-kafka"))
     }
 }
