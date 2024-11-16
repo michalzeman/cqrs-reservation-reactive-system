@@ -9,13 +9,11 @@ import com.mz.customer.domain.api.CustomerDocument
 import com.mz.customer.domain.api.ReservationStatus
 import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.uuid
-import com.mz.reservationsystem.adapter.rest.timeslot.model.CreateTimeSlotRequest
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotDocument
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.codec.json.Jackson2JsonDecoder
@@ -28,6 +26,8 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toMono
 import reactor.util.retry.Retry
+import com.mz.reservationsystem.adapter.model.timeslot.CreateTimeSlotRequest
+import org.junit.jupiter.api.Tag
 import kotlin.random.Random
 import kotlin.time.Duration
 
@@ -36,7 +36,7 @@ private const val RESERVATION_SERVICE_URL = "http://localhost:8081"
 
 private const val CUSTOMER_SERVICE_URL = "http://localhost:8082"
 
-//@Tag("systemChecks")
+@Tag("systemChecks")
 class ReservationLifecycleSystemChecksTest {
 
     companion object {

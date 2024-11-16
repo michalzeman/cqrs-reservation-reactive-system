@@ -3,9 +3,8 @@ package com.mz.reservationsystem.reservation
 import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.uuid
 import com.mz.reservationsystem.TestReservationSystemConfiguration
-import com.mz.reservationsystem.adapter.rest.reservation.model.DeclineReservationRequest
-import com.mz.reservationsystem.adapter.rest.reservation.model.RequestReservationRequest
-import com.mz.reservationsystem.adapter.rest.timeslot.model.CreateTimeSlotRequest
+import com.mz.reservationsystem.adapter.model.reservation.DeclineReservationRequest
+import com.mz.reservationsystem.adapter.model.reservation.RequestReservationRequest
 import com.mz.reservationsystem.domain.api.reservation.ReservationDocument
 import com.mz.reservationsystem.domain.api.reservation.ReservationState
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotDocument
@@ -20,6 +19,7 @@ import org.springframework.data.cassandra.core.cql.CqlTemplate
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
+import com.mz.reservationsystem.adapter.model.timeslot.CreateTimeSlotRequest
 import kotlin.time.Duration
 
 @SpringBootTest(

@@ -58,6 +58,14 @@ project(":ai-agent:ai-agent-adapter-customer") {
     }
 }
 
+project(":ai-agent:ai-agent-adapter-reservation") {
+    dependencies {
+        implementation(project(":ai-agent:ai-agent-domain"))
+        implementation(project(":common-components"))
+        implementation(project(":reservation:reservation-adapter-rest-api"))
+    }
+}
+
 dependencies {
     implementation(project(":@ddd:event-storage-adapter-cassandra-db"))
     implementation(project(":@ddd:domain-view-adapter-cassandra-db"))
