@@ -4,17 +4,13 @@ import com.mz.common.components.ApplicationChannelStream
 import com.mz.common.components.subscribeToChannel
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.instantNow
-import com.mz.ddd.common.view.BetweenInstantQuery
-import com.mz.ddd.common.view.DomainViewReadOnlyRepository
-import com.mz.ddd.common.view.DomainViewRepository
-import com.mz.ddd.common.view.QueryableBoolean
-import com.mz.ddd.common.view.QueryableInstant
+import com.mz.ddd.common.view.*
+import com.mz.ddd.common.view.OperationType.AND
 import com.mz.reservationsystem.domain.api.timeslot.TIME_SLOT_DOMAIN_TAG
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotDocument
 import com.mz.reservationsystem.domain.timeslot.TimeSlotProperties.booked
 import com.mz.reservationsystem.domain.timeslot.TimeSlotProperties.endTime
 import com.mz.reservationsystem.domain.timeslot.TimeSlotProperties.startTime
-import kotlinx.datetime.Instant
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -25,18 +21,11 @@ object TimeSlotProperties {
     val booked = "booked"
 }
 
-sealed interface TimeSlotQuery
-
-data class FindTimeSlotBetweenTimes(
-    val startTime: Instant,
-    val endTime: Instant
-) : TimeSlotQuery
-
 @Component
 class TimeSlotView(
     private val domainViewRepository: DomainViewRepository,
     private val domainViewReadOnlyRepository: DomainViewReadOnlyRepository,
-    private val channelStream: ApplicationChannelStream
+    channelStream: ApplicationChannelStream
 ) {
 
     init {
@@ -70,17 +59,26 @@ class TimeSlotView(
 
     fun find(query: TimeSlotQuery): Flux<Id> {
         return when (query) {
-            is FindTimeSlotBetweenTimes -> {
-                val betweenInstantQuery = BetweenInstantQuery(
-                    startTime = query.startTime,
-                    endTime = query.endTime,
-                    domainTag = TIME_SLOT_DOMAIN_TAG.value,
-                    startTimePropertyName = startTime,
-                    endTimePropertyName = endTime
-                )
-                domainViewReadOnlyRepository.find(betweenInstantQuery)
-            }
+            is FindTimeSlotBetweenTimes -> domainViewReadOnlyRepository
+                .find(DomainViewQuery(setOf(query.toBetweenInstantQuery())))
+
+            is FindTimeSlotsByConditions -> findByConditions(query)
+            is FindTimeSlotByBooked -> domainViewReadOnlyRepository.find(DomainViewQuery(setOf(query.toQueryData())))
         }.map { it.aggregateId }
+    }
+
+    private fun findByConditions(query: FindTimeSlotsByConditions): Flux<DomainView> {
+        return query.conditions
+            .map {
+                when (it) {
+                    is FindTimeSlotBetweenTimes -> it.toBetweenInstantQuery()
+                    is FindTimeSlotByBooked -> it.toQueryData()
+                    is FindTimeSlotsByConditions -> throw TimeSlotQueryException("Recursive conditions are not supported")
+                }
+            }
+            .toSet()
+            .let { DomainViewQuery(it, AND) }
+            .let { domainViewReadOnlyRepository.find(it) }
     }
 
 }

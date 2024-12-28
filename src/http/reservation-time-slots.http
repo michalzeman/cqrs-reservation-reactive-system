@@ -29,4 +29,4 @@ Content-Type: application/json
 }
 
 ### GET findByTime
-GET localhost:8080/reservation-system/time-slots?startTime=2025-07-01T08:00:00Z&endTime=2025-07-01T12:00:00Z
+GET localhost:8080/reservation-system/time-slots?start_time=2024-07-01T08:00:00Z&end_time=2025-07-01T12:00:00Z

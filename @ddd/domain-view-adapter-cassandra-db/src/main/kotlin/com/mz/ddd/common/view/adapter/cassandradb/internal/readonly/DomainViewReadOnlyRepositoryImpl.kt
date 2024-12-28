@@ -1,21 +1,13 @@
 package com.mz.ddd.common.view.adapter.cassandradb.internal.readonly
 
+import com.mz.ddd.common.api.domain.DomainTag
 import com.mz.ddd.common.api.domain.Id
-import com.mz.ddd.common.view.BetweenInstantQuery
-import com.mz.ddd.common.view.DomainView
-import com.mz.ddd.common.view.DomainViewQuery
-import com.mz.ddd.common.view.DomainViewReadOnlyRepository
-import com.mz.ddd.common.view.QueryBoolean
-import com.mz.ddd.common.view.QueryData
-import com.mz.ddd.common.view.QueryDouble
-import com.mz.ddd.common.view.QueryInstant
-import com.mz.ddd.common.view.QueryLong
-import com.mz.ddd.common.view.QueryOperation
-import com.mz.ddd.common.view.QueryString
-import com.mz.ddd.common.view.QueryableData
+import com.mz.ddd.common.view.*
+import com.mz.ddd.common.view.OperationType.AND
 import kotlinx.datetime.toJavaInstant
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
+import reactor.core.scheduler.Schedulers
 
 @Component
 internal class DomainViewReadOnlyRepositoryImpl(
@@ -28,81 +20,90 @@ internal class DomainViewReadOnlyRepositoryImpl(
     override fun find(queryOperation: QueryOperation): Flux<DomainView> {
         return when (queryOperation) {
             is DomainViewQuery -> domainViewQuery(queryOperation)
-            is BetweenInstantQuery -> betweenInstantQuery(queryOperation)
-        }
+        }.subscribeOn(Schedulers.boundedElastic())
     }
 
     private fun domainViewQuery(query: DomainViewQuery): Flux<DomainView> {
-        return Flux.fromIterable(query.queryableDataSet)
+        val resultStream = Flux.fromIterable(query.queryableDataSet)
             .flatMap { queryableView(it) }
-            .collectList()
-            .map { views ->
-                views.groupBy { it.aggregateId }
+            .groupBy { it.aggregateId }
+            .flatMap { group ->
+                group.collectList()
+                    .map { DomainView(Id(group.key()), it.toSet()) }
+            }.cache()
+
+        return if (query.operationType == AND) {
+            resultStream.filter {
+                it.views.size == query.queryableDataSet.size
             }
-            .flatMapIterable {
-                it.entries
-                    .map { entry -> DomainView(Id(entry.key), entry.value.toSet()) }
-            }
-            .filter { it.views.isNotEmpty() }
+        } else resultStream
     }
 
-    private fun queryableView(queryData: QueryData<*>): Flux<QueryableData<*>> {
-        return when (queryData) {
+    private fun queryableView(queryValue: QueryData<*>): Flux<QueryableData<*>> {
+        return when (queryValue) {
             is QueryBoolean -> queryableBooleanViewEntityRepository.findByPropertyNameAndDomainTagAndValue(
-                propertyName = queryData.propertyName,
-                domainTag = queryData.domainTag,
-                value = queryData.value
+                propertyName = queryValue.propertyName,
+                domainTag = queryValue.domainTag,
+                value = queryValue.value
             ).map { it.toDataClass() }
 
             is QueryDouble -> queryableDoubleViewEntityRepository.findByPropertyNameAndDomainTagAndValue(
-                propertyName = queryData.propertyName,
-                domainTag = queryData.domainTag,
-                value = queryData.value
+                propertyName = queryValue.propertyName,
+                domainTag = queryValue.domainTag,
+                value = queryValue.value
             ).map { it.toDataClass() }
 
             is QueryInstant -> queryableTimestampViewEntityRepository.findByPropertyNameAndDomainTagAndValue(
-                propertyName = queryData.propertyName,
-                domainTag = queryData.domainTag,
-                value = queryData.value.toJavaInstant()
+                propertyName = queryValue.propertyName,
+                domainTag = queryValue.domainTag,
+                value = queryValue.value.toJavaInstant()
             ).map { it.toDataClass() }
 
             is QueryLong -> queryableLongViewEntityRepository.findByPropertyNameAndDomainTagAndValue(
-                propertyName = queryData.propertyName,
-                domainTag = queryData.domainTag,
-                value = queryData.value
+                propertyName = queryValue.propertyName,
+                domainTag = queryValue.domainTag,
+                value = queryValue.value
             ).map { it.toDataClass() }
 
             is QueryString -> queryableTextViewEntityRepository.findByPropertyNameAndDomainTagAndValue(
-                propertyName = queryData.propertyName,
-                domainTag = queryData.domainTag,
-                value = queryData.value
+                propertyName = queryValue.propertyName,
+                domainTag = queryValue.domainTag,
+                value = queryValue.value
             ).map { it.toDataClass() }
 
+            is BetweenInstantQuery -> betweenInstantQuery(queryValue)
         }
     }
 
-    private fun betweenInstantQuery(query: BetweenInstantQuery): Flux<DomainView> {
+    private fun betweenInstantQuery(query: BetweenInstantQuery): Flux<QueryableData<*>> {
         val byStart = queryableTimestampViewEntityRepository.findByPropertyNameAndDomainTagAndValueBetween(
             propertyName = query.startTimePropertyName,
             domainTag = query.domainTag,
             value1 = query.startTime.toJavaInstant(),
             value2 = query.endTime.toJavaInstant()
-        ).map { it.toDataClass() }
+        )
         val byEnd = queryableTimestampViewEntityRepository.findByPropertyNameAndDomainTagAndValueBetween(
             propertyName = query.endTimePropertyName,
             domainTag = query.domainTag,
             value1 = query.startTime.toJavaInstant(),
             value2 = query.endTime.toJavaInstant()
-        ).map { it.toDataClass() }
+        )
+
         return Flux.merge(byStart, byEnd)
-            .collectList()
-            .map { views ->
-                views.groupBy { it.aggregateId }
+            .map { it.toDataClass() }
+            .groupBy { it.aggregateId }
+            .flatMap { group ->
+                group.collectList()
+                    .map {
+                        val defaultValue = it[0]
+                        QueryableBetweenInstant(
+                            group.key(),
+                            "timeBetween",
+                            defaultValue.domainTag,
+                            defaultValue.timestamp,
+                            it.toSet()
+                        )
+                    }
             }
-            .flatMapIterable {
-                it.entries
-                    .map { entry -> DomainView(Id(entry.key), entry.value.toSet()) }
-            }
-            .filter { it.views.isNotEmpty() }
     }
 }
