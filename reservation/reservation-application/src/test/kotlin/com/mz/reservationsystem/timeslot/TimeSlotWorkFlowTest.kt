@@ -4,10 +4,11 @@ import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.uuid
 import com.mz.reservationsystem.TestReservationSystemConfiguration
 import com.mz.reservationsystem.adapter.model.timeslot.BookTimeSlotRequest
-import com.mz.reservationsystem.domain.api.timeslot.TimeSlotDocument
 import com.mz.reservationsystem.adapter.model.timeslot.CreateTimeSlotRequest
 import com.mz.reservationsystem.adapter.model.timeslot.UpdateTimeSlotRequest
+import com.mz.reservationsystem.domain.api.timeslot.TimeSlotDocument
 import kotlinx.datetime.toJavaInstant
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,6 +18,7 @@ import org.springframework.data.cassandra.core.cql.CqlTemplate
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.web.reactive.server.expectBody
 import reactor.core.publisher.Mono
 import kotlin.time.Duration
 
@@ -94,6 +96,18 @@ class TimeSlotWorkFlowTest(@LocalServerPort val port: Int) {
             .exchange()
             .expectStatus().isAccepted
             .expectBody(TimeSlotDocument::class.java)
+
+        val returnResult = client.get()
+            .uri(
+                "/reservation-system/time-slots" +
+                        "?start_time=${updateStartTime}&end_time=${updateEndTime}&booked=true"
+            )
+            .exchange()
+            .expectStatus().is2xxSuccessful
+            .expectBody<List<TimeSlotDocument>>()
+            .returnResult().responseBody
+
+        Assertions.assertThat(returnResult?.size).isEqualTo(1)
     }
 
     @Test

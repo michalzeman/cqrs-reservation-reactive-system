@@ -11,7 +11,7 @@ class FindTimeSlotByTimesUseCase(
     private val timeSlotView: TimeSlotView
 ) {
 
-    operator fun invoke(query: FindTimeSlotBetweenTimes): Flux<TimeSlotDocument> {
+    operator fun invoke(query: TimeSlotQuery): Flux<TimeSlotDocument> {
         return timeSlotView.find(query)
             .take(10)
             .flatMap { timeSlotAggregateManager.findById(it) }

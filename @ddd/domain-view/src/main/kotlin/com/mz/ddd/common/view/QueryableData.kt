@@ -34,6 +34,14 @@ data class QueryableInstant(
     override val value: Instant
 ) : QueryableData<Instant>()
 
+data class QueryableBetweenInstant(
+    override val aggregateId: String,
+    override val propertyName: String,
+    override val domainTag: String,
+    override val timestamp: Instant,
+    override val value: Set<QueryableData<Instant>>
+) : QueryableData<Set<QueryableData<Instant>>>()
+
 data class QueryableLong(
     override val aggregateId: String,
     override val propertyName: String,
