@@ -5,6 +5,7 @@ import com.mz.ddd.common.api.domain.newId
 import dev.langchain4j.agent.tool.P
 import dev.langchain4j.agent.tool.Tool
 import org.apache.commons.logging.LogFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.LocalDateTime
@@ -17,6 +18,7 @@ private val logger = LogFactory.getLog(ReservationTool::class.java)
 data class TimeSlot(val startTime: Instant, val endTime: Instant, val slotId: Id = newId())
 
 @Component
+@Profile("!test-ai")
 class ReservationTool {
 
     internal val formatter = DateTimeFormatterBuilder()

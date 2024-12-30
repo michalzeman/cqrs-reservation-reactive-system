@@ -18,7 +18,6 @@ import org.springframework.context.annotation.Primary
 @TestConfiguration
 @ComponentScan("com.mz.reservationsystem.aiagent.domain.ai.**")
 @ComponentScan("com.mz.reservationsystem.aiagent.adapter.llm.**")
-@ComponentScan("com.mz.reservationsystem.aiagent.adapter.customer.**")
 class TestAiAgentConfiguration {
 
     @Primary
@@ -29,7 +28,9 @@ class TestAiAgentConfiguration {
 
     @Primary
     @Bean
-    fun customerToolMock() = mock<CustomerTool>()
+    fun customerToolMock(): CustomerTool {
+        return mock<CustomerTool>()
+    }
 
     @Primary
     @Bean

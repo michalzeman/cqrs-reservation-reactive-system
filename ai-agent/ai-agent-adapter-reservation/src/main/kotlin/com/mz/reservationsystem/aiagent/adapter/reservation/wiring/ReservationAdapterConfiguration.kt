@@ -1,20 +1,17 @@
-package com.mz.reservationsystem.aiagent.adapter.customer.wiring
+package com.mz.reservationsystem.aiagent.adapter.reservation.wiring
 
 import com.mz.common.components.WebClientApiGatewayBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Profile
 import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
-@Profile("!test-ai")
-class CustomerAdapterConfiguration(
+class ReservationAdapterConfiguration(
     private val webClientApiGatewayBuilder: WebClientApiGatewayBuilder
 ) {
 
     @Bean
-    fun customerWebClient(): WebClient {
-        return webClientApiGatewayBuilder.build("customers")
+    fun reservationWebClient(): WebClient {
+        return webClientApiGatewayBuilder.build("reservation-system")
     }
-
 }

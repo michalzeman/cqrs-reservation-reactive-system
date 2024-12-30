@@ -11,6 +11,7 @@ import dev.langchain4j.agent.tool.Tool
 import dev.langchain4j.model.output.structured.Description
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.logging.LogFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 @Description("Customer registration parameters")
@@ -31,6 +32,7 @@ data class CustomerAccount(val customer: CustomerParam, val id: String) {
 private val logger = LogFactory.getLog(CustomerTool::class.java)
 
 @Component
+@Profile("!test-ai")
 class CustomerTool(
     private val customerRepository: CustomerRepository
 ) {

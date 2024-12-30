@@ -31,6 +31,8 @@ project(":ai-agent:ai-agent-domain") {
 project(":ai-agent:ai-agent-domain-api") {
     dependencies {
         api(project(":@ddd:common-domain-api"))
+        api(project(":reservation:reservation-domain-api"))
+        api(project(":customer:customer-domain-api"))
     }
 }
 

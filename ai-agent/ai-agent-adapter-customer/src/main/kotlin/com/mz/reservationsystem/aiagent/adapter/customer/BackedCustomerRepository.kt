@@ -20,7 +20,7 @@ class BackedCustomerRepository(
         return customerWebClient.post()
             .bodyValue(registerCustomer.map())
             .retrieve()
-            .bodyToMono(CustomerDocument::class.java)
+            .bodyToMono<CustomerDocument>()
             .awaitSingle()
     }
 
