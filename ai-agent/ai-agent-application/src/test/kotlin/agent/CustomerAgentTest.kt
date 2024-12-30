@@ -31,7 +31,7 @@ import org.springframework.test.context.ActiveProfiles
 
 @Disabled
 @SpringBootTest(classes = [TestAiAgentConfiguration::class, OllamaLlmModelConfiguration::class, AgentAiServicesConfiguration::class, AiChatMemoryStorageConfiguration::class])
-@ActiveProfiles("ollama", "test")
+@ActiveProfiles("ollama", "test-ai")
 class CustomerAgentTest {
 
     @Autowired

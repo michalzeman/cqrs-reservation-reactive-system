@@ -3,9 +3,9 @@ package com.mz.reservationsystem.aiagent.adapter.llm.wiring
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.AiChatModelListener
 import dev.langchain4j.model.chat.ChatLanguageModel
 import dev.langchain4j.model.chat.StreamingChatLanguageModel
-import dev.langchain4j.model.openai.OpenAiChatModel
-import dev.langchain4j.model.openai.OpenAiStreamingChatModel
-import org.springframework.beans.factory.annotation.Value
+import dev.langchain4j.model.ollama.OllamaChatModel
+import dev.langchain4j.model.ollama.OllamaStreamingChatModel
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -13,35 +13,33 @@ import org.springframework.context.annotation.Profile
 
 @Profile("ollama")
 @Configuration
+@EnableConfigurationProperties(LlmChatModelProperties::class)
 class OllamaLlmModelConfiguration(
-    @Value("\${adapter.llm.chat.base-url}") private val llmChatBaseUrl: String,
-    @Value("\${adapter.llm.chat.model}") private val chatModel: String,
+    val properties: LlmChatModelProperties,
     val aiChatModelListener: AiChatModelListener,
 ) {
 
     @Bean
     fun ollamaLlmModel(): ChatLanguageModel {
-        return OpenAiChatModel.builder()
-            .apiKey("***")
-            .modelName(chatModel)
+        return OllamaChatModel.builder()
+            .modelName(properties.model)
             .maxRetries(5)
-//            .logRequests(true)
-//            .logResponses(true)
-            .baseUrl(llmChatBaseUrl)
-            .temperature(0.1)
+            .logRequests(true)
+            .logResponses(true)
+            .baseUrl(properties.baseUrl)
+            .temperature(properties.temperature)
             .listeners(listOf(aiChatModelListener))
             .build()
     }
 
     @Bean
     fun ollamaStreamingLlmModel(): StreamingChatLanguageModel {
-        return OpenAiStreamingChatModel.builder()
-            .apiKey("***")
-            .modelName(chatModel)
-            .baseUrl(llmChatBaseUrl)
+        return OllamaStreamingChatModel.builder()
+            .modelName(properties.model)
+            .baseUrl(properties.baseUrl)
 //            .logRequests(true)
 //            .logResponses(true)
-            .temperature(0.1)
+            .temperature(properties.temperature)
             .listeners(listOf(aiChatModelListener))
             .build()
     }

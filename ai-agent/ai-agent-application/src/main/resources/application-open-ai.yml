@@ -1,5 +1,7 @@
 adapter:
   llm:
+    chat:
+      model: gpt-3.5-turbo-0125
+      base-url: http://localhost:11434/v1/
     open-ai:
       api-key: ${OPENAI_API_KEY}
-      model: gpt-3.5-turbo-0125

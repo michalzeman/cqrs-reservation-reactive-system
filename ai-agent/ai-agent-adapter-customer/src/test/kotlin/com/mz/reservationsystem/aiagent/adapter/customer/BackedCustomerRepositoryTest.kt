@@ -1,31 +1,27 @@
 package com.mz.reservationsystem.aiagent.adapter.customer
 
-import org.junit.jupiter.api.BeforeEach
+import com.mz.ddd.common.api.domain.Email
+import com.mz.ddd.common.api.domain.FirstName
+import com.mz.ddd.common.api.domain.LastName
+import com.mz.reservationsystem.aiagent.domain.customer.RegisterCustomer
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mock
-import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.web.reactive.function.client.WebClient
 
 
-@ExtendWith(MockitoExtension::class)
 class BackedCustomerRepositoryTest {
 
-    @Mock
-    lateinit var webClient: WebClient
-
-    lateinit var cut: BackedCustomerRepository
-
-    @BeforeEach
-    fun setUp() {
-        cut = BackedCustomerRepository(webClient)
-    }
-
     @Test
-    fun registerCustomer() {
-    }
+    fun `map RegisterCustomer to Request`() {
+        val customerData = RegisterCustomer(
+            lastName = LastName("Doe"),
+            firstName = FirstName("John"),
+            email = Email("test@test.com")
+        )
 
-    @Test
-    fun findCustomer() {
+        val registerCustomerRequest = customerData.map()
+
+        assertThat(registerCustomerRequest.email).isEqualTo(customerData.email.value)
+        assertThat(registerCustomerRequest.firstName).isEqualTo(customerData.firstName.value)
+        assertThat(registerCustomerRequest.lastName).isEqualTo(customerData.lastName.value)
     }
 }

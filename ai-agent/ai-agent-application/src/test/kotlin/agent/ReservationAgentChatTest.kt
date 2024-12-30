@@ -10,9 +10,7 @@ import com.mz.reservationsystem.aiagent.adapter.llm.wiring.AgentAiServicesConfig
 import com.mz.reservationsystem.aiagent.adapter.llm.wiring.OllamaLlmModelConfiguration
 import com.mz.reservationsystem.aiagent.domain.ai.AgentManager
 import com.mz.reservationsystem.aiagent.domain.ai.ChatAgentTypeClassification
-import com.mz.reservationsystem.aiagent.domain.ai.model.ChatCustomerRequest
-import com.mz.reservationsystem.aiagent.domain.ai.model.ChatResponse
-import com.mz.reservationsystem.aiagent.domain.ai.model.NewChatCustomerRequest
+import com.mz.reservationsystem.aiagent.domain.ai.model.*
 import com.mz.reservationsystem.aiagent.domain.api.chat.ChatAgentType
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content
 import kotlinx.coroutines.flow.map
@@ -25,10 +23,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito
-import org.mockito.kotlin.argWhere
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -37,9 +32,9 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatterBuilder
 
-@Disabled
+//@Disabled
 @SpringBootTest(classes = [TestAiAgentConfiguration::class, OllamaLlmModelConfiguration::class, AgentAiServicesConfiguration::class, AiChatMemoryStorageConfiguration::class])
-@ActiveProfiles("ollama", "test")
+@ActiveProfiles("ollama", "test-ai")
 //@ActiveProfiles("open-ai", "test")
 class ReservationAgentChatTest {
 
@@ -63,6 +58,7 @@ class ReservationAgentChatTest {
         Mockito.reset(reservationToolMock, customerToolMock)
     }
 
+    @Disabled
     @Test
     fun `create a reservation streaming chat`() = runBlocking {
 
@@ -187,17 +183,17 @@ class ReservationAgentChatTest {
         println("Agent: ")
         println(agentAnswer1.message.value)
 
-        val message2 = """
-            customer id is ${customerId.value}
-        """.trimIndent()
-        println("User: $message2")
-
-        val agentAnswer2 =
-            agentManager.execute(ChatCustomerRequest(Content(message2), chatId, customerId, customerData))
-                .map { it as ChatResponse }
-                .reduce(aggregateAgentResponseFlow())
-        println("Agent: ")
-        println(agentAnswer2.message.value)
+//        val message2 = """
+//            customer id is ${customerId.value}
+//        """.trimIndent()
+//        println("User: $message2")
+//
+//        val agentAnswer2 =
+//            agentManager.execute(ChatCustomerRequest(Content(message2), chatId, customerId, customerData))
+//                .map { it as ChatResponse }
+//                .reduce(aggregateAgentResponseFlow())
+//        println("Agent: ")
+//        println(agentAnswer2.message.value)
 
         val message3 = """
             Yes
@@ -210,6 +206,101 @@ class ReservationAgentChatTest {
                 .reduce(aggregateAgentResponseFlow())
         println("Agent: ")
         println(agentAnswer3.message.value)
+
+        verify(reservationToolMock, atLeastOnce()).findTimeSlotByTimeWindow(anyString(), anyString())
+        verify(reservationToolMock, atLeastOnce()).createReservation(anyString(), anyString(), anyString(), anyString())
+    }
+
+    @Test
+    fun `create a reservation chat, when customer is unknown`(): Unit = runBlocking {
+        val customerId = newId()
+
+        val customerData = Content(
+            """
+                {
+                    "id": "${customerId.value}",
+                    "first_name": "Michal",
+                    "last_name": "Zeman",
+                    "email": "michal.zeman@test.org"
+                }
+                """.trimIndent()
+        )
+
+        val startTimeText = "2024-10-12 12:00"
+        val startTime: Instant = LocalDateTime.parse("2024-10-12T12:00:00", formatter).toInstant(ZoneOffset.UTC)
+        val endTimeText = "2024-10-12 14:00"
+        val endTime: Instant = startTime.plusSeconds(240)
+
+        whenever(reservationToolMock.findTimeSlotByTimeWindow(
+            argWhere { it.verifyStringDate() },
+            argWhere { it.verifyStringDate() }
+        )).thenAnswer {
+            listOf(TimeSlot(startTime, endTime).toString())
+        }
+
+        whenever(reservationToolMock.createReservation(
+            eq(customerId.value),
+            argWhere { it.verifyStringDate() },
+            argWhere { it.verifyStringDate() },
+            eq("michal.zeman@test.org")
+        )).thenAnswer { "Reservation has been created with the id: ${newId()}" }
+
+        whenever(customerToolMock.findCustomer(anyString())).thenAnswer {
+            customerData.value
+        }
+
+        val message1 = """
+            I would like to create an reservation from $startTimeText to $endTimeText
+        """.trimIndent()
+
+        println("User: $message1")
+
+        val agentAnswer1 = agentManager.execute(
+            NewChatRequest(
+                Content(message1)
+            )
+        )
+            .map { it as ChatResponse }
+            .reduce(aggregateAgentResponseFlow())
+        val chatId = agentAnswer1.chatId
+        println("Agent: ")
+        println(agentAnswer1.message.value)
+
+        val message2 = """
+            customer id is ${customerId.value}
+        """.trimIndent()
+        println("User: $message2")
+
+        val agentAnswer2 =
+            agentManager.execute(ChatRequest(chatId, Content(message2)))
+                .map { it as ChatResponse }
+                .reduce(aggregateAgentResponseFlow())
+        println("Agent: ")
+        println(agentAnswer2.message.value)
+
+        val message3 = """
+            Yes
+        """.trimIndent()
+        println("User: $message3")
+
+        val agentAnswer3 =
+            agentManager.execute(ChatRequest(chatId, Content(message3)))
+                .map { it as ChatResponse }
+                .reduce(aggregateAgentResponseFlow())
+        println("Agent: ")
+        println(agentAnswer3.message.value)
+
+        val message4 = """
+            Yes make a reservation
+        """.trimIndent()
+        println("User: $message4")
+
+        val agentAnswer4 =
+            agentManager.execute(ChatRequest(chatId, Content(message4)))
+                .map { it as ChatResponse }
+                .reduce(aggregateAgentResponseFlow())
+        println("Agent: ")
+        println(agentAnswer4.message.value)
 
         verify(reservationToolMock).findTimeSlotByTimeWindow(anyString(), anyString())
         verify(reservationToolMock).createReservation(anyString(), anyString(), anyString(), anyString())
