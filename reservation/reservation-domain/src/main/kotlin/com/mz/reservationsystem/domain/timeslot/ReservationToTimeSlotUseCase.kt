@@ -13,7 +13,7 @@ import reactor.kotlin.core.publisher.switchIfEmpty
 import reactor.kotlin.core.publisher.toMono
 
 @Component
-class ReservationToTimeSlotProcessor(
+class ReservationToTimeSlotUseCase(
     private val channelStream: ApplicationChannelStream,
     @Qualifier("timeSlotAggregateManager")
     private val aggregateManager: TimeSlotAggregateManager,
