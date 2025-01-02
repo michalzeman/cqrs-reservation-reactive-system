@@ -63,8 +63,13 @@ class CustomerEventHandlerTest {
 
     @Test
     fun `applying CustomerReservationConfirmed event to ExistingCustomer should return ExistingCustomer`() {
+        val requestId = Id("request:2")
         val existingReservation =
-            Reservation(Id("reservation:2"), ReservationStatus.REQUESTED, ReservationPeriod(instantNow(), instantNow()))
+            Reservation(
+                requestId = requestId,
+                status = ReservationStatus.REQUESTED,
+                reservationPeriod = ReservationPeriod(instantNow(), instantNow())
+            )
         val existingCustomer =
             ExistingCustomer(
                 Id("1"),
@@ -74,7 +79,11 @@ class CustomerEventHandlerTest {
                 Email("john.doe@example.com"),
                 setOf(existingReservation)
             )
-        val event = CustomerReservationConfirmed(Id("1"), Id("reservation:2"), newId())
+        val event = CustomerReservationConfirmed(
+            reservationId = Id("1"),
+            requestId = requestId,
+            aggregateId = newId()
+        )
         val result = eventHandler.apply(existingCustomer, event)
         assertTrue(result is ExistingCustomer)
         assertEquals(result.version, Version(3))

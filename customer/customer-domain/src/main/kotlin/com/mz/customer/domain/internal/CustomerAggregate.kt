@@ -13,8 +13,6 @@ import com.mz.customer.domain.api.Reservation
 import com.mz.customer.domain.api.ReservationStatus
 import com.mz.customer.domain.api.UpdateCustomerReservationAsConfirmed
 import com.mz.customer.domain.api.UpdateCustomerReservationAsDeclined
-import com.mz.customer.domain.api.apply
-import com.mz.customer.domain.api.existsReservation
 import com.mz.customer.domain.api.toEvent
 import com.mz.ddd.common.api.domain.Aggregate
 import com.mz.ddd.common.api.domain.DomainTag
@@ -90,8 +88,8 @@ internal data class ExistingCustomer(
     val reservations: Set<Reservation> = emptySet()
 ) : Customer() {
     internal fun verifyRequestNewCustomerReservation(cmd: RequestNewCustomerReservation): List<CustomerEvent> {
-        return if (reservations.existsReservation(cmd.reservationId)) {
-            error("Can't create a new reservation id=${cmd.reservationId}, reservation is already requested")
+        return if (reservations.existsReservation(cmd.requestId)) {
+            error("Can't create a new reservation id=${cmd.requestId}, reservation is already requested")
         } else {
             listOf(
                 cmd.toEvent()
@@ -120,7 +118,7 @@ internal data class ExistingCustomer(
     }
 
     internal fun apply(event: CustomerReservationRequested): ExistingCustomer {
-        val reservation = Reservation(event.reservationId, ReservationStatus.REQUESTED, event.reservationPeriod)
+        val reservation = Reservation(event.requestId, status = ReservationStatus.REQUESTED, reservationPeriod = event.reservationPeriod)
         return this.copy(reservations = reservations.plus(reservation), version = version.increment())
     }
 

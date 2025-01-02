@@ -31,7 +31,7 @@ data class CustomerRegistered(
 @Serializable
 @SerialName("customer-reservation-requested")
 data class CustomerReservationRequested(
-    val reservationId: Id,
+    val requestId: Id,
     val reservationPeriod: ReservationPeriod,
     override val aggregateId: Id,
     override val correlationId: Id = Id(uuid()),

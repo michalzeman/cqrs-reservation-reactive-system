@@ -3,7 +3,6 @@ package com.mz.customer.domain.internal
 import com.mz.customer.domain.api.Reservation
 import com.mz.customer.domain.api.ReservationPeriod
 import com.mz.customer.domain.api.ReservationStatus
-import com.mz.customer.domain.api.existsReservation
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.instantNow
 import org.junit.jupiter.api.Assertions.assertFalse

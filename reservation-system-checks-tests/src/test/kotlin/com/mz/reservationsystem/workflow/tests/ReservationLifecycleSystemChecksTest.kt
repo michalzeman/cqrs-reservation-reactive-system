@@ -76,13 +76,13 @@ class ReservationLifecycleSystemChecksTest {
 
         val newCustomerReservation = NewCustomerReservationRequest(
             customerId = responseCustomer.aggregateId.value,
-            reservationId = uuid(),
+            requestId = uuid(),
             startTime = startTime,
             endTime = endTime
         )
 
         customerServiceClient.put()
-            .uri("/customers")
+            .uri("/customers/${newCustomerReservation.customerId}/reservations")
             .contentType(APPLICATION_JSON)
             .body(newCustomerReservation.toMono(), NewCustomerReservationRequest::class.java)
             .exchange()

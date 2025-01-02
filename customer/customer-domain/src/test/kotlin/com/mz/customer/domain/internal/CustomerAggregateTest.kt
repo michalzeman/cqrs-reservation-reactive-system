@@ -37,16 +37,24 @@ class CustomerAggregateTest {
     fun `requesting a new reservation should produce a CustomerReservationRequested event`() {
         val existingCustomer =
             ExistingCustomer(Id("1"), Version(1), LastName("Doe"), FirstName("John"), Email("john.doe@example.com"))
+
         val requestNewCustomerReservationCommand =
-            RequestNewCustomerReservation(Id("1"), Id("reservation:2"), ReservationPeriod(instantNow(), instantNow()))
+            RequestNewCustomerReservation(
+                customerId = Id("1"),
+                requestId = Id("request:2"),
+                reservationPeriod = ReservationPeriod(instantNow(), instantNow())
+            )
         val events = existingCustomer.verifyRequestNewCustomerReservation(requestNewCustomerReservationCommand)
         assertTrue(events.single() is CustomerReservationRequested)
     }
 
     @Test
     fun `requesting a new reservation with an existing reservation id should throw an exception`() {
+        val requestId = Id("request:2")
         val existingReservation = Reservation(
-            Id("reservation:2"), ReservationStatus.REQUESTED, ReservationPeriod(instantNow(), instantNow())
+            requestId = requestId,
+            status = ReservationStatus.REQUESTED,
+            reservationPeriod = ReservationPeriod(instantNow(), instantNow())
         )
         val existingCustomer = ExistingCustomer(
             Id("1"),
@@ -57,7 +65,11 @@ class CustomerAggregateTest {
             setOf(existingReservation)
         )
         val requestNewCustomerReservationCommand =
-            RequestNewCustomerReservation(Id("1"), Id("reservation:2"), ReservationPeriod(instantNow(), instantNow()))
+            RequestNewCustomerReservation(
+                customerId = Id("1"),
+                requestId = requestId,
+                reservationPeriod = ReservationPeriod(instantNow(), instantNow())
+            )
         assertThrows<RuntimeException> {
             existingCustomer.verifyRequestNewCustomerReservation(requestNewCustomerReservationCommand)
         }
@@ -65,8 +77,11 @@ class CustomerAggregateTest {
 
     @Test
     fun `confirming a reservation should produce a CustomerReservationConfirmed event`() {
+        val requestId = Id("request:2")
         val existingReservation = Reservation(
-            Id("reservation:2"), ReservationStatus.REQUESTED, ReservationPeriod(instantNow(), instantNow())
+            requestId = requestId,
+            status = ReservationStatus.REQUESTED,
+            reservationPeriod = ReservationPeriod(instantNow(), instantNow())
         )
         val existingCustomer =
             ExistingCustomer(
@@ -78,7 +93,11 @@ class CustomerAggregateTest {
                 setOf(existingReservation)
             )
         val updateCustomerReservationAsConfirmedCommand =
-            UpdateCustomerReservationAsConfirmed(Id("1"), newId(), Id("reservation:2"))
+            UpdateCustomerReservationAsConfirmed(
+                customerId = Id("1"),
+                reservationId = newId(),
+                requestId = requestId
+            )
         val events =
             existingCustomer.verifyUpdateCustomerReservationAsConfirmed(updateCustomerReservationAsConfirmedCommand)
         assertTrue(events.single() is CustomerReservationConfirmed)
@@ -95,7 +114,11 @@ class CustomerAggregateTest {
                 Email("john.doe@example.com"),
             )
         val updateCustomerReservationAsConfirmedCommand =
-            UpdateCustomerReservationAsConfirmed(Id("1"), newId(), Id("reservation:2"))
+            UpdateCustomerReservationAsConfirmed(
+                customerId = Id("1"),
+                reservationId = newId(),
+                requestId = Id("request:2")
+            )
 
         assertThrows<RuntimeException> {
             existingCustomer.verifyUpdateCustomerReservationAsConfirmed(updateCustomerReservationAsConfirmedCommand)
@@ -104,8 +127,15 @@ class CustomerAggregateTest {
 
     @Test
     fun `declining a reservation should produce a CustomerReservationDeclined event`() {
+        val requestId = newId()
         val existingReservation =
-            Reservation(Id("reservation:2"), ReservationStatus.REQUESTED, ReservationPeriod(instantNow(), instantNow()))
+            Reservation(
+                id = Id("reservation:2"),
+                requestId = requestId,
+                status = ReservationStatus.REQUESTED,
+                reservationPeriod = ReservationPeriod(instantNow(), instantNow())
+
+            )
         val existingCustomer =
             ExistingCustomer(
                 Id("1"),
@@ -116,7 +146,11 @@ class CustomerAggregateTest {
                 setOf(existingReservation)
             )
         val updateCustomerReservationAsDeclinedCommand =
-            UpdateCustomerReservationAsDeclined(Id("1"), Id("reservation:2"), newId())
+            UpdateCustomerReservationAsDeclined(
+                customerId = Id("1"),
+                reservationId = Id("reservation:2"),
+                requestId = requestId
+            )
         val events =
             existingCustomer.verifyUpdateCustomerReservationAsDeclined(updateCustomerReservationAsDeclinedCommand)
         assertTrue(events.single() is CustomerReservationDeclined)
