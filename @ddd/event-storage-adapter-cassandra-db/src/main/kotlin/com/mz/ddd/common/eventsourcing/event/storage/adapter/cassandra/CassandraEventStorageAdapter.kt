@@ -22,7 +22,6 @@ internal class CassandraEventStorageAdapter(
             .map { events -> events.map { it.toEntity() } }
             .flatMapMany { eventJournalRepository.saveAll(it) }
             .then(lastSequence.toMono())
-            .log()
     }
 
     override fun save(snapshot: Snapshot): Mono<Void> {

@@ -39,13 +39,13 @@ class CustomerWorkflowTest {
 
         val newCustomerReservation = RequestNewCustomerReservation(
             customerId = result!!.aggregateId,
-            reservationId = Id(requestId),
+            requestId = Id(requestId),
             ReservationPeriod(instantNow(), instantNow())
         )
 
         StepVerifier.create(customerApi.execute(newCustomerReservation))
             .assertNext { document ->
-                document.reservations.any { it.id.value == requestId && it.status == ReservationStatus.REQUESTED }
+                document.reservations.any { it.id?.value == requestId && it.status == ReservationStatus.REQUESTED }
             }
             .verifyComplete()
 
@@ -57,7 +57,7 @@ class CustomerWorkflowTest {
 
         StepVerifier.create(customerApi.execute(updateCustomerReservationAsConfirmed))
             .assertNext { document ->
-                document.reservations.any { it.id.value == requestId && it.status == ReservationStatus.CONFIRMED }
+                document.reservations.any { it.id?.value == requestId && it.status == ReservationStatus.CONFIRMED }
             }
             .verifyComplete()
     }
@@ -77,13 +77,13 @@ class CustomerWorkflowTest {
 
         val newCustomerReservation = RequestNewCustomerReservation(
             customerId = result!!.aggregateId,
-            reservationId = Id(requestId),
+            requestId = Id(requestId),
             ReservationPeriod(instantNow(), instantNow())
         )
 
         StepVerifier.create(customerApi.execute(newCustomerReservation))
             .assertNext { document ->
-                document.reservations.any { it.id.value == requestId && it.status == ReservationStatus.REQUESTED }
+                document.reservations.any { it.id?.value == requestId && it.status == ReservationStatus.REQUESTED }
             }
             .verifyComplete()
 
@@ -95,7 +95,7 @@ class CustomerWorkflowTest {
 
         StepVerifier.create(customerApi.execute(updateCustomerReservationAsDeclined))
             .assertNext { document ->
-                document.reservations.any { it.id.value == requestId && it.status == ReservationStatus.DECLINED }
+                document.reservations.any { it.id?.value == requestId && it.status == ReservationStatus.DECLINED }
             }
             .verifyComplete()
     }

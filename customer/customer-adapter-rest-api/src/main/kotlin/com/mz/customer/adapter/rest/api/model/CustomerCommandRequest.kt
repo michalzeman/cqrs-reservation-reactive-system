@@ -63,7 +63,7 @@ data class RegisterCustomerRequest(
 
 data class NewCustomerReservationRequest(
     val customerId: String,
-    val reservationId: String,
+    val requestId: String,
     val startTime: Instant,
     val endTime: Instant,
     val correlationId: String = uuid(),
@@ -73,7 +73,7 @@ data class NewCustomerReservationRequest(
     override fun toCommand(): CustomerCommand {
         return RequestNewCustomerReservation(
             customerId = Id(customerId),
-            reservationId = Id(reservationId),
+            requestId = Id(requestId),
             reservationPeriod = ReservationPeriod(startTime, endTime),
             correlationId = Id(correlationId),
             createdAt = createdAt,

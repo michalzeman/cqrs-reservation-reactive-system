@@ -34,7 +34,7 @@ class CustomerToReservationUseCase(
             RequestReservation(
                 aggregateId = NEW_RESERVATION_ID,
                 customerId = customerReservationRequested.aggregateId,
-                requestId = customerReservationRequested.reservationId,
+                requestId = customerReservationRequested.requestId,
                 startTime = customerReservationRequested.reservationPeriod.startTime,
                 endTime = customerReservationRequested.reservationPeriod.endTime,
                 correlationId = customerReservationRequested.correlationId

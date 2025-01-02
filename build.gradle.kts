@@ -83,12 +83,16 @@ subprojects {
     }
 
     tasks.withType<Test> {
-        if (isSystemCheckProfile) {
-            useJUnitPlatform()
-        } else {
-            useJUnitPlatform {
-                excludeTags("systemChecks")
-            }
+        useJUnitPlatform {
+            excludeTags("systemChecks", "aiTest")
+        }
+    }
+
+    // TODO: enable this
+    tasks.register<Test>("systemTest") {
+        useJUnitPlatform {
+            includeTags("systemChecks")
+            excludeTags("aiTest")
         }
     }
 
@@ -147,8 +151,6 @@ tasks.register("waitForDockerComposeBeforeTests") {
     }
 }
 
-tasks["test"].mustRunAfter("waitForDockerComposeBeforeTests", "runDockerComposeBeforeTests", "systemChecksTests")
-
 tasks.register("tearDownDockerCompose") {
     val allTestTasks = project.subprojects.flatMap { project -> project.tasks.matching { it.name == "test" } }
     mustRunAfter(allTestTasks)
@@ -168,7 +170,15 @@ tasks.register("tearDownDockerCompose") {
     }
 }
 
-tasks["build"].finalizedBy("tearDownDockerCompose")
+tasks.register("processAllLiquibase") {
+    mustRunAfter("compileKotlin", "compileJava")
+    val allProcessLiquibaseTasks = project.subprojects
+        .flatMap { project -> project.tasks.matching { it.name == "processLiquibase" } }
+    dependsOn(allProcessLiquibaseTasks)
+    doLast {
+        println("Executing custom task")
+    }
+}
 
 tasks.register("bootBuildServicesImages") {
     onlyIf { isSystemCheckProfile }
@@ -226,3 +236,7 @@ fun waitToDockerInfrastructureIsHealthy() {
         Thread.sleep(1000)
     }
 }
+
+tasks["build"].dependsOn("processAllLiquibase").finalizedBy("tearDownDockerCompose")
+
+tasks["test"].mustRunAfter("waitForDockerComposeBeforeTests", "runDockerComposeBeforeTests", "systemChecksTests")

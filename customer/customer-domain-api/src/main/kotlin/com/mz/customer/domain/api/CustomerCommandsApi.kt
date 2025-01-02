@@ -38,7 +38,7 @@ fun RegisterCustomer.toEvent(customerId: Id): CustomerRegistered {
 
 data class RequestNewCustomerReservation(
     override val customerId: Id,
-    val reservationId: Id,
+    val requestId: Id,
     val reservationPeriod: ReservationPeriod,
     override val correlationId: Id = Id(uuid()),
     override val createdAt: Instant = instantNow(),
@@ -48,7 +48,7 @@ data class RequestNewCustomerReservation(
 fun RequestNewCustomerReservation.toEvent(): CustomerReservationRequested {
     return CustomerReservationRequested(
         aggregateId = this.customerId,
-        reservationId = this.reservationId,
+        requestId = this.requestId,
         correlationId = this.correlationId,
         reservationPeriod = this.reservationPeriod
     )

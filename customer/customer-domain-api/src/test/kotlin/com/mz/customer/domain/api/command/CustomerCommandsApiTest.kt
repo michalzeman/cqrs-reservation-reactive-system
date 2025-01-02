@@ -34,7 +34,7 @@ class CustomerCommandsApiTest {
             RequestNewCustomerReservation(Id("1"), Id("2"), ReservationPeriod(instantNow(), instantNow()), newId())
         val event = command.toEvent()
         assertEquals("1", event.aggregateId.value)
-        assertEquals("2", event.reservationId.value)
+        assertEquals("2", event.requestId.value)
         assertEquals(event.correlationId, command.correlationId)
     }
 

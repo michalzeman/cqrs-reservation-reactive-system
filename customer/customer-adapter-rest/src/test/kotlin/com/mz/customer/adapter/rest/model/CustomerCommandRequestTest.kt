@@ -44,7 +44,7 @@ class CustomerCommandRequestTest {
             {
                 "type":"new-customer-reservation",
                 "customerId":"123",
-                "reservationId":"456",
+                "requestId":"456",
                 "startTime":"2021-03-01T00:00:00.000Z",
                 "endTime":"2021-03-01T01:00:00.000Z",
                 "correlationId":"789",
@@ -55,7 +55,7 @@ class CustomerCommandRequestTest {
         val request = objectMapper.readValue<CustomerCommandRequest>(jsonTest).toCommand()
         val cmd = request as RequestNewCustomerReservation
         assertThat(cmd.customerId.value).isEqualTo("123")
-        assertThat(cmd.reservationId.value).isEqualTo("456")
+        assertThat(cmd.requestId.value).isEqualTo("456")
         assertThat(cmd.createdAt).isEqualTo(Instant.parse("2021-03-01T00:00:00.000Z"))
         assertThat(cmd.correlationId.value).isEqualTo("789")
         assertThat(cmd.commandId.value).isEqualTo("012")
