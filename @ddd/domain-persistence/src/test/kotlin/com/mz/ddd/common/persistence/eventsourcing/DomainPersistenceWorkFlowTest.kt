@@ -15,6 +15,7 @@ import com.mz.ddd.common.persistence.eventsourcing.wiring.TestDomainPersistenceC
 import com.mz.ddd.common.shared.test.cassandra.waitForDatabase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -23,6 +24,7 @@ import reactor.test.StepVerifier
 
 @SpringBootTest(classes = [TestDomainPersistenceConfiguration::class])
 @ActiveProfiles("test")
+@Tag("systemChecks")
 class DomainPersistenceWorkFlowTest {
 
     @Autowired

@@ -14,7 +14,7 @@ services:
     networks:
       - reservation-system
     profiles:
-      - system-checks
+      - ai
 
   reservation-service:
     image: reservation-application:0.0.1-SNAPSHOT
@@ -32,6 +32,7 @@ services:
       - reservation-system
     profiles:
       - system-checks
+      - ai
 
   customer-service:
     image: customer-application:0.0.1-SNAPSHOT
@@ -49,6 +50,7 @@ services:
       - reservation-system
     profiles:
       - system-checks
+      - ai
 
   kafka-init:
     image: confluentinc/cp-kafka:7.5.3
@@ -162,9 +164,6 @@ services:
       - DEFAULT_SCHEMA_NAME=ai_agent_keyspace
     depends_on:
       - cassandra-db-init-liquibase-keyspace
-      - redis-db
-      - kafka
-      - control-center
     networks:
       - reservation-system
     healthcheck:
@@ -188,9 +187,7 @@ services:
       - DEFAULT_SCHEMA_NAME=ddd_testing_keyspace
     depends_on:
       - cassandra-db-init-liquibase-keyspace
-      - kafka
-      - redis-db
-      - control-center
+      - cassandra-liquibase-ai-agent
     networks:
       - reservation-system
     healthcheck:
@@ -214,9 +211,7 @@ services:
       - DEFAULT_SCHEMA_NAME=customer_keyspace
     depends_on:
       - cassandra-db-init-liquibase-keyspace
-      - kafka
-      - control-center
-      - redis-db
+      - cassandra-liquibase-ddd-testing
     networks:
       - reservation-system
     healthcheck:
@@ -240,9 +235,7 @@ services:
       - DEFAULT_SCHEMA_NAME=reservation_keyspace
     depends_on:
       - cassandra-db-init-liquibase-keyspace
-      - redis-db
-      - kafka
-      - control-center
+      - cassandra-liquibase-customer
     networks:
       - reservation-system
     healthcheck:

@@ -1,6 +1,5 @@
 package com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra
 
-import com.datastax.oss.driver.api.core.CqlSession
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.EventJournalEntity
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.EventJournalRepository
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persistence.SnapshotEntity
@@ -8,20 +7,18 @@ import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persisten
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.EventStorageAdapterCassandraConfiguration
 import com.mz.ddd.common.shared.test.cassandra.waitForDatabase
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import reactor.test.StepVerifier
-import java.net.InetSocketAddress
 import java.nio.ByteBuffer
 import java.time.Instant
 
+
 @SpringBootTest(classes = [EventStorageAdapterCassandraConfiguration::class])
 @ActiveProfiles("test")
+@Tag("systemChecks")
 class CassandraEventStorageAdapterTest {
 
     @Autowired

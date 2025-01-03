@@ -27,7 +27,3 @@ tasks.register<Copy>("processLiquibase") {
     include("**/event-sourcing-changelog.xml")
     into(destDir)
 }
-
-tasks.named("test") {
-    dependsOn("processLiquibase")
-}
