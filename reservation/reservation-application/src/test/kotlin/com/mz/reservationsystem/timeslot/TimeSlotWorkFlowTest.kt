@@ -10,6 +10,7 @@ import com.mz.reservationsystem.domain.api.timeslot.TimeSlotDocument
 import kotlinx.datetime.toJavaInstant
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -22,6 +23,7 @@ import org.springframework.test.web.reactive.server.expectBody
 import reactor.core.publisher.Mono
 import kotlin.time.Duration
 
+@Tag("systemChecks")
 @SpringBootTest(
     classes = [TestReservationSystemConfiguration::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT

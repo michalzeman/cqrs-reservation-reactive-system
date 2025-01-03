@@ -13,11 +13,13 @@ import com.mz.ddd.common.api.domain.LastName
 import com.mz.ddd.common.api.domain.instantNow
 import com.mz.ddd.common.api.domain.newId
 import com.mz.ddd.common.api.domain.uuid
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import reactor.test.StepVerifier
 
+@Tag("systemChecks")
 @SpringBootTest(classes = [CustomerTestConfiguration::class])
 class CustomerWorkflowTest {
 

@@ -4,6 +4,7 @@ import com.mz.ddd.common.api.domain.uuid
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.AcquireLock
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.ReleaseLock
 import com.mz.ddd.common.persistence.eventsourcing.locking.persistence.redis.wiring.RedisLockStorageAdapterConfiguration
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -12,6 +13,7 @@ import reactor.test.StepVerifier
 import java.time.Duration
 
 
+@Tag("systemChecks")
 @SpringBootTest(classes = [RedisLockStorageAdapterConfiguration::class])
 @ActiveProfiles("test")
 class RedisLockStorageAdapterTest {

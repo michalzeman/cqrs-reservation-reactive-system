@@ -3,6 +3,7 @@ package com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.persiste
 import com.mz.ddd.common.eventsourcing.event.storage.adapter.cassandra.wiring.EventStorageAdapterCassandraConfiguration
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -11,6 +12,7 @@ import reactor.test.StepVerifier
 import java.nio.ByteBuffer
 import java.time.Instant
 
+@Tag("systemChecks")
 @SpringBootTest(classes = [EventStorageAdapterCassandraConfiguration::class])
 @ActiveProfiles("test")
 class EventJournalRepositoryTest {

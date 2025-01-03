@@ -20,8 +20,10 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import reactor.core.publisher.Mono
 import com.mz.reservationsystem.adapter.model.timeslot.CreateTimeSlotRequest
+import org.junit.jupiter.api.Tag
 import kotlin.time.Duration
 
+@Tag("systemChecks")
 @SpringBootTest(
     classes = [TestReservationSystemConfiguration::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT

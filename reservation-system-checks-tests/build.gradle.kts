@@ -8,7 +8,3 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
-
-tasks.named("test") {
-    dependsOn(":runDockerComposeBeforeTests", ":waitForDockerComposeBeforeTests", ":systemChecksTests")
-}

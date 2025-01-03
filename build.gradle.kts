@@ -8,10 +8,6 @@ val kotlinxDatetimeVersion: String by project
 val reactorKotlinExtensionsVersion: String by project
 val kotlinVersion: String by project
 
-val systemChecksProfile = "system-checks"
-
-val isSystemCheckProfile = project.hasProperty(systemChecksProfile)
-
 plugins {
     alias(libs.plugins.springframework.boot) apply false
     alias(libs.plugins.io.spring.dependency.management)
@@ -81,22 +77,18 @@ subprojects {
         }
     }
 
-    tasks.withType<Test> {
+    tasks.test {
         useJUnitPlatform {
             excludeTags("systemChecks", "aiTest")
         }
     }
 
-    // TODO: enable this
     tasks.register<Test>("systemTest") {
+        group = "verification"
         useJUnitPlatform {
             includeTags("systemChecks")
-            excludeTags("aiTest")
         }
-    }
-
-    tasks.named("test") {
-        dependsOn(":runDockerComposeBeforeTests", ":waitForDockerComposeBeforeTests", ":systemChecksTests")
+        dependsOn(":systemChecksTests")
     }
 }
 
@@ -134,29 +126,33 @@ project(":reservation-system-checks-tests") {
     }
 }
 
-tasks.register("runDockerComposeBeforeTests") {
-    val allProcessLiquibaseTasks = project.subprojects
-        .flatMap { project -> project.tasks.matching { it.name == "processLiquibase" } }
-    dependsOn(allProcessLiquibaseTasks)
+tasks.register("runDockerCompose") {
+    group = "docker"
+
+    dependsOn(":processAllLiquibase")
+    mustRunAfter(":processAllLiquibase")
     doLast {
         dockerInfrastructureUp()
     }
 }
 
-tasks.register("waitForDockerComposeBeforeTests") {
-    mustRunAfter("runDockerComposeBeforeTests")
+tasks.register("waitForDockerCompose") {
+    group = "docker"
+
+    mustRunAfter(":runDockerCompose", ":springBootBuildImagesAndRunDockerContainers")
     doLast {
         waitToDockerInfrastructureIsHealthy()
     }
 }
 
 tasks.register("tearDownDockerCompose") {
-    val allTestTasks = project.subprojects.flatMap { project -> project.tasks.matching { it.name == "test" } }
+    group = "docker"
+
+    val allTestTasks = project.subprojects.flatMap { project -> project.tasks.matching { it.name == "systemTest" } }
     mustRunAfter(allTestTasks)
     doLast {
         exec {
-            if (isSystemCheckProfile) commandLine("docker", "compose", "--profile", "system-checks", "down", "-v")
-            else commandLine("docker", "compose", "down", "-v")
+            commandLine("docker", "compose", "--profile", "system-checks", "down", "-v")
         }
     }
 }
@@ -166,16 +162,15 @@ tasks.register("processAllLiquibase") {
     val allProcessLiquibaseTasks = project.subprojects
         .flatMap { project -> project.tasks.matching { it.name == "processLiquibase" } }
     dependsOn(allProcessLiquibaseTasks)
-    doLast {
-        println("Executing custom task")
-    }
 }
 
-tasks.register("bootBuildServicesImages") {
-    onlyIf { isSystemCheckProfile }
+tasks.register("springBootBuildImagesAndRunDockerContainers") {
+    group = "docker"
+
     val allBootBuildImagesTasks = project.subprojects
         .flatMap { project -> project.tasks.matching { it.name == "bootBuildImage" } }
     dependsOn(allBootBuildImagesTasks)
+    mustRunAfter(":runDockerCompose")
 
     doLast {
         dockerInfrastructureUp("system-checks")
@@ -183,10 +178,15 @@ tasks.register("bootBuildServicesImages") {
 }
 
 tasks.register("systemChecksTests") {
-    if (isSystemCheckProfile) {
-        dependsOn("bootBuildServicesImages")
-        mustRunAfter("runDockerComposeBeforeTests")
-    }
+    dependsOn(":buildAndRunDockerInfrastructure")
+    mustRunAfter(":buildAndRunDockerInfrastructure")
+}
+
+tasks.register("buildAndRunDockerInfrastructure") {
+    group = "docker"
+
+    dependsOn(":springBootBuildImagesAndRunDockerContainers", ":runDockerCompose", ":waitForDockerCompose")
+    mustRunAfter(":springBootBuildImagesAndRunDockerContainers", ":runDockerCompose", ":waitForDockerCompose")
 }
 
 fun dockerInfrastructureUp(profile: String? = null) {
@@ -222,6 +222,6 @@ fun waitToDockerInfrastructureIsHealthy() {
     }
 }
 
-tasks["build"].dependsOn("processAllLiquibase").finalizedBy("tearDownDockerCompose")
+tasks["build"].dependsOn("processAllLiquibase")
 
-tasks["test"].mustRunAfter("waitForDockerComposeBeforeTests", "runDockerComposeBeforeTests", "systemChecksTests")
+tasks["systemChecksTests"].dependsOn("processAllLiquibase").finalizedBy("tearDownDockerCompose")
