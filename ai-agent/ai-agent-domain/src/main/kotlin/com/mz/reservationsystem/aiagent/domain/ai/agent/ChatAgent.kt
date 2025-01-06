@@ -23,5 +23,6 @@ interface ChatAgent {
 }
 
 fun String.asFlow(): Flow<String> = split(Regex("\\s"))
+    .map { "$it " }
     .asFlow()
     .onEach { delay(Duration.ofMillis(50).toMillis()) }

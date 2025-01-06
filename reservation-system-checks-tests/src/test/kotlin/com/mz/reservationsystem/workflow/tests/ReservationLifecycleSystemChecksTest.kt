@@ -81,7 +81,7 @@ class ReservationLifecycleSystemChecksTest {
             endTime = endTime
         )
 
-        customerServiceClient.put()
+        val result = customerServiceClient.put()
             .uri("/customers/${newCustomerReservation.customerId}/reservations")
             .contentType(APPLICATION_JSON)
             .body(newCustomerReservation.toMono(), NewCustomerReservationRequest::class.java)
@@ -90,8 +90,6 @@ class ReservationLifecycleSystemChecksTest {
             .expectBody(CustomerDocument::class.java)
             .returnResult()
             .responseBody!!
-
-        Thread.sleep(5000)
 
         val customerDocument = customerServiceClient.get().uri("/customers/${responseCustomer.aggregateId.value}")
             .exchange()

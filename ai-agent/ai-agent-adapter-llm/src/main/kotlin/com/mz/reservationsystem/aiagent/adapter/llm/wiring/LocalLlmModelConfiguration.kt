@@ -4,12 +4,14 @@ import dev.langchain4j.model.chat.ChatLanguageModel
 import dev.langchain4j.model.chat.StreamingChatLanguageModel
 import dev.langchain4j.model.localai.LocalAiChatModel
 import dev.langchain4j.model.localai.LocalAiStreamingChatModel
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
 @Profile("local")
 @Configuration
+@EnableConfigurationProperties(LlmChatModelProperties::class)
 class LocalLlmModelConfiguration(
     private val properties: LlmChatModelProperties
 ) {

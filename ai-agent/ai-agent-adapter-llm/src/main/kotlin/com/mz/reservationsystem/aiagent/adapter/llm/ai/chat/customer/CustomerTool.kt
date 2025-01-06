@@ -49,7 +49,8 @@ class CustomerTool(
     @Tool("Find customer")
     fun findCustomer(@P("customer id") customerId: String): String = runBlocking {
         logger.info("findCustomer -> $customerId")
-        customerRepository.findCustomer(Id(customerId))?.toString()
+        customerRepository.findCustomer(Id(customerId))
+            ?.toString()
             ?: "User or customer for given ID doesn't exists!"
     }
 }

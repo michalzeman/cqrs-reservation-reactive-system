@@ -5,6 +5,8 @@ import com.mz.common.components.json.serToJsonString
 import com.mz.reservationsystem.aiagent.domain.ai.AgentManager
 import com.mz.reservationsystem.aiagent.domain.ai.model.AgentRequest
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.reactor.asFlux
 import org.apache.commons.logging.LogFactory
 import org.springframework.stereotype.Component
@@ -27,13 +29,16 @@ class AiAgentChatHandler(
         val output = session.receive()
             .map { it.payloadAsText }
             .map { desJson<AgentRequest>(it) }
-            .flatMap {
-                agentManager.execute(it) { session.close().subscribe() }
+            .flatMap { agentRequest ->
+                agentManager.execute(agentRequest)
+                    .map { serToJsonString(it) }
+                    .map { session.textMessage(it) }
+                    .onCompletion { session.close().subscribe() }
                     .asFlux(Dispatchers.IO)
             }
-            .map { serToJsonString(it) }
-            .map { session.textMessage(it) }
-            .doOnError { logger.error(it) }
+            .doOnError {
+                logger.error(it.message, it)
+            }
             .publishOn(Schedulers.boundedElastic())
 
         return session.send(output)

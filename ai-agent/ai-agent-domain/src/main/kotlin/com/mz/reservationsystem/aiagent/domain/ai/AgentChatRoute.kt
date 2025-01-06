@@ -39,27 +39,39 @@ class AgentChatRoute(
             ?.takeIf { it.chatAgentType != ChatAgentType.NONE }
             ?.chatAgentType
             ?: classifyChatAgentType(id, message)
+        emitAll(
+            when (chatAgentType) {
+            ChatAgentType.USER_REGISTRATION -> {
+                logger.info("userRegistrationChat ->")
+                chatAgent.userRegistrationChat(id, message)
+                    .asFlow()
+                    .map { toChatResponse(it) }
+            }
 
-        emitAll(when (chatAgentType) {
-            ChatAgentType.USER_REGISTRATION -> chatAgent.userRegistrationChat(id, message)
-                .asFlow()
-                .map { toChatResponse(it) }
+            ChatAgentType.RESERVATION -> {
+                logger.info("reservationChat ->")
+                chatAgent.reservationChat(id, message)
+                    .asFlow()
+                    .map { toChatResponse(it) }
+            }
 
-            ChatAgentType.RESERVATION -> chatAgent.reservationChat(id, message)
-                .asFlow()
-                .map { toChatResponse(it) }
+            ChatAgentType.RESERVATION_VIEW -> {
+                logger.info("reservationViewChat ->")
+                chatAgent.reservationViewChat(id, message)
+                    .asFlow()
+                    .map { toChatResponse(it) }
+            }
 
-            ChatAgentType.RESERVATION_VIEW -> chatAgent.reservationViewChat(id, message)
-                .asFlow()
-                .map { toChatResponse(it) }
-
-            ChatAgentType.NONE -> chatAgent.chatWithAssistant(id, message)
-                .map { toChatResponse(it) }
+            ChatAgentType.NONE -> {
+                logger.info("chatWithAssistant ->")
+                chatAgent.chatWithAssistant(id, message)
+                    .map { toChatResponse(it) }
+            }
         })
     }
 
     private suspend fun classifyChatAgentType(id: Id, message: Content): ChatAgentType {
-        logger.trace("Classifying chat agent type for chat $id with message: $message")
+        logger.info("Classifying chat agent type for chat $id with message: $message")
         val result = chatAgentTypeClassification.classify(message)
         updateChat(id, result)
         logger.info("Chat $id classified as $result")

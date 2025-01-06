@@ -33,12 +33,12 @@ class AgentManager(
     private val agentChatRoute: AgentChatRoute,
 ) {
 
-    fun execute(request: AgentRequest, finished: () -> Unit = {}): Flow<AgentResponse> = when (request) {
+    fun execute(request: AgentRequest): Flow<AgentResponse> = when (request) {
         is NewChatRequest -> handleUnknownUserRequest(request)
         is ChatRequest -> handleChatRequest(request)
         is ChatCustomerRequest -> handleChatCustomerRequest(request)
         is NewChatCustomerRequest -> handleNewChatCustomerRequest(request)
-    }.onCompletion { finished() }
+    }
 
     private fun handleChatCustomerRequest(request: ChatCustomerRequest): Flow<AgentResponse> {
         val message = Content(customerPrompt(request.message, request.customerData))

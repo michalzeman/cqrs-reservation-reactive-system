@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.reduce
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -51,6 +50,27 @@ class CustomerAgentTest {
 
     @Test
     fun `AgentManager, register new user`(): Unit = runBlocking {
+        val chat = buildTestChat { request -> agentManager.execute(request) }
+
+        val customerId = newId()
+
+        val customerParam = CustomerParam(
+            lastName = "Zeman",
+            firstName = "Michal",
+            email =
+                "test@test.com"
+        )
+
+        val customerAccount = CustomerAccount(customerParam, customerId.value).toString()
+
+        whenever(
+            customerToolMock.registerCustomer(
+                customerParam
+            )
+        ).thenAnswer {
+            customerAccount
+        }
+
         val agentRequest = NewChatRequest(
             Content(
                 """
@@ -62,86 +82,72 @@ class CustomerAgentTest {
             )
         )
 
-        val customerId = newId()
+        val chatId = chat(agentRequest)
 
-        val customerParam = CustomerParam(
-            lastName = "Zeman",
-            firstName = "Michal",
-            email =
-            "test@test.com"
+        val yesRequest = ChatRequest(
+            chatId,
+            Content("Yes")
         )
 
-        val customerAccount = CustomerAccount(customerParam, customerId.value).toString()
-
-        whenever(
-            customerToolMock.registerCustomer(
-                customerParam
-            )
-        ).thenAnswer {
-            customerAccount.toString()
-        }
-
-        agentManager.execute(agentRequest).collect {
-            print("${it.message.value} ")
-        }
+        chat(yesRequest)
 
         verify(customerToolMock).registerCustomer(customerParam)
     }
 
     @Test
     fun `AgentManager, register customer step by step`(): Unit = runBlocking {
-        val chatId = newId()
-        val message1 = """
-            I want to register new customer
-            - first name: Michal
-        """.trimIndent()
-
-        val request1 = NewChatRequest(Content(message1))
-
-        println("User: ${request1.message.value}")
-        val result1 = agentManager.execute(request1).map { it as ChatResponse }
-            .reduce(aggregateAgentResponseFlow())
-
-        println("Agent: ${result1.message.value}")
-
-        val message2 = """
-            last name is Zeman
-        """.trimIndent()
-
-        val request2 = ChatRequest(chatId, Content(message2))
-
-        println("User: ${request2.message.value}")
-        val result2 = agentManager.execute(request2).map { it as ChatResponse }
-            .reduce(aggregateAgentResponseFlow())
-
-        println("Agent: ${result2.message.value}")
-
-        val message3 = """
-            email is test@test.org
-        """.trimIndent()
-
-        val request3 = ChatRequest(chatId, Content(message3))
-
-        println("User: ${request3.message.value}")
-        val result3 = agentManager.execute(request3).map { it as ChatResponse }
-            .reduce(aggregateAgentResponseFlow())
+        val chat = buildTestChat { request -> agentManager.execute(request) }
 
         val customerParam = CustomerParam("Michal", "Zeman", "test@test.org")
 
         val customerAccount = CustomerAccount(customerParam, newId().value).toString()
+        whenever(customerToolMock.registerCustomer(customerParam))
+            .thenAnswer { customerAccount }
 
-        whenever(customerToolMock.registerCustomer(
-            CustomerParam("Michal", "Zeman", "test@test.org")))
-            .thenAnswer { customerAccount.toString() }
+        val message1 = """
+            I want to register new customer
+        """.trimIndent()
 
-        println("Agent: ${result3.message.value}")
+        val request1 = NewChatRequest(Content(message1))
 
+        val chatId = chat(request1)
+
+        val message2 = """
+            first name is Michal
+        """.trimIndent()
+
+        val request2 = ChatRequest(chatId, Content(message2))
+
+        chat(request2)
+
+        val message3 = """
+            last name is Zeman
+        """.trimIndent()
+
+        val request3 = ChatRequest(chatId, Content(message3))
+
+        chat(request3)
+
+        val message4 = """
+            email is test@test.org
+        """.trimIndent()
+
+        val request4 = ChatRequest(chatId, Content(message4))
+        chat(request4)
+
+        val message5 = """
+            Yes
+        """.trimIndent()
+        val request5 = ChatRequest(chatId, Content(message5))
+        chat(request5)
         verify(customerToolMock).registerCustomer(customerParam)
     }
 
     @Test
     fun `CustomerAgent, load existing customer and classify customer is true`(): Unit = runBlocking {
         val id = Id("3d769d58-87a3-4c7c-9297-b85150dcb864")
+
+        val chat = buildTestChat { request -> agentManager.execute(request) }
 
         val customer: Customer = Customer(
             CustomerDocument(
@@ -161,20 +167,13 @@ class CustomerAgentTest {
             )
         )
 
-        println("User: \n${agentRequest.message.value}")
-
         whenever(customerToolMock.findCustomer(id.value)).thenAnswer {
             customer.toString()
         }
 
-        val responseFlow = agentManager.execute(agentRequest)
-        val answer = responseFlow
-            .map { it as ChatResponse }
-            .reduce(aggregateAgentResponseFlow())
+        val chatId = chat(agentRequest)
 
-        println("Agent: ${answer.message.value}")
-
-        assertThat(registrationAgent.isCustomerIdentified(answer.chatId)).isTrue()
+        assertThat(registrationAgent.isCustomerIdentified(chatId)).isTrue()
 
         verify(customerToolMock).findCustomer(id.value)
     }
@@ -182,10 +181,18 @@ class CustomerAgentTest {
     @Test
     fun `CustomerAgent, when is customer data are not present then classification of customer is false`(): Unit =
         runBlocking {
+//            val agentRequest = NewChatRequest(
+//                Content(
+//                    """
+//                    Hi, how are you?
+//                    """.trimIndent()
+//                )
+//            )
+
             val agentRequest = NewChatRequest(
                 Content(
                     """
-                    Hi, how are you?
+                    Hi
                     """.trimIndent()
                 )
             )

@@ -22,6 +22,8 @@ data class ChatCreated(
     override val createdAt: Instant = instantNow()
 ) : ChatEvent()
 
+@Serializable
+@SerialName("chat-agent-changed")
 data class ChatAgentChanged(
     override val aggregateId: Id,
     val chatAgentType: ChatAgentType,
