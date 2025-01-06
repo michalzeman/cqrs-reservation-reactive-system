@@ -1,7 +1,7 @@
 package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat
 
 import com.mz.ddd.common.api.domain.Id
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.RegistrationAgent
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationAgent
 import com.mz.reservationsystem.aiagent.domain.ai.agent.ChatAgent
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content
@@ -15,11 +15,11 @@ import org.springframework.stereotype.Component
 @Component
 class LangChainChatAgent(
     private val assistantAgent: AssistantAgent,
-    private val registrationAgent: RegistrationAgent,
+    private val customerAgent: CustomerAgent,
     private val reservationAgent: ReservationAgent
 ) : ChatAgent {
     override suspend fun userRegistrationChat(chatId: Id, message: Content): String = withContext(Dispatchers.IO) {
-        registrationAgent.chat(chatId, message.value)
+        customerAgent.registrationChat(chatId, message.value)
     }
 
     override suspend fun reservationChat(chatId: Id, message: Content): String = withContext(Dispatchers.IO) {

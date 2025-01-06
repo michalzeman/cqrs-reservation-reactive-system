@@ -3,7 +3,7 @@ package com.mz.reservationsystem.aiagent.adapter.llm.wiring
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.AssistantAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.ChatClassification
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerTool
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.RegistrationAgent
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationStreamingAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationTool
@@ -39,7 +39,7 @@ class AgentAiServicesConfiguration(
     }
 
     @Bean
-    fun registrationAgent(chatLanguageModel: ChatLanguageModel): RegistrationAgent {
+    fun customerAgent(chatLanguageModel: ChatLanguageModel): CustomerAgent {
         val chatMemoryProvider = ChatMemoryProvider { memoryId: Any? ->
             MessageWindowChatMemory.builder()
                 .id(memoryId)
@@ -48,7 +48,7 @@ class AgentAiServicesConfiguration(
                 .build()
         }
 
-        return AiServices.builder(RegistrationAgent::class.java)
+        return AiServices.builder(CustomerAgent::class.java)
             .chatLanguageModel(chatLanguageModel)
             .chatMemoryProvider(chatMemoryProvider)
             .tools(customerTool)

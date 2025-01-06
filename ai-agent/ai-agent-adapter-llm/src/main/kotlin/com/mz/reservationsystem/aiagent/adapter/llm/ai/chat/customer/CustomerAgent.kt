@@ -4,12 +4,11 @@ import com.mz.ddd.common.api.domain.Id
 import dev.langchain4j.service.MemoryId
 import dev.langchain4j.service.SystemMessage
 import dev.langchain4j.service.UserMessage
-import dev.langchain4j.service.V
 
-interface RegistrationAgent {
+interface CustomerAgent {
 
     @SystemMessage(fromResource = "prompts/registration-agent-customer-registration-chat.txt")
-    fun chat(@MemoryId memoryId: Id, @UserMessage message: String): String
+    fun registrationChat(@MemoryId memoryId: Id, @UserMessage message: String): String
 
     @UserMessage(
         """
