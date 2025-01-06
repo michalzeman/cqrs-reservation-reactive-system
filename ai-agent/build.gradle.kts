@@ -9,6 +9,7 @@ project(":ai-agent:ai-agent-application") {
         implementation(project(":ai-agent:ai-agent-adapter-llm"))
         implementation(project(":ai-agent:ai-agent-adapter-rest"))
         implementation(project(":ai-agent:ai-agent-adapter-customer"))
+        implementation(project(":ai-agent:ai-agent-adapter-reservation"))
 
         implementation(project(":@ddd:domain-persistence"))
         implementation(project(":@ddd:lock-storage-adapter-redis"))

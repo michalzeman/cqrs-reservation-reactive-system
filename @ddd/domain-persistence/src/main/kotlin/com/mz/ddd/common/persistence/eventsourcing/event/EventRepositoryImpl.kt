@@ -91,6 +91,7 @@ internal class EventRepositoryImpl<E : DomainEvent, A : Aggregate>(
             .map { sequenceN ->
                 events.mapIndexed { index, event -> mapEvent(sequenceN + index, event) }
             }
+            .filter { it.isNotEmpty() }
             .flatMap(eventStorageAdapter::save)
     }
 }

@@ -109,6 +109,10 @@ val promptChatTypeJson: PromptTemplate = PromptTemplate.from(
          - RESPONSE: RESERVATION
          - INPUT: If is not related to any provided options
          - RESPONSE: NONE
+         - INPUT: Hi
+         - RESPONSE: NONE
+         - INPUT: What's the weather today?
+         - RESPONSE: NONE
          - MESSAGE to analyse: {{text}}
     """.trimIndent()
 )

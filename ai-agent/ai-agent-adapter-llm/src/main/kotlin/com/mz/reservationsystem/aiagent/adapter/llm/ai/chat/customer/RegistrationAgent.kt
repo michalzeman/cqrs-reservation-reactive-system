@@ -8,20 +8,7 @@ import dev.langchain4j.service.V
 
 interface RegistrationAgent {
 
-    @SystemMessage(
-        """
-         You are a professional trained customer agent, to train for the CUSTOMER REGISTRATION PROCESS.
-         You are communicating with a customer via online chat.
-         You must use information only provided by the user.
-         You must use messages history for the user already provided information. 
-         Ask User step by step information needed for the registration.
-         Information needed to register new customer are:
-         - first name
-         - last name
-         - email
-         When registration is done you must provide id to customer.
-        """
-    )
+    @SystemMessage(fromResource = "prompts/registration-agent-customer-registration-chat.txt")
     fun chat(@MemoryId memoryId: Id, @UserMessage message: String): String
 
     @UserMessage(
@@ -30,13 +17,4 @@ interface RegistrationAgent {
         """
     )
     fun isCustomerIdentified(@MemoryId memoryId: Id): Boolean
-
-    @UserMessage(
-        """
-            Does chat history or message contains any data related to the Custom data, is customer know? 
-            Message: {{message}} 
-        """
-    )
-    fun isCustomerIdentified(@MemoryId memoryId: Id, @V("message") text: String): Boolean
-
 }

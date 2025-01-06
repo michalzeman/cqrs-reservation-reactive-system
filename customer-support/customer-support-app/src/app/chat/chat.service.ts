@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
-import {catchError, filter, finalize} from 'rxjs/operators';
+import {catchError, filter, finalize, tap} from 'rxjs/operators';
 import {Observable, Subject} from 'rxjs';
 import {ErrorService} from "../error/error.service";
 import {CustomerDocument} from "../customer/customer.service";
@@ -78,20 +78,23 @@ export class ChatService {
     }
     this.socket$?.pipe(
       catchError(err => {
+          console.error("Chat connection error", err);
           this.errorService.throwError(err);
           this.close();
           throw err;
         }
       ),
-      finalize(() => this.close())
-    ).subscribe(
-      msg => {
+      tap(msg => {
         if (this.isChatResponse(msg)) {
-          let response = { text: msg.message, sender: 'server', chatId: msg.chatId } as Message
+          let response = {text: msg.message, sender: 'server', chatId: msg.chatId} as Message
           this.messages$.next(response)
         }
-      }
-    );
+      }),
+      finalize(() => {
+        console.log("finalize -> Chat connection closed");
+        this.close();
+      })
+    ).subscribe();
     this.connectionState$.next(true);
   }
 
@@ -99,13 +102,24 @@ export class ChatService {
     let request: AgentRequest
     if (msg.chatId) {
       if (msg.customerData) {
-        request = {message: msg.text, chatId: msg.chatId, customerId: msg.customerData.aggregateId, customerData: JSON.stringify(msg.customerData), type: "chat-customer-request"} as ChatCustomerRequest
+        request = {
+          message: msg.text,
+          chatId: msg.chatId,
+          customerId: msg.customerData.aggregateId,
+          customerData: JSON.stringify(msg.customerData),
+          type: "chat-customer-request"
+        } as ChatCustomerRequest
       } else {
         request = {message: msg.text, chatId: msg.chatId, type: "chat-request"} as ChatRequest
       }
     } else {
       if (msg.customerData) {
-        request = {message: msg.text, customerId: msg.customerData.aggregateId, customerData: JSON.stringify(msg.customerData), type: "new-chat-customer-request"} as NewChatCustomerRequest
+        request = {
+          message: msg.text,
+          customerId: msg.customerData.aggregateId,
+          customerData: JSON.stringify(msg.customerData),
+          type: "new-chat-customer-request"
+        } as NewChatCustomerRequest
       } else {
         request = {message: msg.text, type: "new-chat-request"} as NewChatRequest
       }
