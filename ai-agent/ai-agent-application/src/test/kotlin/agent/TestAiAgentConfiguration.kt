@@ -2,6 +2,7 @@ package agent
 
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.persistence.eventsourcing.aggregate.AggregateProcessor
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerIdentificationTool
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerTool
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationTool
 import com.mz.reservationsystem.aiagent.domain.api.chat.ChatCommand
@@ -31,6 +32,10 @@ class TestAiAgentConfiguration {
     fun customerToolMock(): CustomerTool {
         return mock<CustomerTool>()
     }
+
+    @Primary
+    @Bean
+    fun customerIdentificationToolMock(): CustomerIdentificationTool = mock<CustomerIdentificationTool>()
 
     @Primary
     @Bean

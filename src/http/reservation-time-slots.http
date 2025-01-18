@@ -55,3 +55,8 @@ Content-Type: application/json
   "startTime": "2025-07-01T09:01:00Z",
   "endTime": "2025-07-01T10:01:00Z"
 }
+
+### Get customer by id
+@customerIdForGet=9b10dc31-9354-4bcb-802c-5b96c2220155
+
+GET localhost:8080/customers/{{customerIdForGet}}

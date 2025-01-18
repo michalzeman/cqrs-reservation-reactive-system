@@ -2,10 +2,7 @@ package agent
 
 import com.mz.customer.domain.api.CustomerDocument
 import com.mz.ddd.common.api.domain.*
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerAccount
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerParam
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerTool
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerAgent
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.*
 import com.mz.reservationsystem.aiagent.adapter.llm.storage.AiChatMemoryStorageConfiguration
 import com.mz.reservationsystem.aiagent.adapter.llm.wiring.AgentAiServicesConfiguration
 import com.mz.reservationsystem.aiagent.adapter.llm.wiring.OllamaLlmModelConfiguration
@@ -43,9 +40,12 @@ class CustomerAgentTest {
     @Autowired
     lateinit var customerToolMock: CustomerTool
 
+    @Autowired
+    lateinit var customerIdentificationToolMock: CustomerIdentificationTool
+
     @BeforeEach
     fun setUp() {
-        Mockito.reset(customerToolMock)
+        Mockito.reset(customerToolMock, customerIdentificationToolMock)
     }
 
     @Test
@@ -167,7 +167,7 @@ class CustomerAgentTest {
             )
         )
 
-        whenever(customerToolMock.findCustomer(id.value)).thenAnswer {
+        whenever(customerIdentificationToolMock.findCustomer(id.value)).thenAnswer {
             customer.toString()
         }
 
@@ -175,7 +175,7 @@ class CustomerAgentTest {
 
         assertThat(customerAgent.isCustomerIdentified(chatId)).isTrue()
 
-        verify(customerToolMock).findCustomer(id.value)
+        verify(customerIdentificationToolMock).findCustomer(id.value)
     }
 
     @Test
