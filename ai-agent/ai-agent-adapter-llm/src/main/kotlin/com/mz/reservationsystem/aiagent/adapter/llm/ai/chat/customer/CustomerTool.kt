@@ -1,5 +1,6 @@
 package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer
 
+import com.mz.customer.domain.api.ReservationStatus
 import com.mz.ddd.common.api.domain.Email
 import com.mz.ddd.common.api.domain.FirstName
 import com.mz.ddd.common.api.domain.Id
@@ -44,14 +45,6 @@ class CustomerTool(
         logger.info("registerCustomer -> $customer")
         val createdCustomer = customerRepository.registerCustomer(customer.toRegisterCustomer())
         CustomerAccount(customer, createdCustomer.aggregateId.value).toString()
-    }
-
-    @Tool("Find customer")
-    fun findCustomer(@P("customer id") customerId: String): String = runBlocking {
-        logger.info("findCustomer -> $customerId")
-        customerRepository.findCustomer(Id(customerId))
-            ?.toString()
-            ?: "User or customer for given ID doesn't exists!"
     }
 }
 

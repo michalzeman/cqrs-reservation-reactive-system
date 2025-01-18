@@ -2,8 +2,9 @@ package com.mz.reservationsystem.aiagent.adapter.llm.wiring
 
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.AssistantAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.ChatClassification
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerTool
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerAgent
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerIdentificationTool
+import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerTool
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationStreamingAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationTool
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class AgentAiServicesConfiguration(
     val customerTool: CustomerTool,
+    val customerIdentificationTool: CustomerIdentificationTool,
     val reservationTool: ReservationTool,
     val store: ChatMemoryStore
 ) {
@@ -51,7 +53,7 @@ class AgentAiServicesConfiguration(
         return AiServices.builder(CustomerAgent::class.java)
             .chatLanguageModel(chatLanguageModel)
             .chatMemoryProvider(chatMemoryProvider)
-            .tools(customerTool)
+            .tools(customerTool, customerIdentificationTool)
             .build()
     }
 
@@ -68,7 +70,7 @@ class AgentAiServicesConfiguration(
         return AiServices.builder(ReservationAgent::class.java)
             .chatMemoryProvider(chatMemoryProvider)
             .chatLanguageModel(chatLanguageModel)
-            .tools(reservationTool, customerTool)
+            .tools(reservationTool, customerIdentificationTool)
             .build()
     }
 
@@ -85,7 +87,7 @@ class AgentAiServicesConfiguration(
         return AiServices.builder(ReservationStreamingAgent::class.java)
             .chatMemoryProvider(chatMemoryProvider)
             .streamingChatLanguageModel(chatLanguageModel)
-            .tools(reservationTool, customerTool)
+            .tools(reservationTool, customerTool, customerIdentificationTool)
             .build()
     }
 

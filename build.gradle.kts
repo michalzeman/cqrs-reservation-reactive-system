@@ -169,6 +169,7 @@ tasks.register("springBootBuildImagesAndRunDockerContainers") {
     group = "docker"
 
     val allBootBuildImagesTasks = project.subprojects
+        .filter { it.name != "api-gateway" }
         .flatMap { project -> project.tasks.matching { it.name == "bootBuildImage" } }
     dependsOn(allBootBuildImagesTasks)
     mustRunAfter(":runDockerCompose")

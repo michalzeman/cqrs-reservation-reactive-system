@@ -1,5 +1,6 @@
 package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation
 
+import com.mz.customer.domain.api.ReservationStatus
 import com.mz.ddd.common.api.domain.Email
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.newId
@@ -40,10 +41,10 @@ class ReservationTool(
         .optionalEnd()
         .toFormatter()
 
-    @Tool("Find available time slots by start and end time, times are in the ISO 8601 formatted `yyyy-MM-dd'T'HH:mmXXX`")
-    fun findTimeSlotByTimeWindow(
-        @P("Start time, in the ISO 8601") startTime: String,
-        @P("End time, in the ISO 8601") endTime: String
+    @Tool("Find available time slot by time window")
+    fun findAvailableTimeSlotByTimeWindow(
+        @P("Start time, in the ISO 8601 formatted `yyyy-MM-dd'T'HH:mmXXX`") startTime: String,
+        @P("End time, in the ISO 8601 formatted `yyyy-MM-dd'T'HH:mmXXX`") endTime: String
     ): List<String> = runBlocking {
         logger.info("findTimeSlotByTimeWindow -> start: $startTime , end: $endTime")
 
@@ -80,6 +81,20 @@ class ReservationTool(
 
         val reservationId = customerRepository.createReservation(request)
         "Reservation has been created with the id: $reservationId"
+    }
+
+    @Tool("List all customer reservation")
+    fun listAllCustomerReservation(@P("customer id") customerId: String): String = runBlocking {
+        logger.info("listAllCustomerReservation -> $customerId")
+        val customer = customerRepository.findCustomer(Id(customerId))
+            ?: error("Customer not found for the given ID")
+
+        customer.document.reservations
+            .filter { it.status == ReservationStatus.CONFIRMED }
+            .map { item -> item.toString() }
+            .joinToString(separator = ",\n") { it }
+            .takeIf { it.isNotEmpty() }
+            ?: "No reservation found for the customer"
     }
 
 }

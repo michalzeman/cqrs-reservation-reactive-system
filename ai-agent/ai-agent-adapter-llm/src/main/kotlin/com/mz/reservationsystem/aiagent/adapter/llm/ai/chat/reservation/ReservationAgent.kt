@@ -7,6 +7,9 @@ import dev.langchain4j.service.UserMessage
 
 interface ReservationAgent {
 
-    @SystemMessage(fromResource = "prompts/reservation-agent-create-reservation-sys.txt")
+    @SystemMessage(fromResource = "prompts/reservation-agent-create-reservation-chat.txt")
     fun createReservation(@MemoryId id: Id, @UserMessage message: String): String
+
+    @SystemMessage(fromResource = "prompts/reservation-agent-list-customer-reservation-chat.txt")
+    fun listAllCustomerReservation(@MemoryId id: Id, @UserMessage message: String): String
 }

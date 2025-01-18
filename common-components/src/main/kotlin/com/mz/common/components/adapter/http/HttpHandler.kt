@@ -25,6 +25,7 @@ fun <E : Throwable> onError(e: E, logger: (E) -> Unit): Mono<ServerResponse> {
     }.flatMap { error ->
         val httpStatus = when (error) {
             is IllegalStateException -> HttpStatus.PRECONDITION_FAILED
+            is RuntimeException -> HttpStatus.CONFLICT
             is ErrorResponse -> error.statusCode
             else -> HttpStatus.INTERNAL_SERVER_ERROR
         }
