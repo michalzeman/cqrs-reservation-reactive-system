@@ -5,7 +5,6 @@ val kotlinxSerializationJsonVersion: String by settings
 val mockitoCoreVersion: String by settings
 val langchain4jVersion: String by settings
 
-
 pluginManagement {
     repositories {
         mavenCentral()
@@ -15,6 +14,7 @@ pluginManagement {
         maven { url = uri("https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven") }
     }
 }
+
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
 }
@@ -22,15 +22,22 @@ plugins {
 dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
+            // Define versions
             version("kotlin", kotlinVersion)
+            version("springframeworkBoot", springframeworkBootVersion)
+            version("springDependencyManagement", springDependencyManagementVersion)
+            version("kotlinxSerializationJson", kotlinxSerializationJsonVersion)
+            version("mockitoCore", mockitoCoreVersion)
+            version("langchain4j", langchain4jVersion)
+
+            // Define plugins
             plugin("kotlin-jvm", "org.jetbrains.kotlin.jvm").versionRef("kotlin")
             plugin("kotlin-serialization", "org.jetbrains.kotlin.plugin.serialization").versionRef("kotlin")
             plugin("kotlin-plugin.spring", "org.jetbrains.kotlin.plugin.spring").versionRef("kotlin")
-            plugin("io.spring.dependency-management", "io.spring.dependency-management").version(
-                springDependencyManagementVersion
-            )
-            plugin("springframework-boot", "org.springframework.boot").version(springframeworkBootVersion)
-            // libraries ----------------------------->
+            plugin("io.spring.dependency-management", "io.spring.dependency-management").versionRef("springDependencyManagement")
+            plugin("springframework-boot", "org.springframework.boot").versionRef("springframeworkBoot")
+
+            // Define libraries
             library("kotlin-stdlib", "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
             library("guava", "com.google.guava:guava:28.1-jre")
             library("projectreactor-blockhound", "io.projectreactor.tools:blockhound:1.0.4.RELEASE")
@@ -38,10 +45,7 @@ dependencyResolutionManagement {
             library("assertj-core", "org.assertj:assertj-core:3.14.0")
             library("mockito-core", "org.mockito:mockito-core:$mockitoCoreVersion")
             library("mockito-kotlin", "org.mockito.kotlin:mockito-kotlin:$mockitoCoreVersion")
-            library(
-                "kotlinx-serialization-json",
-                "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion"
-            )
+            library("kotlinx-serialization-json", "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion")
             library("langchain4j-core", "dev.langchain4j:langchain4j-core:$langchain4jVersion")
             library("langchain4j-local-ai", "dev.langchain4j:langchain4j-local-ai:$langchain4jVersion")
             library("langchain4j-ollama", "dev.langchain4j:langchain4j-ollama:$langchain4jVersion")
