@@ -53,43 +53,46 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "cqrs-reservation-reactive-system"
-include("api-gateway")
-include("common-components")
-include("@ddd")
-include("@ddd:common-domain-api")
-include("@ddd:domain-persistence")
-include("@ddd:domain-view")
-include("@ddd:domain-view-adapter-cassandra-db")
-include("@ddd:lock-storage-adapter-api")
-include("@ddd:lock-storage-adapter-in-memory")
-include("@ddd:lock-storage-adapter-redis")
-include("@ddd:event-storage-ser-des-adapter-api")
-include("@ddd:event-storage-ser-des-adapter-json")
-include("@ddd:event-storage-adapter-api")
-include("@ddd:event-storage-adapter-cassandra-db")
-include("@ddd:shared-kernel-test-cassandra-db")
-include("ai-agent")
-include("ai-agent:ai-agent-adapter-customer")
-include("ai-agent:ai-agent-adapter-reservation")
-include("ai-agent:ai-agent-adapter-llm")
-include("ai-agent:ai-agent-adapter-rest")
-include("ai-agent:ai-agent-application")
-include("ai-agent:ai-agent-domain")
-include("ai-agent:ai-agent-domain-api")
-include("customer-support")
-include("customer-support:customer-support-app")
-include("customer")
-include("customer:customer-adapter-rest")
-include("customer:customer-adapter-rest-api")
-include("customer:customer-adapter-kafka")
-include("customer:customer-domain-api")
-include("customer:customer-application")
-include("customer:customer-domain")
-include("reservation")
-include("reservation:reservation-application")
-include("reservation:reservation-domain-api")
-include("reservation:reservation-domain")
-include("reservation:reservation-adapter-rest")
-include("reservation:reservation-adapter-rest-api")
-include("reservation:reservation-adapter-kafka")
-include("reservation-system-checks-tests")
+
+include(
+    "api-gateway",
+    "common-components",
+    "@ddd",
+    "@ddd:common-domain-api",
+    "@ddd:domain-persistence",
+    "@ddd:domain-view",
+    "@ddd:domain-view-adapter-cassandra-db",
+    "@ddd:lock-storage-adapter-api",
+    "@ddd:lock-storage-adapter-in-memory",
+    "@ddd:lock-storage-adapter-redis",
+    "@ddd:event-storage-ser-des-adapter-api",
+    "@ddd:event-storage-ser-des-adapter-json",
+    "@ddd:event-storage-adapter-api",
+    "@ddd:event-storage-adapter-cassandra-db",
+    "@ddd:shared-kernel-test-cassandra-db",
+    "ai-agent",
+    "ai-agent:ai-agent-adapter-customer",
+    "ai-agent:ai-agent-adapter-reservation",
+    "ai-agent:ai-agent-adapter-llm",
+    "ai-agent:ai-agent-adapter-rest",
+    "ai-agent:ai-agent-application",
+    "ai-agent:ai-agent-domain",
+    "ai-agent:ai-agent-domain-api",
+    "customer-support",
+    "customer-support:customer-support-app",
+    "customer",
+    "customer:customer-adapter-rest",
+    "customer:customer-adapter-rest-api",
+    "customer:customer-adapter-kafka",
+    "customer:customer-domain-api",
+    "customer:customer-application",
+    "customer:customer-domain",
+    "reservation",
+    "reservation:reservation-application",
+    "reservation:reservation-domain-api",
+    "reservation:reservation-domain",
+    "reservation:reservation-adapter-rest",
+    "reservation:reservation-adapter-rest-api",
+    "reservation:reservation-adapter-kafka",
+    "reservation-system-checks-tests"
+)
