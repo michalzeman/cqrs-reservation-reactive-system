@@ -24,10 +24,9 @@ allprojects {
     repositories {
         mavenCentral()
         maven { url = uri("https://plugins.gradle.org/m2/") }
+        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven") }
     }
 }
-
-val jvmTargetVersion = "17"
 
 subprojects {
 
@@ -42,6 +41,7 @@ subprojects {
 
     java {
         sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     group = "com.mz"
@@ -55,9 +55,8 @@ subprojects {
     }
 
     dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-reflect")
+        implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
         implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-        implementation("org.jetbrains.kotlin:kotlin-serialization")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion")
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
@@ -76,7 +75,9 @@ subprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = jvmTargetVersion
+            jvmTarget = "17"
+            languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1.version
+            apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1.version
         }
     }
 
@@ -193,8 +194,9 @@ fun waitToDockerInfrastructureIsHealthy() {
             commandLine(
                 "sh",
                 "-c",
-                "docker inspect --format='{{.Name}}: {{if .State.Health}}{{.State.Health.Status}}{{end}}' $(docker ps -q) | grep 'healthy'"
+                "docker inspect --format='{{.Name}}: {{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' $(docker ps -q) | grep -E '(healthy|running)'"
             )
+            isIgnoreExitValue = true
         }
         if (result.exitValue == 0) {
             break

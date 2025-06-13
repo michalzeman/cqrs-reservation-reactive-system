@@ -10,10 +10,12 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         maven { url = uri("https://plugins.gradle.org/m2/") }
+        // Adding JetBrains repository to access latest Kotlin 2.1 releases
+        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven") }
     }
 }
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
 }
 
 dependencyResolutionManagement {
