@@ -1,8 +1,8 @@
 package com.mz.reservationsystem.aiagent.adapter.llm.wiring
 
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.AiChatModelListener
-import dev.langchain4j.model.chat.ChatLanguageModel
-import dev.langchain4j.model.chat.StreamingChatLanguageModel
+import dev.langchain4j.model.chat.ChatModel
+import dev.langchain4j.model.chat.StreamingChatModel
 import dev.langchain4j.model.ollama.OllamaChatModel
 import dev.langchain4j.model.ollama.OllamaStreamingChatModel
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -20,7 +20,7 @@ class OllamaLlmModelConfiguration(
 ) {
 
     @Bean
-    fun ollamaLlmModel(): ChatLanguageModel {
+    fun ollamaLlmModel(): ChatModel {
         return OllamaChatModel.builder()
             .modelName(properties.model)
             .maxRetries(5)
@@ -33,7 +33,7 @@ class OllamaLlmModelConfiguration(
     }
 
     @Bean
-    fun ollamaStreamingLlmModel(): StreamingChatLanguageModel {
+    fun ollamaStreamingLlmModel(): StreamingChatModel {
         return OllamaStreamingChatModel.builder()
             .modelName(properties.model)
             .baseUrl(properties.baseUrl)

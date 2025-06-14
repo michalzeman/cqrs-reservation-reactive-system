@@ -12,11 +12,11 @@ private val logger = LogFactory.getLog(AiChatModelListener::class.java)
 @Component
 class AiChatModelListener : ChatModelListener {
     override fun onRequest(requestContext: ChatModelRequestContext) {
-        logger.debug("Request -> ${requestContext.request().messages()}")
+        logger.debug("Request -> ${requestContext.chatRequest().messages()}")
     }
 
     override fun onResponse(responseContext: ChatModelResponseContext) {
-        logger.info("Response -> ${responseContext.response().aiMessage()}")
+        logger.info("Response -> ${responseContext.chatResponse().aiMessage()}")
     }
 
     override fun onError(errorContext: ChatModelErrorContext) {
