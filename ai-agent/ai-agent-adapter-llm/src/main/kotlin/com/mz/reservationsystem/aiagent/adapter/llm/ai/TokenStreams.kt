@@ -32,9 +32,9 @@ fun TokenStream.toFlow(): Flow<String> {
     val coroutineScope = CoroutineScope(Dispatchers.IO)
     channel.invokeOnClose { coroutineScope.cancel() }
 
-    tokenStream.onNext { token ->
+    tokenStream.onPartialResponse { token ->
         coroutineScope.launch(Dispatchers.IO) { channel.send(token) }
-    }.onComplete {
+    }.onCompleteResponse {
         logger.trace("Chat completed, message: $it")
         channel.close()
     }.onError {

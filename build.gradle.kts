@@ -169,7 +169,7 @@ tasks.register("springBootBuildImagesAndRunDockerContainers") {
     group = "docker"
 
     val allBootBuildImagesTasks = project.subprojects
-        .filter { it.name != "api-gateway" }
+        .filter { it.name != "api-gateway" && it.name != "ai-agent" }
         .flatMap { project -> project.tasks.matching { it.name == "bootBuildImage" } }
     dependsOn(allBootBuildImagesTasks)
     mustRunAfter(":runDockerCompose")
@@ -192,15 +192,18 @@ tasks.register("buildAndRunDockerInfrastructure") {
 }
 
 fun dockerInfrastructureUp(profile: String? = null) {
-    exec {
-        if (profile != null) commandLine(
-            "sh",
-            "-c",
-            "docker compose --profile", profile, "up -d")
-        else commandLine(
-            "sh",
-            "-c",
-            "docker compose up -d")
+    try {
+        exec {
+            workingDir = projectDir
+            if (profile != null) commandLine("docker", "compose", "--profile", profile, "up", "-d")
+            else commandLine("docker", "compose", "up", "-d")
+            standardOutput = System.out
+            errorOutput = System.err
+        }
+    } catch (e: Exception) {
+        logger.error("Error running Docker Compose: ${e.message}")
+        logger.error("Make sure Docker is installed and available in your PATH")
+        throw GradleException("Docker Compose execution failed. Is Docker installed and running?", e)
     }
 }
 
@@ -210,16 +213,24 @@ fun waitToDockerInfrastructureIsHealthy() {
 
     // wait for Docker containers to be healthy
     while (true) {
-        val result = exec {
-            commandLine(
-                "sh",
-                "-c",
-                "docker inspect --format='{{.Name}}: {{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' $(docker ps -q) | grep -E '(healthy|running)'"
-            )
-            isIgnoreExitValue = true
-        }
-        if (result.exitValue == 0) {
-            break
+        try {
+            val result = exec {
+                workingDir = projectDir
+                commandLine(
+                    "sh",
+                    "-c",
+                    "docker inspect --format='{{.Name}}: {{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' $(docker ps -q) | grep -E '(healthy|running)'"
+                )
+                isIgnoreExitValue = true
+                standardOutput = System.out
+                errorOutput = System.err
+            }
+            if (result.exitValue == 0) {
+                break
+            }
+        } catch (e: Exception) {
+            logger.error("Error checking Docker container health: ${e.message}")
+            throw GradleException("Failed to check Docker container health. Is Docker installed and running?", e)
         }
 
         if (System.currentTimeMillis() - startTime > timeout) {

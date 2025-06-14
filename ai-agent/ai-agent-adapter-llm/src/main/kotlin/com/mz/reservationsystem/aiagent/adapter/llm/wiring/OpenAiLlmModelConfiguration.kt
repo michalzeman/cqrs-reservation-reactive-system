@@ -1,8 +1,8 @@
 package com.mz.reservationsystem.aiagent.adapter.llm.wiring
 
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.AiChatModelListener
-import dev.langchain4j.model.chat.ChatLanguageModel
-import dev.langchain4j.model.chat.StreamingChatLanguageModel
+import dev.langchain4j.model.chat.ChatModel
+import dev.langchain4j.model.chat.StreamingChatModel
 import dev.langchain4j.model.openai.OpenAiChatModel
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel
 import org.springframework.beans.factory.annotation.Value
@@ -22,7 +22,7 @@ class OpenAiLlmModelConfiguration(
 ) {
 
     @Bean
-    fun openAiChatModel(): ChatLanguageModel {
+    fun openAiChatModel(): ChatModel {
         return OpenAiChatModel.builder()
             .apiKey(apiKey)
             .modelName(properties.model)
@@ -32,7 +32,7 @@ class OpenAiLlmModelConfiguration(
     }
 
     @Bean
-    fun openAiStreamingChatModel(): StreamingChatLanguageModel {
+    fun openAiStreamingChatModel(): StreamingChatModel {
         return OpenAiStreamingChatModel.builder()
             .apiKey(apiKey)
             .modelName(properties.model)

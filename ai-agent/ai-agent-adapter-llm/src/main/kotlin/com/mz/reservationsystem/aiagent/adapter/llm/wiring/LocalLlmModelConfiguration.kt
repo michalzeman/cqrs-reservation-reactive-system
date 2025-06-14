@@ -1,7 +1,7 @@
 package com.mz.reservationsystem.aiagent.adapter.llm.wiring
 
-import dev.langchain4j.model.chat.ChatLanguageModel
-import dev.langchain4j.model.chat.StreamingChatLanguageModel
+import dev.langchain4j.model.chat.ChatModel
+import dev.langchain4j.model.chat.StreamingChatModel
 import dev.langchain4j.model.localai.LocalAiChatModel
 import dev.langchain4j.model.localai.LocalAiStreamingChatModel
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -17,7 +17,7 @@ class LocalLlmModelConfiguration(
 ) {
 
     @Bean
-    fun localLlmModel(): ChatLanguageModel {
+    fun localLlmModel(): ChatModel {
         return LocalAiChatModel.builder()
             .modelName(properties.model)
             .baseUrl(properties.baseUrl).logRequests(true)
@@ -27,7 +27,7 @@ class LocalLlmModelConfiguration(
     }
 
     @Bean
-    fun localStreamingLlmModel(): StreamingChatLanguageModel {
+    fun localStreamingLlmModel(): StreamingChatModel {
         return LocalAiStreamingChatModel.builder()
             .modelName(properties.model)
             .baseUrl(properties.baseUrl)
