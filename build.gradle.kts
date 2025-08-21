@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val kotlinxSerializationJsonVersion: String by project
 val springframeworkBootVersion: String by project
@@ -51,12 +51,13 @@ subprojects {
         imports {
             mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
             mavenBom("org.springframework.boot:spring-boot-dependencies:$springframeworkBootVersion")
+            mavenBom("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion")
         }
     }
 
     dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-        implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+        implementation("org.jetbrains.kotlin:kotlin-reflect")
+        implementation("org.jetbrains.kotlin:kotlin-stdlib")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion")
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
@@ -72,10 +73,10 @@ subprojects {
         testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoCoreVersion")
     }
 
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "21"
+    kotlin {
+        compilerOptions {
+            freeCompilerArgs.addAll("-Xjsr305=strict")
+            jvmTarget = JvmTarget.JVM_21
         }
     }
 
@@ -149,8 +150,16 @@ tasks.register("tearDownDockerCompose") {
     mustRunAfter(allTestTasks)
     doLast {
         exec {
-            if (isSystemCheckProfile) commandLine("docker", "compose", "--profile", "system-checks", "down", "-v")
-            else commandLine("docker", "compose", "down", "-v")
+            if (isSystemCheckProfile) commandLine(
+                "sh",
+                "-c",
+                "docker compose --profile system-checks down -v"
+            )
+            else commandLine(
+                "sh",
+                "-c",
+                "docker compose down -v"
+            )
         }
     }
 }
@@ -177,8 +186,14 @@ tasks.register("systemChecksTests") {
 
 fun dockerInfrastructureUp(profile: String? = null) {
     exec {
-        if (profile != null) commandLine("docker", "compose", "--profile", profile, "up", "-d")
-        else commandLine("docker", "compose", "up", "-d")
+        if (profile != null) commandLine(
+            "sh",
+            "-c",
+            "docker compose --profile", profile, "up -d")
+        else commandLine(
+            "sh",
+            "-c",
+            "docker compose up -d")
     }
 }
 
