@@ -153,7 +153,11 @@ tasks.register("tearDownDockerCompose") {
     mustRunAfter(allTestTasks)
     doLast {
         exec {
-            commandLine("docker", "compose", "--profile", "system-checks", "down", "-v")
+            commandLine(
+                "sh",
+                "-c",
+                "docker compose --profile system-checks down -v"
+            )
         }
     }
 }
@@ -169,7 +173,7 @@ tasks.register("springBootBuildImagesAndRunDockerContainers") {
     group = "docker"
 
     val allBootBuildImagesTasks = project.subprojects
-        .filter { it.name != "api-gateway" && it.name != "ai-agent" }
+        .filter { it.name != "api-gateway" && !it.name.contains("ai-agent") }
         .flatMap { project -> project.tasks.matching { it.name == "bootBuildImage" } }
     dependsOn(allBootBuildImagesTasks)
     mustRunAfter(":runDockerCompose")
@@ -195,8 +199,14 @@ fun dockerInfrastructureUp(profile: String? = null) {
     try {
         exec {
             workingDir = projectDir
-            if (profile != null) commandLine("docker", "compose", "--profile", profile, "up", "-d")
-            else commandLine("docker", "compose", "up", "-d")
+            if (profile != null) commandLine(
+                "sh",
+                "-c",
+                "docker compose --profile $profile up -d")
+            else commandLine(
+                "sh",
+                "-c",
+                "docker compose up -d")
             standardOutput = System.out
             errorOutput = System.err
         }
