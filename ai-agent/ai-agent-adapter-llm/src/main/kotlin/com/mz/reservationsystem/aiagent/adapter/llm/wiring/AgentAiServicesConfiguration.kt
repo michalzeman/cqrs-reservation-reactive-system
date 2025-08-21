@@ -14,6 +14,7 @@ import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.chat.StreamingChatModel
 import dev.langchain4j.service.AiServices
 import dev.langchain4j.store.memory.chat.ChatMemoryStore
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -41,7 +42,7 @@ class AgentAiServicesConfiguration(
     }
 
     @Bean
-    fun customerAgent(chatLanguageModel: ChatModel): CustomerAgent {
+    fun customerAgent(@Qualifier("chatModel") chatLanguageModel: ChatModel): CustomerAgent {
         val chatMemoryProvider = ChatMemoryProvider { memoryId: Any? ->
             MessageWindowChatMemory.builder()
                 .id(memoryId)
@@ -58,7 +59,7 @@ class AgentAiServicesConfiguration(
     }
 
     @Bean
-    fun reservationAgent(chatLanguageModel: ChatModel): ReservationAgent {
+    fun reservationAgent(@Qualifier("chatModel") chatLanguageModel: ChatModel): ReservationAgent {
         val chatMemoryProvider = ChatMemoryProvider { memoryId: Any? ->
             MessageWindowChatMemory.builder()
                 .id(memoryId)
@@ -66,6 +67,8 @@ class AgentAiServicesConfiguration(
                 .chatMemoryStore(store)
                 .build()
         }
+
+        chatLanguageModel.defaultRequestParameters()
 
         return AiServices.builder(ReservationAgent::class.java)
             .chatMemoryProvider(chatMemoryProvider)
@@ -87,12 +90,12 @@ class AgentAiServicesConfiguration(
         return AiServices.builder(ReservationStreamingAgent::class.java)
             .chatMemoryProvider(chatMemoryProvider)
             .streamingChatModel(chatLanguageModel)
-            .tools(reservationTool, customerTool, customerIdentificationTool)
+            .tools(reservationTool, customerIdentificationTool)
             .build()
     }
 
     @Bean
-    fun chatClassification(chatLanguageModel: ChatModel): ChatClassification {
+    fun chatClassification(@Qualifier("smallModel") chatLanguageModel: ChatModel): ChatClassification {
         return AiServices.builder(ChatClassification::class.java)
             .chatModel(chatLanguageModel)
             .build()

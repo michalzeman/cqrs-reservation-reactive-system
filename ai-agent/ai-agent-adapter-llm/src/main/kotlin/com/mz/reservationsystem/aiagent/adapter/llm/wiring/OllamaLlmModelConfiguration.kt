@@ -19,10 +19,23 @@ class OllamaLlmModelConfiguration(
     val aiChatModelListener: AiChatModelListener,
 ) {
 
-    @Bean
+    @Bean("chatModel")
     fun ollamaLlmModel(): ChatModel {
         return OllamaChatModel.builder()
             .modelName(properties.model)
+            .maxRetries(5)
+            .logRequests(true)
+            .logResponses(true)
+            .baseUrl(properties.baseUrl)
+            .temperature(properties.temperature)
+            .listeners(listOf(aiChatModelListener))
+            .build()
+    }
+
+    @Bean("smallModel")
+    fun ollamaLlmSmallModel(): ChatModel {
+        return OllamaChatModel.builder()
+            .modelName(properties.smallModel)
             .maxRetries(5)
             .logRequests(true)
             .logResponses(true)

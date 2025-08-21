@@ -3,8 +3,11 @@ adapter:
     chat:
       base-url: http://localhost:11434
       temperature: 0.2
-      model: llama3-groq-tool-use
-#      model: qwen2.5
+#      model: llama3-groq-tool-use
+      model: qwen3:14b
+#      model: qwen3:latest
+#      model: qwen2.5-coder:1.5b
+#      model: qwen2.5:latest
 #      model: llama3.2
 #      model: llama3.2:1b
 #      model: mistral

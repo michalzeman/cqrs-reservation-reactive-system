@@ -29,3 +29,4 @@ adapter:
   llm:
     chat:
       temperature: 0.3
+      small-model: qwen2.5:1.5b

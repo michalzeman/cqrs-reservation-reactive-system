@@ -6,12 +6,13 @@ import dev.langchain4j.memory.chat.MessageWindowChatMemory
 import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.store.memory.chat.ChatMemoryStore
 import kotlinx.serialization.json.Json
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 
 @Component
 class ConversationalChainProvider(
     val store: ChatMemoryStore,
-    val model: ChatModel
+    @Qualifier("chatModel") val model: ChatModel
 ) {
 
     final inline fun <reified T> chatChain(chatId: Id): suspend (String) -> T {

@@ -6,5 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 data class LlmChatModelProperties(
     val baseUrl: String,
     val model: String,
+    val smallModel: String,
     val temperature: Double
 )

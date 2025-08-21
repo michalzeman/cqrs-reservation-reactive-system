@@ -17,6 +17,7 @@ interface ReservationStreamingAgent {
             Don't ask information which customer already provided in chat and contains in the chat history.
             Ask customer necessary information step by step, if any information is missing.
             Do not hallucinate!
+            
             Information needed to create reservation are:
             - Customer must be verified by Customer id.
             - for the reservation customer hast to provide date and start time and end time of the reservation.

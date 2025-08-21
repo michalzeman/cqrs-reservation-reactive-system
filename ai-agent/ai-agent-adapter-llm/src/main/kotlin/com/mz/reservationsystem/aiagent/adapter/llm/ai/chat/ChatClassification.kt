@@ -1,6 +1,7 @@
 package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat
 
 import com.mz.reservationsystem.aiagent.domain.api.chat.ChatAgentType
+import dev.langchain4j.service.SystemMessage
 import dev.langchain4j.service.UserMessage
 import kotlinx.serialization.Serializable
 
@@ -34,6 +35,9 @@ interface ChatClassification {
     )
     fun relatedToReservationSystem(text: String): ClassificationResult
 
+    @SystemMessage(
+        "You are classification agent, acting as simple classification function. Answer with single word."
+    )
     fun classifyChat(@UserMessage message: String): ChatAgentType
 
 }
