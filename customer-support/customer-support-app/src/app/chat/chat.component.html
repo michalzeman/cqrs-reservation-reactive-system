@@ -1,18 +1,17 @@
-<div class="chat-container" #chatMessages>
-  <div class="col-auto chat-messages">
-    <ng-container *ngFor="let message of messages">
-      <div *ngIf="message.text.trim().length > 0"
-           [ngClass]="{'user-message': message.sender === 'user', 'server-message': message.sender === 'server'}">
-        <markdown *ngIf="!isConnected">
-          {{ message.text }}
-        </markdown>
-        <div *ngIf="isConnected">
-          {{ message.text }}
+<div class="chat-container">
+  <div class="chat-messages" #chatMessages>
+    <div class="messages-content">
+      <ng-container *ngFor="let message of messages">
+        <div *ngIf="message.text.trim().length > 0"
+             [ngClass]="{'user-message': message.sender === 'user', 'server-message': message.sender === 'server'}">
+          <div>
+            {{ message.text }}
+          </div>
         </div>
-      </div>
-    </ng-container>
+      </ng-container>
+    </div>
   </div>
-  <div class="row chat-input">
+  <div class="chat-input">
     <form (ngSubmit)="sendMessage()">
       <app-error/>
       <button class="responding-button btn" (click)="closeWebSocket()" *ngIf="isConnected">Responding...</button>

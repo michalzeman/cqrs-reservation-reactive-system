@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef} from '@angular/core';
 import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {ActivatedRoute} from '@angular/router';
 import {environment} from '../../environments/environment';
@@ -27,6 +27,8 @@ const idPathParam = 'id';
 })
 export class ChatComponent implements OnInit {
 
+  @ViewChild('chatMessages', { static: false }) private chatMessagesContainer!: ElementRef;
+
   messageToSend: string = '';
   isConnected: boolean = false;
   chatId?: string;
@@ -39,19 +41,36 @@ export class ChatComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private chatService: ChatService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private cdr: ChangeDetectorRef
   ) {
     chatService.serverAnswer$.pipe(
       map(message => this.handleChatMessage(message))
     ).subscribe();
 
-    chatService.connected$.subscribe(state => this.isConnected = state);
+    chatService.connected$.subscribe(state => {
+      const wasConnected = this.isConnected;
+      this.isConnected = state;
+
+      // If connection just ended (streaming finished), ensure we stay scrolled to bottom
+      if (wasConnected && !state) {
+        setTimeout(() => {
+          this.scrollToBottom();
+        }, 50);
+      }
+    });
   }
 
   private handleChatMessage(message: Message) {
     let activeMsg = this.messages[this.messages.length - 1];
     activeMsg.text = activeMsg.text.concat(message.text);
     this.chatId = message.chatId;
+
+    // Force change detection and scroll after DOM update
+    setTimeout(() => {
+      this.scrollToBottom();
+    }, 0);
+
     return activeMsg;
   }
 
@@ -78,6 +97,11 @@ export class ChatComponent implements OnInit {
     this.messages.push(({text: '', sender: 'server'}));
     this.chatService.sendMessage(userMessage);
     this.messageToSend = '';
+
+    // Scroll to bottom after adding new messages
+    setTimeout(() => {
+      this.scrollToBottom();
+    }, 0);
   }
 
   get buttonDisabled(): boolean {
@@ -93,6 +117,20 @@ export class ChatComponent implements OnInit {
     if (!keyboardEvent.shiftKey) {
       event.preventDefault();
       this.sendMessage();
+    }
+  }
+
+  private scrollToBottom(): void {
+    try {
+      if (this.chatMessagesContainer?.nativeElement) {
+        const element = this.chatMessagesContainer.nativeElement;
+        element.scrollTo({
+          top: element.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
+    } catch (err) {
+      console.error('Error scrolling to bottom:', err);
     }
   }
 }

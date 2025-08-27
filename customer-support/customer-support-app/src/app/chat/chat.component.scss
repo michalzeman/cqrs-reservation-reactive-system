@@ -1,49 +1,59 @@
 .chat-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   height: 90vh;
+  max-height: 90vh;
 }
 
 .chat-messages {
-  flex: 0 1 70%;
+  flex: 1;
   overflow-y: auto;
+  padding: 10px;
+  scroll-behavior: smooth;
+}
+
+.messages-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
 }
 
 .chat-input {
-  bottom: 10px;
-  width: 90%;
+  flex-shrink: 0;
+  padding: 10px;
+  border-top: 1px solid #e0e0e0;
+  background-color: #fff;
 
   textarea {
     resize: vertical;
-    max-height: 30vh;
-    min-height: 20vh;
+    max-height: 150px;
+    min-height: 80px;
     overflow-y: auto;
   }
 }
 
 .user-message {
   align-self: flex-end;
-  background-color: #f0f0f0;
-  color: #000;
-  margin: 10px;
-  padding: 10px;
-  border-radius: 10px;
-  width: auto;
-  max-width: 80%;
-  box-sizing: border-box;
+  background-color: #007bff;
+  color: #fff;
+  margin: 5px 0;
+  padding: 10px 15px;
+  border-radius: 18px 18px 4px 18px;
+  max-width: 70%;
+  word-wrap: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .server-message {
   align-self: flex-start;
-  background-color: rgba(30, 181, 246, 0.32);
-  color: #040303;
-  margin: 10px;
-  padding: 10px;
-  border-radius: 10px;
-  width: auto;
-  max-width: 80%;
-  box-sizing: border-box;
+  background-color: #f1f3f4;
+  color: #202124;
+  margin: 5px 0;
+  padding: 10px 15px;
+  border-radius: 18px 18px 18px 4px;
+  max-width: 70%;
+  word-wrap: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .send-button {
@@ -73,6 +83,10 @@
 }
 
 .responding-button {
+  margin-bottom: 10px;
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
   padding: 10px 20px;
   text-align: center;
   text-decoration: none;
@@ -82,13 +96,22 @@
   transition-duration: 0.4s;
   cursor: pointer;
   border-radius: 10px;
-  background-color: #ff7f7f; /* light red */
-  color: #fff;
-  border: none;
 }
 
-.chat-input {
-  position: fixed;
-  bottom: 10px;
-  width: 90%; // Adjust this value as needed
+.input-group {
+  display: flex;
+  gap: 10px;
+}
+
+.input-group textarea {
+  flex: 1;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  padding: 10px 15px;
+}
+
+.input-group button {
+  border-radius: 20px;
+  padding: 10px 20px;
+  white-space: nowrap;
 }
