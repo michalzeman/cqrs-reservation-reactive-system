@@ -37,6 +37,7 @@ export class ChatComponent implements OnInit {
   private wsUrl = environment.wsApiUrl + '/ai-agent/chat-stream'
 
   messages: Message[] = [];
+  private rawMessageBuffer: string = ''; // Buffer to store the complete raw message
 
   constructor(
     private route: ActivatedRoute,
@@ -63,7 +64,12 @@ export class ChatComponent implements OnInit {
 
   private handleChatMessage(message: Message) {
     let activeMsg = this.messages[this.messages.length - 1];
-    activeMsg.text = activeMsg.text.concat(message.text);
+
+    // Append new text to the raw buffer
+    this.rawMessageBuffer += message.text;
+
+    // Process the buffer to filter out <think> content and update the displayed message
+    activeMsg.text = this.filterThinkContent(this.rawMessageBuffer);
     this.chatId = message.chatId;
 
     // Force change detection and scroll after DOM update
@@ -72,6 +78,43 @@ export class ChatComponent implements OnInit {
     }, 0);
 
     return activeMsg;
+  }
+
+  private filterThinkContent(text: string): string {
+    let result = '';
+    let currentPos = 0;
+    let insideThink = false;
+
+    while (currentPos < text.length) {
+      const thinkStartIndex = text.indexOf('<think>', currentPos);
+      const thinkEndIndex = text.indexOf('</think>', currentPos);
+
+      if (!insideThink) {
+        // We're outside a think block
+        if (thinkStartIndex === -1) {
+          // No more think blocks, add the rest of the text
+          result += text.substring(currentPos);
+          break;
+        } else {
+          // Found a think start, add text before it
+          result += text.substring(currentPos, thinkStartIndex);
+          insideThink = true;
+          currentPos = thinkStartIndex + '<think>'.length;
+        }
+      } else {
+        // We're inside a think block
+        if (thinkEndIndex === -1) {
+          // Think block not closed yet, skip the rest
+          break;
+        } else {
+          // Found think end, skip to after it
+          insideThink = false;
+          currentPos = thinkEndIndex + '</think>'.length;
+        }
+      }
+    }
+
+    return result;
   }
 
   ngOnInit(): void {
@@ -87,6 +130,10 @@ export class ChatComponent implements OnInit {
   sendMessage(message?: string) {
     this.chatService.connect(this.wsUrl);
     this.isConnected = true;
+
+    // Reset the raw message buffer for new messages
+    this.rawMessageBuffer = '';
+
     let userMessage: Message;
     if (message) {
       userMessage = {text: message, sender: 'user', chatId: this.chatId, customerData: this.customer}
