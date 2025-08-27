@@ -199,7 +199,7 @@ Run the complete test suite:
 
 Run system integration tests:
 ```bash
-./gradlew systemChecks
+./gradlew systemTest
 ```
 
 ## 📊 Monitoring
@@ -220,10 +220,6 @@ Each service maintains separate Cassandra keyspaces:
 - `customer_keyspace` - Customer service data
 - `reservation_keyspace` - Reservation service data  
 - `ai_agent_keyspace` - AI agent service data
-
-## 📚 Architecture Documentation
-
-This system demonstrates enterprise-grade architecture patterns and best practices. For implementation details, explore the modular project structure where each service follows Clean Architecture principles with clear separation between domain logic, application services, and infrastructure adapters.
 
 ---
 
