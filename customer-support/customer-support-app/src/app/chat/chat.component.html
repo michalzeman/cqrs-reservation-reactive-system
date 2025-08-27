@@ -5,7 +5,7 @@
         <div *ngIf="message.text.trim().length > 0"
              [ngClass]="{'user-message': message.sender === 'user', 'server-message': message.sender === 'server'}">
           <div>
-            {{ message.text }}
+            <markdown [data]="message.text"></markdown>
           </div>
         </div>
       </ng-container>
