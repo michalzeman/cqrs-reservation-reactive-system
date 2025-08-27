@@ -1,128 +1,233 @@
-# cqrs-reservation-reactive-system
+# CQRS Reservation Reactive System
 
-This project is a reactive microservices system built using Kotlin, Spring Boot, and Gradle. It leverages Apache Kafka
-for event-driven communication and Apache Cassandra for data persistence. The entire system is containerized using
-Docker.
+A comprehensive reactive microservices system built using **Kotlin**, **Spring Boot**, and **Gradle**. This system demonstrates enterprise-grade architecture patterns including CQRS, Event Sourcing, and Domain-Driven Design, with AI integration capabilities.
 
-The system follows several architectural design patterns:
+## 🏗️ Architecture Overview
 
-- Command Query Responsibility Segregation (CQRS)
-- Event Sourcing
-- Event-Driven Architecture
-- Domain-Driven Design (DDD)
-- Reactive Microservices
-- Hexagonal Architecture
+The system leverages **Apache Kafka** for event-driven communication, **Apache Cassandra** for data persistence, and **Redis** for distributed locking. The entire system is containerized using **Docker** and follows reactive programming principles.
 
-The microservices in the system are designed following the Hexagonal Architecture.
+### System Architecture Diagram
 
-The interaction between the Customer MS and the Reservation MS is primarily event-driven, with domain
-events being published into Kafka topics. This approach ensures loose coupling between the services and promotes
-scalability and resilience.
+```mermaid
+graph TB
+    %% External
+    UI[Client Applications] --> Gateway[API Gateway]
+    
+    %% Core Services (Hexagonal)
+    Gateway --> Customer{{Customer S}}
+    Gateway --> Reservation{{Reservation S}}
+    Gateway --> AIAgent{{AI Agent S}}
+    
+    %% Event Communication (Customer ↔ Reservation)
+    Customer -.->|Events| Kafka[(Kafka)]
+    Reservation -.->|Events| Kafka
+    
+    Kafka -.-> Customer
+    Kafka -.-> Reservation
+    
+    %% HTTP Communication (AI Agent)
+    AIAgent -->|HTTP Calls| Customer
+    AIAgent -->|HTTP Calls| Reservation
+    
+    %% Database Isolation (Keyspace Level)
+    Customer --> CustomerDB[(Customer DB)]
+    Reservation --> ReservationDB[(Reservation DB)]
+    AIAgent --> AIAgentDB[(AI Agent DB)]
+    
+    %% External LLM
+    AIAgent --> Ollama[Ollama LLM]
+    
+    %% Styling
+    classDef service fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef infrastructure fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef ai fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef database fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    
+    class Customer,Reservation service
+    class AIAgent ai
+    class Kafka,Gateway,Ollama infrastructure
+    class CustomerDB,ReservationDB,AIAgentDB database
+```
 
-## Basic Interaction
+## 🚀 System Components
 
-1. **Customer Registration**: A `CustomerRegistered` event is published to a Kafka topic when a new customer is
-   registered.
+### Core Microservices
 
-2. **Reservation Request**: A `CustomerReservationRequested` event is published to a Kafka topic when a customer makes a
-   reservation request. The Reservation MS initiates the reservation process upon receiving the event.
+1. **Customer Service** (`customer/`) - Handles customer registration and reservation status management
+2. **Reservation Service** (`reservation/`) - Manages reservations and time slot availability
+3. **AI Agent Service** (`ai-agent/`) - Provides intelligent assistance and automation using LangChain4j
+4. **API Gateway** (`api-gateway/`) - Routes and manages external API requests
+5. **Customer Support** (`customer-support/`) - Handles customer support operations
 
-3. **Reservation Confirmation or Declination**: The Reservation MS either confirms or declines the reservation based on
-   the availability of the requested time slot. It then publishes a `ReservationAccepted` or `ReservationDeclined` event
-   to a Kafka topic. The Customer MS updates the customer's reservation status accordingly.
+### Infrastructure Components
 
-4. **Time Slot Management**: The Reservation MS manages time slots. When a time slot is booked, updated, or created,
-   corresponding events (`TimeSlotBooked`, `TimeSlotUpdated`, `TimeSlotCreated`) are published to Kafka topics.
+- **Apache Kafka** - Event streaming and inter-service communication
+- **Apache Cassandra** - Primary data store with event sourcing support
+- **Redis** - Distributed locking and caching
 
-There is no direct communication between the Customer MS and the Reservation MS via REST APIs. All interactions are
-asynchronous and event-driven, which allows each service to operate independently and handle its own failures.
+### Shared Libraries
 
-## Customer Microservice
+- **@ddd Framework** (`@ddd/`) - Custom DDD framework providing:
+  - Domain persistence layer
+  - Event storage with Cassandra adapter
+  - View projections
+  - Locking mechanisms (in-memory and Redis)
+  - JSON serialization for event storage
+- **Common Components** (`common-components/`) - Shared utilities and configurations
 
-The Customer Microservice is designed to handle all operations related to customers. The microservice follows the
-principles of Domain-Driven Design (DDD) and Event Sourcing.
+### Testing Infrastructure
+
+- **System Integration Tests** (`reservation-system-checks-tests/`) - End-to-end system validation
+- **Shared Test Utilities** (`@ddd/shared-kernel-test-cassandra-db/`) - Cassandra testing support
+
+## 🔄 Event-Driven Interactions
+
+The microservices communicate exclusively through asynchronous events published to Kafka topics, ensuring loose coupling and high scalability:
+
+1. **Customer Registration**: `CustomerRegistered` event triggers customer onboarding
+2. **Reservation Request**: `CustomerReservationRequested` initiates reservation processing
+3. **Reservation Processing**: `ReservationAccepted`/`ReservationDeclined` events update customer status
+4. **Time Slot Management**: `TimeSlotBooked`/`TimeSlotUpdated`/`TimeSlotCreated` events manage availability
+
+## 🤖 AI Integration
+
+The system includes an AI Agent service powered by **LangChain4j** that serves as a **Proof of Concept (PoC)** demonstrating how to integrate LLM agents into enterprise systems using **locally running LLM models**. The implementation uses:
+
+- **Dual Model Architecture**: A larger model for conversational chat and a smaller model for request classification
+- **Local LLM Deployment**: All models run locally via Ollama, ensuring data privacy and enterprise compliance
+- **Function Tool Integration**: Chat capabilities with integrated function tools for business operations
+- **Event Sourcing for Chat History**: Leverages the custom @ddd framework with event sourcing to persist and reconstruct chat conversations, demonstrating the power and flexibility of Event Sourcing and CQRS patterns in non-traditional domains
+
+### Capabilities
+
+- **Customer Management**: Register new customers with personal details (name, email)
+- **Customer Lookup**: Find existing customers by their information
+- **Reservation Operations**: Create reservations for existing customers with specific time slots
+- **Time Slot Discovery**: Find available time slots within specified time windows
+- **Reservation History**: List all confirmed reservations for a customer
+- **Natural Language Interface**: Chat-based interaction using locally deployed Ollama models
+- **Persistent Chat History**: Event-sourced chat conversations that can be replayed and analyzed
+
+The AI agents use function calling to execute business operations through the existing microservices APIs, enabling users to perform complex reservation workflows through simple conversational interactions. This PoC demonstrates AI integration patterns while maintaining data sovereignty through local model deployment.
+
+**Event Sourcing Innovation**: The AI Agent service showcases how the @ddd framework's Event Sourcing capabilities can be applied beyond traditional business domains. Chat conversations are stored as immutable events, allowing for complete conversation reconstruction, audit trails, and advanced analytics - proving the versatility and power of CQRS/Event Sourcing patterns in modern AI-driven applications.
+
+## 🏛️ Customer Microservice
+
+Handles all customer-related operations following DDD and Event Sourcing principles.
 
 ### Aggregates
 
-The main aggregate in the Customer Microservice is the `Customer` aggregate. It is represented by two
-states: `EmptyCustomer` and `ExistingCustomer`.
+- **Customer Aggregate**: Manages customer lifecycle with states:
+  - `EmptyCustomer` - Unregistered customer state
+  - `ExistingCustomer` - Registered customer with reservation history
 
-- `EmptyCustomer` represents a customer that is not yet registered in the system.
-- `ExistingCustomer` represents a customer that is already registered in the system.
+### Commands & Events
 
-The `Customer` aggregate handles commands such
-as `RegisterCustomer`, `RequestNewCustomerReservation`, `UpdateCustomerReservationAsConfirmed`,
-and `UpdateCustomerReservationAsDeclined`. These commands trigger events that change the state of the `Customer`
-aggregate.
+**Commands**: `RegisterCustomer`, `RequestNewCustomerReservation`, `UpdateCustomerReservationAsConfirmed`, `UpdateCustomerReservationAsDeclined`
 
-### APIs
+**Events**: `CustomerRegistered`, `CustomerReservationRequested`, `CustomerReservationConfirmed`, `CustomerReservationDeclined`
 
-The main API in the Customer Microservice is the `CustomerApi`. It uses the `AggregateManager` to handle the customer's
-commands and events. It also provides a method to find a customer by their ID.
+### Use Cases
 
-The `CustomerCommand` API defines the commands that can be executed on the `Customer` aggregate. These commands
-include `RegisterCustomer`, `RequestNewCustomerReservation`, `UpdateCustomerReservationAsConfirmed`,
-and `UpdateCustomerReservationAsDeclined`.
+- **RegisterCustomerUseCase** - Customer registration workflow
+- **ReservationToCustomerUseCase** - Handles reservation status updates
 
-The `CustomerEvent` API defines the events that can occur in the lifecycle of a `Customer` aggregate. These events
-include `CustomerRegistered`, `CustomerReservationRequested`, `CustomerReservationConfirmed`,
-and `CustomerReservationDeclined`.
+## 🏛️ Reservation Microservice
 
-### Basic UseCases
-
-The basic use cases in the Customer Microservice are represented by the `RegisterCustomerUseCase`
-and `ReservationToCustomerUseCase` classes.
-
-- `RegisterCustomerUseCase` is responsible for the registration use case of a customer. It uses the `AggregateManager` to
-  handle the customer's commands and events. It also uses the `CustomerView` to check if a customer already exists
-  before registration.
-
-- `ReservationToCustomerUseCase` is responsible for handling reservation use cases. It listens to reservation events and
-  updates the `Customer` aggregate accordingly. It handles events such as `ReservationAccepted`
-  and `ReservationDeclined`.
-
-## Reservation Microservice
-
-The Reservation Microservice is designed to handle all operations related to reservations. The microservice is designed
-following the principles of Domain-Driven Design (DDD) and Event Sourcing.
+Manages reservation lifecycle and time slot availability.
 
 ### Aggregates
 
-The Reservation Microservice has two main aggregates:
+1. **ReservationAggregate** - Handles reservation operations
+   - **Commands**: `RequestReservation`, `AcceptReservation`, `DeclineReservation`
+   - **Events**: `ReservationRequested`, `ReservationAccepted`, `ReservationDeclined`
 
-1. **ReservationAggregate**: This aggregate is responsible for handling all operations related to a reservation. It
-   includes commands such as `RequestReservation`, `AcceptReservation`, and `DeclineReservation`, and events such
-   as `ReservationRequested`, `ReservationAccepted`, and `ReservationDeclined`.
+2. **TimeSlotAggregate** - Manages time slot availability
+   - **Commands**: `BookTimeSlot`, `CreateTimeSlot`, `UpdateTimeSlot`
+   - **Events**: `TimeSlotBooked`, `TimeSlotCreated`, `TimeSlotUpdated`
 
-2. **TimeSlotAggregate**: This aggregate is responsible for managing time slots. It includes commands such
-   as `BookTimeSlot`, `CreateTimeSlot`, and `UpdateTimeSlot`, and events such as `TimeSlotBooked`, `TimeSlotCreated`,
-   and `TimeSlotUpdated`.
+### Use Cases
 
-### APIs
+- **CustomerToReservationUseCase** - Processes customer reservation requests
+- **TimeSlotToReservationUseCase** - Manages time slot booking
+- **ReservationToTimeSlotUseCase** - Handles time slot state changes
 
-The Reservation Microservice exposes APIs for managing reservations and time slots:
+## 🛠️ Getting Started
 
-1. **ReservationApi**: This API allows executing commands on the `ReservationAggregate` and retrieving reservation
-   documents by their ID.
+### Prerequisites
 
-2. **TimeSlotApi**: This API allows executing commands on the `TimeSlotAggregate`, retrieving time slot documents by
-   their ID, and finding time slots between specific times.
+- **Java 21**
+- **Docker & Docker Compose**
+- **Gradle 8.x**
 
-### Basic UseCases
+### Quick Start
 
-The Reservation Microservice has several basic UseCases:
+1. **Build the system**
+   ```bash
+   ./gradlew build
+   ```
 
-1. **CustomerToReservationUseCase**: This UseCase handles the creation of a reservation when a `CustomerReservationRequested`
-   event is received from the Customer Microservice.
+2. **Run with Docker Compose profiles**
+   
+   The system uses Docker Compose profiles to run different service combinations:
+   
+   ```bash
+   # Complete system with AI agent
+   docker-compose --profile ai up
+   
+   # Core system for testing (customer + reservation services)
+   docker-compose --profile system-checks up
+   
+   # Infrastructure only (Kafka, Cassandra, Redis)
+   docker-compose up -d
+   ```
 
-2. **TimeSlotToReservationUseCase**: This UseCase handles the booking of a time slot when a `ReservationRequested` event is
-   received from the Reservation Microservice. If no time slot is available, the reservation is declined.
+### Service Endpoints
 
-3. **ReservationToTimeSlotUseCase**: This UseCase handles the booking of a time slot when a `ReservationRequested` event is
-   received. If the time slot is already booked, the reservation is declined.
+- **Customer Service**: http://localhost:8082
+- **Reservation Service**: http://localhost:8081
+- **AI Agent Service**: http://localhost:8083
+- **Kafka Control Center**: http://localhost:9021
+
+## 🧪 Testing
+
+Run the complete test suite:
+```bash
+./gradlew test
+```
+
+Run system integration tests:
+```bash
+./gradlew systemChecks
+```
+
+## 📊 Monitoring
+
+- **Kafka Topics**: Monitor through Confluent Control Center at http://localhost:9021
+- **Application Health**: Each service exposes Spring Boot Actuator endpoints
+- **Database**: Cassandra CQL shell available via Docker
+
+## 🔧 Configuration
+
+The system uses environment-based configuration:
+
+- **BROKERS**: Kafka broker addresses
+- **CASSANDRA_DB**: Cassandra database host
+- **REDIS_DB**: Redis database host
+
+Each service maintains separate Cassandra keyspaces:
+- `customer_keyspace` - Customer service data
+- `reservation_keyspace` - Reservation service data  
+- `ai_agent_keyspace` - AI agent service data
+
+## 📚 Architecture Documentation
+
+This system demonstrates enterprise-grade architecture patterns and best practices. For implementation details, explore the modular project structure where each service follows Clean Architecture principles with clear separation between domain logic, application services, and infrastructure adapters.
+
 ---
 
-Copyright (2024) Michal Zeman, zeman.michal@yahoo.com
+**Copyright (2024) Michal Zeman, zeman.michal@yahoo.com**
 
 Licensed under the Creative Commons Attribution (CC BY) license. You are free to share, copy, distribute, 
 and adapt this work, provided you give appropriate credit to the original author Michal Zeman, zeman.michal@yahoo.com.
