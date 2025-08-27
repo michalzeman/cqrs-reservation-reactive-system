@@ -3,7 +3,6 @@ package agent
 import com.mz.ddd.common.api.domain.newId
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerIdentificationTool
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerTool
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationStreamingAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationTool
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.TimeSlot
 import com.mz.reservationsystem.aiagent.adapter.llm.storage.AiChatMemoryStorageConfiguration
@@ -44,9 +43,6 @@ class ReservationAgentChatTest {
     private lateinit var agentManager: AgentManager
 
     @Autowired
-    lateinit var reservationStreamingAgent: ReservationStreamingAgent
-
-    @Autowired
     private lateinit var chatAgentTypeClassification: ChatAgentTypeClassification
 
     @Autowired
@@ -61,43 +57,6 @@ class ReservationAgentChatTest {
     @BeforeEach
     fun setUp() {
         Mockito.reset(reservationToolMock, customerToolMock, customerIdentificationToolMock)
-    }
-
-    @Disabled
-    @Test
-    fun `create a reservation streaming chat`() = runBlocking {
-
-        val chatId = newId()
-
-        val message1 = """
-            I would like to create an reservation from 2024-10-12 12:00 to 2024-10-12 14:00
-        """.trimIndent()
-        println("User: $message1")
-
-        println("Agent: ")
-        val agentAnswer1 = reservationStreamingAgent.createReservation(chatId, message1).asFlow()
-        agentAnswer1.collect { print(it) }
-
-        println()
-
-        val message2 = """
-            customer id is 124231rwgerhy45
-        """.trimIndent()
-        println("User: $message2")
-
-        println("Agent: ")
-
-        val agentAnswer2 = reservationStreamingAgent.createReservation(chatId, message2).asFlow()
-        agentAnswer2.collect { print(it) }
-
-        val message3 = """
-            Yes
-        """.trimIndent()
-        println("\nUser: $message3")
-
-        println("Agent: ")
-        val agentAnswer3 = reservationStreamingAgent.createReservation(chatId, message3).asFlow()
-        agentAnswer3.collect { print(it) }
     }
 
     @Test

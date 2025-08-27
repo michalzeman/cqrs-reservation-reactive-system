@@ -1,9 +1,7 @@
 package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer
 
-import com.mz.customer.domain.api.ReservationStatus
 import com.mz.ddd.common.api.domain.Email
 import com.mz.ddd.common.api.domain.FirstName
-import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.LastName
 import com.mz.reservationsystem.aiagent.domain.customer.CustomerRepository
 import com.mz.reservationsystem.aiagent.domain.customer.RegisterCustomer

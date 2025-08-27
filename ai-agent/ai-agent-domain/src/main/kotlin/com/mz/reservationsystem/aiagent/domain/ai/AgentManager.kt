@@ -4,7 +4,6 @@ import com.mz.ddd.common.api.domain.newId
 import com.mz.reservationsystem.aiagent.domain.ai.model.*
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.onCompletion
 import org.springframework.stereotype.Component
 
 // TODO: reconsider this approach -> not sure if we need to add for the every time user information

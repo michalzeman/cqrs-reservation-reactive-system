@@ -6,7 +6,6 @@ import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerAge
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerIdentificationTool
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerTool
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationAgent
-import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationStreamingAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationTool
 import dev.langchain4j.memory.chat.ChatMemoryProvider
 import dev.langchain4j.memory.chat.MessageWindowChatMemory
@@ -42,7 +41,9 @@ class AgentAiServicesConfiguration(
     }
 
     @Bean
-    fun customerAgent(@Qualifier("chatModel") chatLanguageModel: ChatModel): CustomerAgent {
+    fun customerAgent(
+        chatLanguageModel: StreamingChatModel
+    ): CustomerAgent {
         val chatMemoryProvider = ChatMemoryProvider { memoryId: Any? ->
             MessageWindowChatMemory.builder()
                 .id(memoryId)
@@ -52,14 +53,16 @@ class AgentAiServicesConfiguration(
         }
 
         return AiServices.builder(CustomerAgent::class.java)
-            .chatModel(chatLanguageModel)
+            .streamingChatModel(chatLanguageModel)
             .chatMemoryProvider(chatMemoryProvider)
             .tools(customerTool, customerIdentificationTool)
             .build()
     }
 
     @Bean
-    fun reservationAgent(@Qualifier("chatModel") chatLanguageModel: ChatModel): ReservationAgent {
+    fun reservationAgent(
+        chatLanguageModel: StreamingChatModel
+    ): ReservationAgent {
         val chatMemoryProvider = ChatMemoryProvider { memoryId: Any? ->
             MessageWindowChatMemory.builder()
                 .id(memoryId)
@@ -71,23 +74,6 @@ class AgentAiServicesConfiguration(
         chatLanguageModel.defaultRequestParameters()
 
         return AiServices.builder(ReservationAgent::class.java)
-            .chatMemoryProvider(chatMemoryProvider)
-            .chatModel(chatLanguageModel)
-            .tools(reservationTool, customerIdentificationTool)
-            .build()
-    }
-
-    @Bean
-    fun reservationStreamingAgent(chatLanguageModel: StreamingChatModel): ReservationStreamingAgent {
-        val chatMemoryProvider = ChatMemoryProvider { memoryId: Any? ->
-            MessageWindowChatMemory.builder()
-                .id(memoryId)
-                .maxMessages(50)
-                .chatMemoryStore(store)
-                .build()
-        }
-
-        return AiServices.builder(ReservationStreamingAgent::class.java)
             .chatMemoryProvider(chatMemoryProvider)
             .streamingChatModel(chatLanguageModel)
             .tools(reservationTool, customerIdentificationTool)

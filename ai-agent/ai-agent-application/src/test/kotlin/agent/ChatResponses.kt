@@ -7,6 +7,7 @@ import com.mz.reservationsystem.aiagent.domain.ai.model.ChatResponse
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.reduce
 
 fun aggregateAgentResponseFlow(): suspend (accumulator: ChatResponse, value: ChatResponse) -> ChatResponse =
@@ -18,10 +19,10 @@ fun buildTestChat(aiChat: (AgentRequest) -> Flow<AgentResponse>): suspend (Agent
     return {
         request ->
         println("User: ${request.message.value}")
+        println("Agent:")
         val result = aiChat(request).map { it as ChatResponse }
+            .onEach { print(it.message.value) }
             .reduce(aggregateAgentResponseFlow())
-
-        println("Agent: ${result.message.value}")
 
         result.chatId
     }

@@ -3,6 +3,7 @@ package com.mz.reservationsystem.aiagent.adapter.llm.wiring
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.AiChatModelListener
 import dev.langchain4j.model.chat.ChatModel
 import dev.langchain4j.model.chat.StreamingChatModel
+import dev.langchain4j.model.chat.request.ResponseFormat
 import dev.langchain4j.model.ollama.OllamaChatModel
 import dev.langchain4j.model.ollama.OllamaStreamingChatModel
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -24,8 +25,6 @@ class OllamaLlmModelConfiguration(
         return OllamaChatModel.builder()
             .modelName(properties.model)
             .maxRetries(5)
-            .logRequests(true)
-            .logResponses(true)
             .baseUrl(properties.baseUrl)
             .temperature(properties.temperature)
             .listeners(listOf(aiChatModelListener))
@@ -37,8 +36,6 @@ class OllamaLlmModelConfiguration(
         return OllamaChatModel.builder()
             .modelName(properties.smallModel)
             .maxRetries(5)
-            .logRequests(true)
-            .logResponses(true)
             .baseUrl(properties.baseUrl)
             .temperature(properties.temperature)
             .listeners(listOf(aiChatModelListener))
@@ -50,10 +47,10 @@ class OllamaLlmModelConfiguration(
         return OllamaStreamingChatModel.builder()
             .modelName(properties.model)
             .baseUrl(properties.baseUrl)
-//            .logRequests(true)
-//            .logResponses(true)
             .temperature(properties.temperature)
             .listeners(listOf(aiChatModelListener))
+            .think(false)
+//            .responseFormat(ResponseFormat.JSON)
             .build()
     }
 

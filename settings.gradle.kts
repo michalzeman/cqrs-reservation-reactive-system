@@ -47,10 +47,12 @@ dependencyResolutionManagement {
             library("mockito-kotlin", "org.mockito.kotlin:mockito-kotlin:$mockitoCoreVersion")
             library("kotlinx-serialization-json", "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationJsonVersion")
             library("langchain4j-core", "dev.langchain4j:langchain4j-core:$langchain4jVersion")
-            library("langchain4j-local-ai", "dev.langchain4j:langchain4j-local-ai:$langchain4jVersion-beta6")
-            library("langchain4j-ollama", "dev.langchain4j:langchain4j-ollama:$langchain4jVersion-beta6")
+            library("langchain4j-local-ai", "dev.langchain4j:langchain4j-local-ai:$langchain4jVersion-beta9")
+//            library("langchain4j-local-ai", "dev.langchain4j:langchain4j-local-ai:$langchain4jVersion")
+//            library("langchain4j-ollama", "dev.langchain4j:langchain4j-ollama:$langchain4jVersion-beta6")
+            library("langchain4j-ollama", "dev.langchain4j:langchain4j-ollama:$langchain4jVersion")
             library("langchain4j-open-ai", "dev.langchain4j:langchain4j-open-ai:$langchain4jVersion")
-            library("langchain4j-reactor", "dev.langchain4j:langchain4j-reactor:$langchain4jVersion-beta6")
+            library("langchain4j-reactor", "dev.langchain4j:langchain4j-reactor:$langchain4jVersion-beta9")
             library("langchain4j", "dev.langchain4j:langchain4j:$langchain4jVersion")
         }
     }
