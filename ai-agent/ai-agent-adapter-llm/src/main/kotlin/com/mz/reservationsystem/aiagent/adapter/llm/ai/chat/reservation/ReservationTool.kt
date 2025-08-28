@@ -4,10 +4,10 @@ import com.mz.customer.domain.api.ReservationStatus
 import com.mz.ddd.common.api.domain.Email
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.newId
-import com.mz.reservationsystem.aiagent.domain.customer.CreateReservation
-import com.mz.reservationsystem.aiagent.domain.customer.CustomerRepository
-import com.mz.reservationsystem.aiagent.domain.reservation.FindTimeSlotByTimeWindow
-import com.mz.reservationsystem.aiagent.domain.reservation.ReservationRepository
+import com.mz.reservationsystem.aiagent.application.customer.CreateReservation
+import com.mz.reservationsystem.aiagent.application.customer.CustomerRepository
+import com.mz.reservationsystem.aiagent.application.reservation.FindTimeSlotByTimeWindow
+import com.mz.reservationsystem.aiagent.application.reservation.ReservationRepository
 import dev.langchain4j.agent.tool.P
 import dev.langchain4j.agent.tool.Tool
 import kotlinx.coroutines.flow.toList

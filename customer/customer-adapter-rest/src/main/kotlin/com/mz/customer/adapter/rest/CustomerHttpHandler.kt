@@ -2,8 +2,8 @@ package com.mz.customer.adapter.rest
 
 import com.mz.common.components.adapter.http.HttpHandler
 import com.mz.customer.adapter.rest.api.model.CustomerCommandRequest
-import com.mz.customer.domain.CustomerApi
-import com.mz.customer.domain.NewCustomerReservationUseCase
+import com.mz.customer.application.CustomerApi
+import com.mz.customer.application.NewCustomerReservationUseCase
 import com.mz.customer.domain.api.RegisterCustomer
 import com.mz.customer.domain.api.RequestNewCustomerReservation
 import com.mz.ddd.common.api.domain.Id

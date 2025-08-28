@@ -1,7 +1,7 @@
 package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer
 
 import com.mz.ddd.common.api.domain.Id
-import com.mz.reservationsystem.aiagent.domain.customer.CustomerRepository
+import com.mz.reservationsystem.aiagent.application.customer.CustomerRepository
 import dev.langchain4j.agent.tool.P
 import dev.langchain4j.agent.tool.Tool
 import kotlinx.coroutines.runBlocking

@@ -5,7 +5,7 @@ import com.mz.reservationsystem.aiagent.domain.api.chat.AddChatMessage
 import com.mz.reservationsystem.aiagent.domain.api.chat.ChatAiMessage
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content
 import com.mz.reservationsystem.aiagent.domain.api.chat.CreateChat
-import com.mz.reservationsystem.aiagent.domain.chat.ChatApi
+import com.mz.reservationsystem.aiagent.application.chat.ChatApi
 import dev.langchain4j.data.message.ChatMessage
 import dev.langchain4j.data.message.ChatMessageDeserializer.messageFromJson
 import dev.langchain4j.data.message.ChatMessageSerializer.messageToJson

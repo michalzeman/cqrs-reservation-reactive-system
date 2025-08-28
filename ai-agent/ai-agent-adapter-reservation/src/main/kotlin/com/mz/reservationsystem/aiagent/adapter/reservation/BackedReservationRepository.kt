@@ -1,9 +1,9 @@
 package com.mz.reservationsystem.aiagent.adapter.reservation
 
 import com.mz.ddd.common.api.domain.Id
-import com.mz.reservationsystem.aiagent.domain.reservation.FindTimeSlotByTimeWindow
-import com.mz.reservationsystem.aiagent.domain.reservation.ReservationData
-import com.mz.reservationsystem.aiagent.domain.reservation.ReservationRepository
+import com.mz.reservationsystem.aiagent.application.reservation.FindTimeSlotByTimeWindow
+import com.mz.reservationsystem.aiagent.application.reservation.ReservationData
+import com.mz.reservationsystem.aiagent.application.reservation.ReservationRepository
 import com.mz.reservationsystem.domain.api.reservation.ReservationDocument
 import com.mz.reservationsystem.domain.api.timeslot.TimeSlotDocument
 import kotlinx.coroutines.flow.Flow

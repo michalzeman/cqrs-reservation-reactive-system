@@ -1,6 +1,6 @@
 package com.mz.customer
 
-import com.mz.customer.domain.CustomerApi
+import com.mz.customer.application.CustomerApi
 import com.mz.customer.domain.api.RegisterCustomer
 import com.mz.customer.domain.api.RequestNewCustomerReservation
 import com.mz.customer.domain.api.ReservationPeriod

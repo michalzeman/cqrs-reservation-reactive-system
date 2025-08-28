@@ -5,7 +5,7 @@ val keySpace = "reservation_keyspace"
 project(":reservation:reservation-boot-app") {
     dependencies {
         implementation(project(":reservation:reservation-domain-api"))
-        implementation(project(":reservation:reservation-domain"))
+        implementation(project(":reservation:reservation-application"))
         implementation(project(":reservation:reservation-adapter-rest"))
         implementation(project(":reservation:reservation-adapter-rest-api"))
         implementation(project(":reservation:reservation-adapter-kafka"))
@@ -23,7 +23,7 @@ project(":reservation:reservation-boot-app") {
 project(":reservation:reservation-adapter-kafka") {
     dependencies {
         implementation(project(":reservation:reservation-domain-api"))
-        implementation(project(":reservation:reservation-domain"))
+        implementation(project(":reservation:reservation-application"))
         implementation(project(":reservation:reservation-adapter-rest"))
 
         implementation(project(":customer:customer-domain-api"))
@@ -41,7 +41,7 @@ project(":reservation:reservation-adapter-rest") {
     dependencies {
         implementation(project(":reservation:reservation-domain-api"))
         implementation(project(":reservation:reservation-adapter-rest-api"))
-        implementation(project(":reservation:reservation-domain"))
+        implementation(project(":reservation:reservation-application"))
         implementation(project(":common-components"))
     }
 }
@@ -59,7 +59,7 @@ project(":reservation:reservation-domain-api") {
     }
 }
 
-project(":reservation:reservation-domain") {
+project(":reservation:reservation-application") {
     dependencies {
         implementation(project(":reservation:reservation-domain-api"))
 

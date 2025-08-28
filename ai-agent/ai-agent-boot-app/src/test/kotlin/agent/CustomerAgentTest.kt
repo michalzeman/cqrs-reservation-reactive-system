@@ -1,21 +1,15 @@
 package agent
 
-import com.mz.customer.domain.api.CustomerDocument
 import com.mz.ddd.common.api.domain.*
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.*
 import com.mz.reservationsystem.aiagent.adapter.llm.storage.AiChatMemoryStorageConfiguration
 import com.mz.reservationsystem.aiagent.adapter.llm.wiring.AgentAiServicesConfiguration
 import com.mz.reservationsystem.aiagent.adapter.llm.wiring.OllamaLlmModelConfiguration
-import com.mz.reservationsystem.aiagent.domain.ai.AgentManager
-import com.mz.reservationsystem.aiagent.domain.ai.model.ChatRequest
-import com.mz.reservationsystem.aiagent.domain.ai.model.ChatResponse
-import com.mz.reservationsystem.aiagent.domain.ai.model.NewChatRequest
+import com.mz.reservationsystem.aiagent.application.ai.AgentManager
+import com.mz.reservationsystem.aiagent.application.ai.model.ChatRequest
+import com.mz.reservationsystem.aiagent.application.ai.model.NewChatRequest
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content
-import com.mz.reservationsystem.aiagent.domain.customer.Customer
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.reduce
 import kotlinx.coroutines.runBlocking
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test

@@ -3,7 +3,7 @@ package com.mz.reservationsystem.adapter.rest.reservation
 import com.mz.common.components.adapter.http.HttpHandler
 import com.mz.ddd.common.api.domain.Id
 import com.mz.reservationsystem.adapter.model.reservation.ReservationCommandRequest
-import com.mz.reservationsystem.domain.reservation.ReservationApi
+import com.mz.reservationsystem.application.reservation.ReservationApi
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.RequestPredicates

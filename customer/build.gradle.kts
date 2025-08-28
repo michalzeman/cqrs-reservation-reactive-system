@@ -6,7 +6,7 @@ project(":customer:customer-boot-app") {
     dependencies {
         implementation(project(":customer:customer-domain-api"))
         implementation(project(":customer:customer-domain-api"))
-        implementation(project(":customer:customer-domain"))
+        implementation(project(":customer:customer-application"))
         implementation(project(":customer:customer-adapter-rest"))
         implementation(project(":customer:customer-adapter-kafka"))
         implementation(project(":common-components"))
@@ -23,7 +23,7 @@ project(":customer:customer-boot-app") {
 project(":customer:customer-adapter-kafka") {
     dependencies {
         implementation(project(":customer:customer-domain-api"))
-        implementation(project(":customer:customer-domain"))
+        implementation(project(":customer:customer-application"))
         implementation(project(":common-components"))
 
         implementation(project(":reservation:reservation-domain-api"))
@@ -33,7 +33,7 @@ project(":customer:customer-adapter-kafka") {
 project(":customer:customer-adapter-rest") {
     dependencies {
         implementation(project(":customer:customer-domain-api"))
-        implementation(project(":customer:customer-domain"))
+        implementation(project(":customer:customer-application"))
         implementation(project(":customer:customer-adapter-rest-api"))
         implementation(project(":common-components"))
     }
@@ -52,7 +52,7 @@ project(":customer:customer-domain-api") {
     }
 }
 
-project(":customer:customer-domain") {
+project(":customer:customer-application") {
     dependencies {
         implementation(project(":customer:customer-domain-api"))
         implementation(project(":reservation:reservation-domain-api"))
@@ -161,4 +161,3 @@ tasks.register<Copy>("extractedDomainQueryChangelog") {
     into(destDir)
     rename("001_init-persistence-view-db-model.cql", "001_init-customer-persistence-view-db-model.cql")
 }
-

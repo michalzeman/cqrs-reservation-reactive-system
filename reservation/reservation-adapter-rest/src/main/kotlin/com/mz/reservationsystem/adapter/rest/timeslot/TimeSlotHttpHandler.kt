@@ -5,7 +5,7 @@ import com.mz.ddd.common.api.domain.Id
 import com.mz.reservationsystem.adapter.model.timeslot.TimeSlotCommandRequest
 import com.mz.reservationsystem.domain.api.timeslot.BookTimeSlot
 import com.mz.reservationsystem.domain.api.timeslot.CreateTimeSlot
-import com.mz.reservationsystem.domain.timeslot.*
+import com.mz.reservationsystem.application.timeslot.*
 import kotlinx.datetime.Instant
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component

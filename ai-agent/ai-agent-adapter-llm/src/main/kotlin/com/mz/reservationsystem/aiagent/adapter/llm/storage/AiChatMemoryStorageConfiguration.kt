@@ -1,6 +1,6 @@
 package com.mz.reservationsystem.aiagent.adapter.llm.storage
 
-import com.mz.reservationsystem.aiagent.domain.chat.ChatApi
+import com.mz.reservationsystem.aiagent.application.chat.ChatApi
 import dev.langchain4j.store.memory.chat.ChatMemoryStore
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.context.annotation.Bean

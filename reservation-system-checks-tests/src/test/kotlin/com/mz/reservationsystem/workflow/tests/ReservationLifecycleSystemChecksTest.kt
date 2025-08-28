@@ -19,7 +19,6 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.codec.json.Jackson2JsonDecoder
 import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.test.web.reactive.server.WebTestClient
-import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
@@ -28,6 +27,7 @@ import reactor.kotlin.core.publisher.toMono
 import reactor.util.retry.Retry
 import com.mz.reservationsystem.adapter.model.timeslot.CreateTimeSlotRequest
 import org.junit.jupiter.api.Tag
+import org.springframework.test.web.reactive.server.expectBody
 import kotlin.random.Random
 import kotlin.time.Duration
 

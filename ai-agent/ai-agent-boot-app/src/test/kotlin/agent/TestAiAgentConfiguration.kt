@@ -7,8 +7,8 @@ import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerToo
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationTool
 import com.mz.reservationsystem.aiagent.domain.api.chat.ChatCommand
 import com.mz.reservationsystem.aiagent.domain.api.chat.ChatDocument
-import com.mz.reservationsystem.aiagent.domain.chat.ChatApi
-import com.mz.reservationsystem.aiagent.domain.chat.aggregate.*
+import com.mz.reservationsystem.aiagent.application.chat.ChatApi
+import com.mz.reservationsystem.aiagent.application.chat.aggregate.*
 import org.mockito.kotlin.mock
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean

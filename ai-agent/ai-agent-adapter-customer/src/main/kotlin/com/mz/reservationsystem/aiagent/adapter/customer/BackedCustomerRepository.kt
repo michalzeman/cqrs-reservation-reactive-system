@@ -5,10 +5,10 @@ import com.mz.customer.adapter.rest.api.model.RegisterCustomerRequest
 import com.mz.customer.domain.api.CustomerDocument
 import com.mz.ddd.common.api.domain.Id
 import com.mz.ddd.common.api.domain.uuid
-import com.mz.reservationsystem.aiagent.domain.customer.CreateReservation
-import com.mz.reservationsystem.aiagent.domain.customer.Customer
-import com.mz.reservationsystem.aiagent.domain.customer.CustomerRepository
-import com.mz.reservationsystem.aiagent.domain.customer.RegisterCustomer
+import com.mz.reservationsystem.aiagent.application.customer.CreateReservation
+import com.mz.reservationsystem.aiagent.application.customer.Customer
+import com.mz.reservationsystem.aiagent.application.customer.CustomerRepository
+import com.mz.reservationsystem.aiagent.application.customer.RegisterCustomer
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import kotlinx.datetime.toKotlinInstant

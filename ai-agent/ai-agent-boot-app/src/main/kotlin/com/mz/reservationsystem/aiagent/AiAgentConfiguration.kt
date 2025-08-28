@@ -20,7 +20,7 @@ import com.mz.reservationsystem.aiagent.adapter.customer.wiring.CustomerAdapterC
 import com.mz.reservationsystem.aiagent.domain.api.chat.ChatCommand
 import com.mz.reservationsystem.aiagent.domain.api.chat.ChatDocument
 import com.mz.reservationsystem.aiagent.domain.api.chat.ChatEvent
-import com.mz.reservationsystem.aiagent.domain.chat.aggregate.*
+import com.mz.reservationsystem.aiagent.application.chat.aggregate.*
 import kotlinx.coroutines.reactor.mono
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean

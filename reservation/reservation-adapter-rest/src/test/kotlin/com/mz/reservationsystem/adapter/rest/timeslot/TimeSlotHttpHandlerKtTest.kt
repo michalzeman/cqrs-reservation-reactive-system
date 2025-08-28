@@ -1,8 +1,8 @@
 package com.mz.reservationsystem.adapter.rest.timeslot
 
-import com.mz.reservationsystem.domain.timeslot.FindTimeSlotBetweenTimes
-import com.mz.reservationsystem.domain.timeslot.FindTimeSlotByBooked
-import com.mz.reservationsystem.domain.timeslot.FindTimeSlotsByConditions
+import com.mz.reservationsystem.application.timeslot.FindTimeSlotBetweenTimes
+import com.mz.reservationsystem.application.timeslot.FindTimeSlotByBooked
+import com.mz.reservationsystem.application.timeslot.FindTimeSlotsByConditions
 import kotlinx.datetime.Instant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

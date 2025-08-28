@@ -3,8 +3,8 @@ package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer
 import com.mz.ddd.common.api.domain.Email
 import com.mz.ddd.common.api.domain.FirstName
 import com.mz.ddd.common.api.domain.LastName
-import com.mz.reservationsystem.aiagent.domain.customer.CustomerRepository
-import com.mz.reservationsystem.aiagent.domain.customer.RegisterCustomer
+import com.mz.reservationsystem.aiagent.application.customer.CustomerRepository
+import com.mz.reservationsystem.aiagent.application.customer.RegisterCustomer
 import dev.langchain4j.agent.tool.P
 import dev.langchain4j.agent.tool.Tool
 import dev.langchain4j.model.output.structured.Description

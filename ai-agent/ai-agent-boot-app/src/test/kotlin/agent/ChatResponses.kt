@@ -1,9 +1,9 @@
 package agent
 
 import com.mz.ddd.common.api.domain.Id
-import com.mz.reservationsystem.aiagent.domain.ai.model.AgentRequest
-import com.mz.reservationsystem.aiagent.domain.ai.model.AgentResponse
-import com.mz.reservationsystem.aiagent.domain.ai.model.ChatResponse
+import com.mz.reservationsystem.aiagent.application.ai.model.AgentRequest
+import com.mz.reservationsystem.aiagent.application.ai.model.AgentResponse
+import com.mz.reservationsystem.aiagent.application.ai.model.ChatResponse
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

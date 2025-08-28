@@ -13,11 +13,11 @@ import com.mz.reservationsystem.domain.api.reservation.RESERVATION_DOMAIN_TAG
 import com.mz.reservationsystem.domain.api.reservation.ReservationCommand
 import com.mz.reservationsystem.domain.api.reservation.ReservationDocument
 import com.mz.reservationsystem.domain.api.reservation.ReservationEvent
-import com.mz.reservationsystem.domain.internal.reservation.ReservationAggregate
-import com.mz.reservationsystem.domain.internal.reservation.ReservationCommandHandler
-import com.mz.reservationsystem.domain.internal.reservation.ReservationEventHandler
-import com.mz.reservationsystem.domain.internal.reservation.toAggregate
-import com.mz.reservationsystem.domain.internal.reservation.toDocument
+import com.mz.reservationsystem.application.internal.reservation.ReservationAggregate
+import com.mz.reservationsystem.application.internal.reservation.ReservationCommandHandler
+import com.mz.reservationsystem.application.internal.reservation.ReservationEventHandler
+import com.mz.reservationsystem.application.internal.reservation.toAggregate
+import com.mz.reservationsystem.application.internal.reservation.toDocument
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

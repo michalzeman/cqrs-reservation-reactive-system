@@ -3,7 +3,7 @@ package com.mz.reservationsystem.aiagent.adapter.llm.ai.chat
 import com.mz.ddd.common.api.domain.Id
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.customer.CustomerAgent
 import com.mz.reservationsystem.aiagent.adapter.llm.ai.chat.reservation.ReservationAgent
-import com.mz.reservationsystem.aiagent.domain.ai.agent.ChatAgent
+import com.mz.reservationsystem.aiagent.application.ai.agent.ChatAgent
 import com.mz.reservationsystem.aiagent.domain.api.chat.Content
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow

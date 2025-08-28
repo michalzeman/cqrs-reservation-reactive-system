@@ -3,7 +3,7 @@ package com.mz.reservationsystem.aiagent.adapter.customer
 import com.mz.ddd.common.api.domain.Email
 import com.mz.ddd.common.api.domain.FirstName
 import com.mz.ddd.common.api.domain.LastName
-import com.mz.reservationsystem.aiagent.domain.customer.RegisterCustomer
+import com.mz.reservationsystem.aiagent.application.customer.RegisterCustomer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

@@ -2,8 +2,8 @@ package com.mz.reservationsystem.aiagent.adapter.rest
 
 import com.mz.common.components.json.desJson
 import com.mz.common.components.json.serToJsonString
-import com.mz.reservationsystem.aiagent.domain.ai.AgentManager
-import com.mz.reservationsystem.aiagent.domain.ai.model.AgentRequest
+import com.mz.reservationsystem.aiagent.application.ai.AgentManager
+import com.mz.reservationsystem.aiagent.application.ai.model.AgentRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion

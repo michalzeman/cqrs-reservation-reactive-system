@@ -5,7 +5,7 @@ val keySpace = "ai_agent_keyspace"
 project(":ai-agent:ai-agent-boot-app") {
     dependencies {
         implementation(project(":common-components"))
-        implementation(project(":ai-agent:ai-agent-domain"))
+        implementation(project(":ai-agent:ai-agent-application"))
         implementation(project(":ai-agent:ai-agent-adapter-llm"))
         implementation(project(":ai-agent:ai-agent-adapter-rest"))
         implementation(project(":ai-agent:ai-agent-adapter-customer"))
@@ -20,7 +20,7 @@ project(":ai-agent:ai-agent-boot-app") {
     }
 }
 
-project(":ai-agent:ai-agent-domain") {
+project(":ai-agent:ai-agent-application") {
     dependencies {
         api(project(":ai-agent:ai-agent-domain-api"))
         implementation(project(":common-components"))
@@ -39,7 +39,7 @@ project(":ai-agent:ai-agent-domain-api") {
 
 project(":ai-agent:ai-agent-adapter-llm") {
     dependencies {
-        implementation(project(":ai-agent:ai-agent-domain"))
+        implementation(project(":ai-agent:ai-agent-application"))
         implementation(project(":customer:customer-adapter-rest-api"))
         implementation(project(":common-components"))
     }
@@ -47,14 +47,14 @@ project(":ai-agent:ai-agent-adapter-llm") {
 
 project(":ai-agent:ai-agent-adapter-rest") {
     dependencies {
-        implementation(project(":ai-agent:ai-agent-domain"))
+        implementation(project(":ai-agent:ai-agent-application"))
         implementation(project(":common-components"))
     }
 }
 
 project(":ai-agent:ai-agent-adapter-customer") {
     dependencies {
-        implementation(project(":ai-agent:ai-agent-domain"))
+        implementation(project(":ai-agent:ai-agent-application"))
         implementation(project(":common-components"))
         implementation(project(":customer:customer-adapter-rest-api"))
         implementation(project(":customer:customer-domain-api"))
@@ -63,7 +63,7 @@ project(":ai-agent:ai-agent-adapter-customer") {
 
 project(":ai-agent:ai-agent-adapter-reservation") {
     dependencies {
-        implementation(project(":ai-agent:ai-agent-domain"))
+        implementation(project(":ai-agent:ai-agent-application"))
         implementation(project(":common-components"))
         implementation(project(":reservation:reservation-adapter-rest-api"))
     }
