@@ -1,6 +1,6 @@
 services:
   ai-agent-service:
-    image: ai-agent-application:0.0.1-SNAPSHOT
+    image: ai-agent-boot-app:0.0.1-SNAPSHOT
     ports:
       - "8083:8083"
     environment:
@@ -17,7 +17,7 @@ services:
       - ai
 
   reservation-service:
-    image: reservation-application:0.0.1-SNAPSHOT
+    image: reservation-boot-app:0.0.1-SNAPSHOT
     ports:
       - "8081:8081"
     environment:
@@ -35,7 +35,7 @@ services:
       - ai
 
   customer-service:
-    image: customer-application:0.0.1-SNAPSHOT
+    image: customer-boot-app:0.0.1-SNAPSHOT
     ports:
       - "8082:8082"
     environment:

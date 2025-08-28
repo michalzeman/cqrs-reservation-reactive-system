@@ -2,7 +2,7 @@ description = "ai-agent service"
 
 val keySpace = "ai_agent_keyspace"
 
-project(":ai-agent:ai-agent-application") {
+project(":ai-agent:ai-agent-boot-app") {
     dependencies {
         implementation(project(":common-components"))
         implementation(project(":ai-agent:ai-agent-domain"))

@@ -2,7 +2,7 @@ description = "Reservation service"
 
 val keySpace = "reservation_keyspace"
 
-project(":reservation:reservation-application") {
+project(":reservation:reservation-boot-app") {
     dependencies {
         implementation(project(":reservation:reservation-domain-api"))
         implementation(project(":reservation:reservation-domain"))

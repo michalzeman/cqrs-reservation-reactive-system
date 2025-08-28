@@ -2,7 +2,7 @@ description = "Customer service"
 
 val keySpace = "customer_keyspace"
 
-project(":customer:customer-application") {
+project(":customer:customer-boot-app") {
     dependencies {
         implementation(project(":customer:customer-domain-api"))
         implementation(project(":customer:customer-domain-api"))
@@ -161,3 +161,4 @@ tasks.register<Copy>("extractedDomainQueryChangelog") {
     into(destDir)
     rename("001_init-persistence-view-db-model.cql", "001_init-customer-persistence-view-db-model.cql")
 }
+
